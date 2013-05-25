@@ -30,7 +30,7 @@ void input(struct pos *posInc, int *sair);
 
 void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings);
 
-void desenhaCenario(FILE *cenario);
+void desenhaCenario(FILE *cenario, struct pos *alimentos);
 
 void addAlimento(struct pos *alimentos, int *alimCount);
 
@@ -48,6 +48,8 @@ int main(int argc, char *argv[])
   struct pos cobra[MAXTAM]; /* array de pos, formando o corpo inteiro da cobra */
   struct pos posInc;
   struct levelSettings levelSettings;
+  struct pos alimentos[29];
+  int alimCount=0;
   FILE *cenario;
 
   setlocale(LC_ALL,""); /* Unicode */
@@ -58,11 +60,12 @@ int main(int argc, char *argv[])
   curs_set(0); /* esconde o cursor */
 
   levelSettings.velocidade = 10000;
-  levelSettings.unidadesInc = 2;
+  levelSettings.unidadesInc = 1;
   posInc.x = 1;
   posInc.y = 0; /* cobra inicia movendo-se para a direita */
 
-  desenhaCenario(cenario);
+  desenhaCenario(cenario, alimentos);
+  addAlimento(alimentos, &alimCount);
   initCobra(cobra, &tam);
   move(cobra[0].y, cobra[0].x);
   desenhaCobra(cobra, &tam);
@@ -84,12 +87,11 @@ void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair, struct lev
     }
 }
 
-void desenhaCenario(FILE *cenario)
+void desenhaCenario(FILE *cenario, struct pos *alimentos)
 {
   int i, alimInd, alimCount=0;
   int x, y, len;
   char obj, linha[20];
-  struct pos alimentos[29];
 
   //  getmaxyx(stdscr,maxY,maxX);
   
@@ -133,7 +135,6 @@ void desenhaCenario(FILE *cenario)
   fclose(cenario);
   //  mvprintw(10, 10, "y: %d x: %d i: %d\n", y, x, alimInd);
 
-  addAlimento(alimentos, &alimCount);
   //  addAlimento(alimentos[1]);
   //  addAlimento(alimentos[2]);
 
@@ -211,9 +212,20 @@ void desenhaCobra(struct pos *cobra, int *tam)
 
 void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSettings *levelSettings)
 {
-  (*tam)++;
+  int diffX, diffY, i;
+  /* diffX = appendPos->x - cobra[*tam].x; */
+  /* diffY = appendPos->y - cobra[*tam].y; */
+  for(i=0; i<levelSettings->unidadesInc; i++)
+    (*tam)++;
   cobra[*tam].x = appendPos->x;
   cobra[*tam].y = appendPos->y;
+  diffX = cobra[*tam - 1].x - cobra[*tam].x;
+  diffY = cobra[*tam - 1].y - cobra[*tam].y;
+  for(i=1; i < levelSettings->unidadesInc; i++)
+    {
+      cobra[*tam + i].x = appendPos->x - diffX;
+      cobra[*tam + i].y = appendPos->y - diffY;
+    }
 }
 
 void input(struct pos *posInc, int *sair)
