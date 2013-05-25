@@ -15,34 +15,39 @@ struct pos{
   int y;
 };
 
+struct levelSettings{
+  int velocidade;
+  int unidadesInc; /* unidades de incremento */
+};
+
 void initCobra(struct pos *cobra, int *tam);
 
 void desenhaCobra(struct pos *cobra, int *tam);
 
-void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, int *unidades);
+void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSettings *levelSettings);
 
 void input(struct pos *posInc, int *sair);
 
-void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, int *unidades);
+void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings);
 
 void desenhaCenario(FILE *cenario);
 
 void addAlimento(struct pos *alimentos, int *alimCount);
 
-void testaPos(struct pos *cobra, struct pos *appendPos, int *tam, int *unidades);
+void testaPos(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSettings *levelSettings);
 
 void morre(void);
 
-void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair);
+void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair, struct levelSettings *levelSettings);
 
  
 int main(int argc, char *argv[])
 {
   int i, sair=0;
   int tam = 4;
-  int unidades = 2;
   struct pos cobra[MAXTAM]; /* array de pos, formando o corpo inteiro da cobra */
   struct pos posInc;
+  struct levelSettings levelSettings;
   FILE *cenario;
 
   setlocale(LC_ALL,""); /* Unicode */
@@ -52,6 +57,8 @@ int main(int argc, char *argv[])
   cbreak(); /* desabilita buffer de linha */
   curs_set(0); /* esconde o cursor */
 
+  levelSettings.velocidade = 10000;
+  levelSettings.unidadesInc = 2;
   posInc.x = 1;
   posInc.y = 0; /* cobra inicia movendo-se para a direita */
 
@@ -60,19 +67,19 @@ int main(int argc, char *argv[])
   move(cobra[0].y, cobra[0].x);
   desenhaCobra(cobra, &tam);
   
-  play(cobra, &posInc, &tam, &sair, &unidades);
+  play(cobra, &posInc, &tam, &sair, &levelSettings);
   
   endwin();
   return 0;
 }
 
-void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair, int *unidades)
+void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair, struct levelSettings *levelSettings)
 {
   while(!(*sair))
     {
       timeout(0);
       input(posInc, sair);
-      moveCobra(cobra, posInc, tam, unidades);
+      moveCobra(cobra, posInc, tam, levelSettings);
       usleep(100000);
     }
 }
@@ -152,7 +159,7 @@ void initCobra(struct pos *cobra, int *tam)
 }
 
 /* analisa elementos contidos na posição atual */
-void testaPos(struct pos *cobra, struct pos *appendPos, int *tam, int *unidades)
+void testaPos(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSettings *levelSettings)
 {
   char elem;
   elem = (inch() & A_CHARTEXT);
@@ -160,7 +167,7 @@ void testaPos(struct pos *cobra, struct pos *appendPos, int *tam, int *unidades)
   if(elem == -120 || elem == 35)
     morre();
   else if (elem == 42)
-    incCobra(cobra, appendPos, tam, unidades);    
+    incCobra(cobra, appendPos, tam, levelSettings);    
 }
 
 void morre(void)
@@ -202,7 +209,7 @@ void desenhaCobra(struct pos *cobra, int *tam)
   refresh();
 }
 
-void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, int *unidades)
+void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSettings *levelSettings)
 {
   (*tam)++;
   cobra[*tam].x = appendPos->x;
@@ -250,7 +257,7 @@ void input(struct pos *posInc, int *sair)
     }
 }
 
-void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, int *unidades)
+void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings)
 {
   int i;
   struct pos temp;
@@ -278,7 +285,7 @@ void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, int *unidades)
   cobra[0].y += posInc->y;  
   move(cobra[0].y, cobra[0].x);
 
-  testaPos(cobra, &temp, tam, unidades);
+  testaPos(cobra, &temp, tam, levelSettings);
 
   desenhaCobra(cobra, tam);
 }
