@@ -40,6 +40,7 @@ void morre(void);
 
 void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount);
 
+void imprimeInfos(int *alimCount);
  
 int main(int argc, char *argv[])
 {
@@ -49,7 +50,7 @@ int main(int argc, char *argv[])
   struct pos posInc;
   struct levelSettings levelSettings;
   struct pos alimentos[29];
-  int alimCount=0;
+  int alimCount=-1;
   FILE *cenario;
 
   setlocale(LC_ALL,""); /* Unicode */
@@ -94,6 +95,7 @@ void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair, struct lev
       timeout(0);
       input(posInc, sair);
       moveCobra(cobra, posInc, tam, levelSettings, alimentos, alimCount);
+      imprimeInfos(alimCount);
       usleep(100000);
     }
 }
@@ -152,6 +154,15 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
   //  addAlimento(alimentos[2]);
 
   refresh();
+}
+
+void imprimeInfos(int *alimCount)
+{
+  int x, y;
+  getyx(stdscr, y, x);
+  move(27, 5);
+  printw("Pontos: %d", *alimCount);
+  move(y, x); 
 }
 
 /* inicializa a estrutura da cobra povoando o array cobra com as coordenadas */
