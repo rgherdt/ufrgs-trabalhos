@@ -59,6 +59,17 @@ int main(int argc, char *argv[])
   cbreak(); /* desabilita buffer de linha */
   curs_set(0); /* esconde o cursor */
 
+  if(has_colors() == FALSE)
+    {
+      endwin();
+      printf("Seu terminal não suporta cores\n");
+      exit(1);
+    }
+  start_color();
+  init_pair(1, COLOR_CYAN, COLOR_BLACK);
+  init_pair(2, COLOR_RED, COLOR_BLACK);
+  init_pair(3, COLOR_YELLOW, COLOR_BLACK);
+
   levelSettings.velocidade = 10000;
   levelSettings.unidadesInc = 1;
   posInc.x = 1;
@@ -96,6 +107,7 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
   //  getmaxyx(stdscr,maxY,maxX);
   
   /* Bordas */
+  attron(COLOR_PAIR(3));
   for(i=0; i<=MAXX; i++)
     {
       mvprintw(0, i, "\u2588");
@@ -132,6 +144,7 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
 	  alimInd++;
 	}
     }
+  attroff(COLOR_PAIR(3));
   fclose(cenario);
   //  mvprintw(10, 10, "y: %d x: %d i: %d\n", y, x, alimInd);
 
@@ -196,7 +209,9 @@ void addAlimento(struct pos *alimentos, int *alimCount)
       elem = (inch() & A_CHARTEXT);
       if(elem == 32)
 	{
+	  attron(COLOR_PAIR(2)); /* maças vermelhas */
 	  addch('*');
+	  attroff(COLOR_PAIR(2));
 	  valido = 1;
 	}
       else
@@ -235,12 +250,14 @@ void desenhaCobra(struct pos *cobra, int *tam)
 {
   int i, x, y;
 
+  attron(COLOR_PAIR(1)); /* habilita cor */
   addch('Q'); /* cabeça */
   for(i=1; i<(*tam); i++) /* corpo */
     {
       mvaddch(cobra[i].y, cobra[i].x, '#');
     }
   mvaddch(cobra[(*tam)].y, cobra[(*tam)].x, ' '); /* fim da cobra */
+  attroff(COLOR_PAIR(1));
   refresh();
 }
 
