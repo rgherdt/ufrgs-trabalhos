@@ -28,17 +28,17 @@ void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSe
 
 void input(struct pos *posInc, int *sair);
 
-void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings);
+void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount);
 
 void desenhaCenario(FILE *cenario, struct pos *alimentos);
 
 void addAlimento(struct pos *alimentos, int *alimCount);
 
-void testaPos(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSettings *levelSettings);
+void scanPos(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount);
 
 void morre(void);
 
-void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair, struct levelSettings *levelSettings);
+void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount);
 
  
 int main(int argc, char *argv[])
@@ -70,19 +70,19 @@ int main(int argc, char *argv[])
   move(cobra[0].y, cobra[0].x);
   desenhaCobra(cobra, &tam);
   
-  play(cobra, &posInc, &tam, &sair, &levelSettings);
+  play(cobra, &posInc, &tam, &sair, &levelSettings, alimentos, &alimCount);
   
   endwin();
   return 0;
 }
 
-void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair, struct levelSettings *levelSettings)
+void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount)
 {
   while(!(*sair))
     {
       timeout(0);
       input(posInc, sair);
-      moveCobra(cobra, posInc, tam, levelSettings);
+      moveCobra(cobra, posInc, tam, levelSettings, alimentos, alimCount);
       usleep(100000);
     }
 }
@@ -126,9 +126,9 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
       else if
 	(linha[0] == 'A') /* passa coordenadas de alimentos para o array */
 	{
-	  sscanf(linha, "%c %d %d", &obj, &x, &y);
+	  sscanf(linha, "%c %d %d ", &obj, &x, &y);
 	  alimentos[alimInd].x = x;
-	  alimentos[alimInd].y = x;
+	  alimentos[alimInd].y = y;
 	  alimInd++;
 	}
     }
@@ -160,15 +160,19 @@ void initCobra(struct pos *cobra, int *tam)
 }
 
 /* analisa elementos contidos na posição atual */
-void testaPos(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSettings *levelSettings)
+void scanPos(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount)
 {
   char elem;
   elem = (inch() & A_CHARTEXT);
   
-  if(elem == -120 || elem == 35)
+  if(elem == -120 || elem == 35) /* Caractere bloco ou própria cobra */
     morre();
-  else if (elem == 42)
-    incCobra(cobra, appendPos, tam, levelSettings);    
+  else if (elem == 42) /* alimento */
+    {
+      incCobra(cobra, appendPos, tam, levelSettings);    
+      addAlimento(alimentos, alimCount);
+    }
+  move(cobra[0].y, cobra[0].x); /* restaura posição */
 }
 
 void morre(void)
@@ -179,10 +183,51 @@ void morre(void)
 
 void addAlimento(struct pos *alimentos, int *alimCount)
 {
-   mvaddch(alimentos[*alimCount].y, alimentos[*alimCount].x, '*');
-   (*alimCount)++;
-  //e  mvaddch(10, 10, '*');
-  //  mvprintw(10, 10, "y: %d x: %d\n", alimPos.y, alimPos.x);
+  char elem;
+  int valido=0, tentativa=0;
+  int x, y; /* coordenadas */
+
+  y = alimentos[*alimCount].y;
+  x = alimentos[*alimCount].x;
+
+  while(valido==0)
+    {
+      move(y, x);
+      elem = (inch() & A_CHARTEXT);
+      if(elem == 32)
+	{
+	  addch('*');
+	  valido = 1;
+	}
+      else
+	{
+	  switch(tentativa) /* caso posição seja inválida, testa as posições mais próximas */
+	    {
+	    case 0: /* testa à direita */
+	      x++;
+	      break;
+	    case 1: /* testa acima */
+	      x--; /* restaura x */
+	      y--;
+	      break;
+	    case 2: /* testa à esquerda */
+	      x--;
+	      y++; /* restaura y */
+	      break;
+	    case 3: /* testa abaixo */
+	      x++; /* restaura x */
+	      y++;
+	      break;
+	    default: 
+	      valido = 1;
+	    }
+	  tentativa++;
+	}
+    }
+  alimentos[*alimCount].x = x;
+  alimentos[*alimCount].y = y;
+  (*alimCount)++;
+
   refresh();
 }
 
@@ -190,31 +235,18 @@ void desenhaCobra(struct pos *cobra, int *tam)
 {
   int i, x, y;
 
-  /* elem = inch() & A_CHARTEXT; */
-  /* if(elem == -120) */
-  /*   { */
-  /*     endwin(); */
-  /*     exit(1); */
-  /*   } */
-  /* mvprintw(10, 10, "%d", elem); */
-  /* move(y, x); */
   addch('Q'); /* cabeça */
   for(i=1; i<(*tam); i++) /* corpo */
     {
       mvaddch(cobra[i].y, cobra[i].x, '#');
     }
   mvaddch(cobra[(*tam)].y, cobra[(*tam)].x, ' '); /* fim da cobra */
-  //  elem = (inch() && A_CHARTEXT);
-  //  testaPos();
-  //  addch(elem);
   refresh();
 }
 
 void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSettings *levelSettings)
 {
   int diffX, diffY, i;
-  /* diffX = appendPos->x - cobra[*tam].x; */
-  /* diffY = appendPos->y - cobra[*tam].y; */
   for(i=0; i<levelSettings->unidadesInc; i++)
     (*tam)++;
   cobra[*tam].x = appendPos->x;
@@ -269,7 +301,7 @@ void input(struct pos *posInc, int *sair)
     }
 }
 
-void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings)
+void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount)
 {
   int i;
   struct pos temp;
@@ -297,7 +329,7 @@ void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSett
   cobra[0].y += posInc->y;  
   move(cobra[0].y, cobra[0].x);
 
-  testaPos(cobra, &temp, tam, levelSettings);
+  scanPos(cobra, &temp, tam, levelSettings, alimentos, alimCount);
 
   desenhaCobra(cobra, tam);
 }
