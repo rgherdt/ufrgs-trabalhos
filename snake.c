@@ -53,14 +53,17 @@ int main(int argc, char *argv[])
   int alimCount=-1;
   int passos = 0;
   FILE *cenario;
-
+  
+  system("resize -s 30 83"); // define o tamanho do terminal
   setlocale(LC_ALL,""); /* Unicode */
   initscr(); /* inicializa o modo curses */
+  keypad(stdscr, TRUE); // possibilita o uso das setas
+  resize_term(30, 83); // permite com que o usuário mude o tamanho do terminal
   clear();
   noecho(); /* evita que teclas digitadas sejam impressas na tela */
   cbreak(); /* desabilita buffer de linha */
   curs_set(0); /* esconde o cursor */
-
+ 
   if(has_colors() == FALSE)
     {
       endwin();
@@ -73,7 +76,7 @@ int main(int argc, char *argv[])
   init_pair(3, COLOR_YELLOW, COLOR_BLACK);
 
   levelSettings.velocidade = 10000;
-  levelSettings.unidadesInc = 1;
+  levelSettings.unidadesInc = 2;
   posInc.x = 1;
   posInc.y = 0; /* cobra inicia movendo-se para a direita */
 
@@ -292,13 +295,13 @@ void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSe
 
 void input(struct pos *posInc, int *sair)
 {
-  char dir;
+  int dir; // tipo int necessário para reconhecer setas
   dir = toupper(getch());
-
   switch(dir)
     {
       /* Ordenadas iniciam no topo superior da tela */
     case 'D':
+    case KEY_RIGHT: // seta direita
       if(posInc->x != -1)
 	{
 	  posInc->x = 1;
@@ -306,6 +309,7 @@ void input(struct pos *posInc, int *sair)
 	}
       break;
     case 'A':
+    case KEY_LEFT: // seta esquerda
       if(posInc->x != 1)
 	{
 	  posInc->x = -1;
@@ -313,6 +317,7 @@ void input(struct pos *posInc, int *sair)
 	}
       break;
     case 'W':
+    case KEY_UP: // seta "up"
       if(posInc->y != 1)
 	{
 	  posInc->x = 0;
@@ -320,6 +325,7 @@ void input(struct pos *posInc, int *sair)
 	}
       break;
     case 'X':
+    case KEY_DOWN: // seta down
       if(posInc->y != -1)
 	{
 	  posInc->x = 0;
@@ -364,3 +370,5 @@ void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSett
 
   desenhaCobra(cobra, tam);
 }
+
+
