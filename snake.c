@@ -4,7 +4,7 @@
 #include <locale.h> /* para codificar em Unicode */
 #include <wchar.h>
 #include <string.h>
-#define MAXTAM 20
+#define MAXTAM 95
 #define MAXY 24
 #define MAXX 80
 
@@ -28,7 +28,7 @@ void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSe
 
 void input(struct pos *posInc, int *sair);
 
-void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount);
+void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount, int *passos);
 
 void desenhaCenario(FILE *cenario, struct pos *alimentos);
 
@@ -38,9 +38,9 @@ void scanPos(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSet
 
 void morre(void);
 
-void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount);
+void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount, int *passos);
 
-void imprimeInfos(int *alimCount);
+void imprimeInfos(int *alimCount, int *passos);
  
 int main(int argc, char *argv[])
 {
@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
   struct levelSettings levelSettings;
   struct pos alimentos[29];
   int alimCount=-1;
+  int passos = 0;
   FILE *cenario;
 
   setlocale(LC_ALL,""); /* Unicode */
@@ -82,20 +83,20 @@ int main(int argc, char *argv[])
   move(cobra[0].y, cobra[0].x);
   desenhaCobra(cobra, &tam);
   
-  play(cobra, &posInc, &tam, &sair, &levelSettings, alimentos, &alimCount);
+  play(cobra, &posInc, &tam, &sair, &levelSettings, alimentos, &alimCount, &passos);
   
   endwin();
   return 0;
 }
 
-void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount)
+void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount, int *passos)
 {
   while(!(*sair))
     {
       timeout(0);
       input(posInc, sair);
-      moveCobra(cobra, posInc, tam, levelSettings, alimentos, alimCount);
-      imprimeInfos(alimCount);
+      moveCobra(cobra, posInc, tam, levelSettings, alimentos, alimCount, passos);
+      imprimeInfos(alimCount, passos);
       usleep(100000);
     }
 }
@@ -106,19 +107,19 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
   int x, y, len;
   char obj, linha[20];
 
-  //  getmaxyx(stdscr,maxY,maxX);
+  // getmaxyx(stdscr,maxY,maxX);
   
   /* Bordas */
   attron(COLOR_PAIR(3));
-  for(i=0; i<=MAXX; i++)
+  for(i=0; i<MAXX; i++)
     {
-      mvprintw(0, i, "\u2588");
-      mvprintw(MAXY, i, "\u2588");
+      mvprintw(0, i, "\u2588"); //superior
+      mvprintw(MAXY, i, "\u2588"); //inferior
     }
   for(i=0; i<MAXY; i++)
     {
-      mvprintw(i, 0, "\u2588");
-      mvprintw(i, MAXX, "\u2588");
+      mvprintw(i, 0, "\u2588"); //esquerda
+      mvprintw(i, MAXX, "\u2588"); //direita
     }
 
   cenario = fopen("cenario1.txt", "r");
@@ -148,38 +149,39 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
     }
   attroff(COLOR_PAIR(3));
   fclose(cenario);
-  //  mvprintw(10, 10, "y: %d x: %d i: %d\n", y, x, alimInd);
+  // mvprintw(10, 10, "y: %d x: %d i: %d\n", y, x, alimInd);
 
-  //  addAlimento(alimentos[1]);
-  //  addAlimento(alimentos[2]);
+  // addAlimento(alimentos[1]);
+  // addAlimento(alimentos[2]);
 
   refresh();
 }
 
-void imprimeInfos(int *alimCount)
+void imprimeInfos(int *alimCount, int *passos)
 {
   int x, y;
   getyx(stdscr, y, x);
   move(27, 5);
-  printw("Pontos: %d", *alimCount);
-  move(y, x); 
+  printw("Tamanho da cobra: %d", *alimCount+4);
+  printw(" Passos: %d", *passos);
+  move(y, x);
 }
 
 /* inicializa a estrutura da cobra povoando o array cobra com as coordenadas */
-/* centrais da tela (voltada horizontalmente para a direita).                */
-/* Adiciona-se mais um elemento ao fim da cobra, o qual será utilizado para  */
-/* finalizá-la com o caractere ' ' na função desenhaCobra                    */
-void initCobra(struct pos *cobra, int *tam) 
+/* centrais da tela (voltada horizontalmente para a direita). */
+/* Adiciona-se mais um elemento ao fim da cobra, o qual será utilizado para */
+/* finalizá-la com o caractere ' ' na função desenhaCobra */
+void initCobra(struct pos *cobra, int *tam)
 {
   int i;
-  //  getmaxyx(stdscr,maxY,maxX);
+  // getmaxyx(stdscr,maxY,maxX);
 
   cobra[0].x = MAXX / 2;
   cobra[0].y = MAXY / 2;
   for(i=1; i <= *tam; i++) /* <= pois há o fim da cobra */
     {
       cobra[i].x = cobra[i-1].x - 1;
-      cobra[i].y = cobra[i-1].y; 
+      cobra[i].y = cobra[i-1].y;
     }
 }
 
@@ -193,7 +195,7 @@ void scanPos(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSet
     morre();
   else if (elem == 42) /* alimento */
     {
-      incCobra(cobra, appendPos, tam, levelSettings);    
+      incCobra(cobra, appendPos, tam, levelSettings);
       addAlimento(alimentos, alimCount);
     }
   move(cobra[0].y, cobra[0].x); /* restaura posição */
@@ -244,7 +246,7 @@ void addAlimento(struct pos *alimentos, int *alimCount)
 	      x++; /* restaura x */
 	      y++;
 	      break;
-	    default: 
+	    default:
 	      valido = 1;
 	    }
 	  tentativa++;
@@ -295,7 +297,7 @@ void input(struct pos *posInc, int *sair)
 
   switch(dir)
     {
-    /* Ordenadas iniciam no topo superior da tela */
+      /* Ordenadas iniciam no topo superior da tela */
     case 'D':
       if(posInc->x != -1)
 	{
@@ -314,7 +316,7 @@ void input(struct pos *posInc, int *sair)
       if(posInc->y != 1)
 	{
 	  posInc->x = 0;
-	  posInc->y = -1; 
+	  posInc->y = -1;
 	}
       break;
     case 'X':
@@ -329,18 +331,18 @@ void input(struct pos *posInc, int *sair)
     }
 }
 
-void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount)
+void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount, int *passos)
 {
   int i;
   struct pos temp;
   int incFlag = 1;
 
   /* if(incFlag) */
-  /*   { */
-  /*     //      *tam++; */
-  /*     cobra[*tam+1].x = cobra[*tam].x; */
-  /*     cobra[*tam+1].y = cobra[*tam].y; */
-  /*   } */
+  /* { */
+  /* // *tam++; */
+  /* cobra[*tam+1].x = cobra[*tam].x; */
+  /* cobra[*tam+1].y = cobra[*tam].y; */
+  /* } */
     
   temp.x = cobra[*tam].x;
   temp.y = cobra[*tam].y;
@@ -354,11 +356,11 @@ void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSett
   /* temp.x = cobra[0].x; */
   /* temp.y = cobra[0].y; */
   cobra[0].x += posInc->x; /* calcula a posição da cabeça */
-  cobra[0].y += posInc->y;  
+  cobra[0].y += posInc->y;
   move(cobra[0].y, cobra[0].x);
+  (*passos)++;
 
   scanPos(cobra, &temp, tam, levelSettings, alimentos, alimCount);
 
   desenhaCobra(cobra, tam);
 }
-
