@@ -1,9 +1,20 @@
-- investigar um bug que ocorreu onde a cobra dividiu-se, deixando uma parte para trás
-- investigar bug: ocorre um delay de input se uma tecla direcional (ou qualquer outra,
-mesmo sem função) é pressionada continuamente
-- implementar função salvarJogo() e atrelar à tecla 'g'
-- implementar contador de passos
-- implementar função mudaNivel e opção "trapaça" atrelada à tecla 't'
-- portar direcionais para as setas do teclado
 
+  TODO:
+
+- investigar bug: ocorre um delay de input se uma tecla direcional (ou qualquer outra,
+mesmo sem função) é pressionada continuamente 
+
+- implementar função salvarJogo() e atrelar à tecla 'g'
+
+- implementar função mudaNivel e opção "trapaça" atrelada à tecla 't' - em andamento
+
+
+
+
+
+  FEITOS:
+  
+- investigar um bug que ocorreu onde a cobra dividiu-se, deixando uma parte para trás - RESOLVIDO
+- implementar contador de passos - FEITO
+- portar direcionais para as setas do teclado - FEITO
 
