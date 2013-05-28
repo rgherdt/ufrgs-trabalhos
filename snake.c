@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
   init_pair(3, COLOR_YELLOW, COLOR_BLACK);
 
   levelSettings.velocidade = 10000;
-  levelSettings.unidadesInc = 2;
+  levelSettings.unidadesInc = 1;
   posInc.x = 1;
   posInc.y = 0; /* cobra inicia movendo-se para a direita */
 
@@ -152,10 +152,6 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
     }
   attroff(COLOR_PAIR(3));
   fclose(cenario);
-  // mvprintw(10, 10, "y: %d x: %d i: %d\n", y, x, alimInd);
-
-  // addAlimento(alimentos[1]);
-  // addAlimento(alimentos[2]);
 
   refresh();
 }
@@ -272,7 +268,7 @@ void desenhaCobra(struct pos *cobra, int *tam)
     {
       mvaddch(cobra[i].y, cobra[i].x, '#');
     }
-  mvaddch(cobra[(*tam)].y, cobra[(*tam)].x, ' '); /* fim da cobra */
+  mvaddch(cobra[(*tam)].y, cobra[(*tam)].x, ' '); /* fim da cobra com espaço para 'limpar o rastro' */
   attroff(COLOR_PAIR(1));
   refresh();
 }
@@ -284,12 +280,12 @@ void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSe
     (*tam)++;
   cobra[*tam].x = appendPos->x;
   cobra[*tam].y = appendPos->y;
-  diffX = cobra[*tam - 1].x - cobra[*tam].x;
+  diffX = cobra[*tam - 1].x - cobra[*tam].x; /* diffX e diffY calculam o sentido de crescimento */
   diffY = cobra[*tam - 1].y - cobra[*tam].y;
   for(i=1; i < levelSettings->unidadesInc; i++)
     {
-      cobra[*tam + i].x = appendPos->x - diffX;
-      cobra[*tam + i].y = appendPos->y - diffY;
+      cobra[*tam + i].x = appendPos->x - diffX; /* transmite as coordenadas para unidadesInc-1 */
+      cobra[*tam + i].y = appendPos->y - diffY; /* após a última parte da cobra  */
     }
 }
 
@@ -343,13 +339,6 @@ void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSett
   struct pos temp;
   int incFlag = 1;
 
-  /* if(incFlag) */
-  /* { */
-  /* // *tam++; */
-  /* cobra[*tam+1].x = cobra[*tam].x; */
-  /* cobra[*tam+1].y = cobra[*tam].y; */
-  /* } */
-    
   temp.x = cobra[*tam].x;
   temp.y = cobra[*tam].y;
   /* transfere as coordenadas dos elos de trás pra frente */
@@ -359,9 +348,7 @@ void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSett
       cobra[i].y = cobra[i-1].y;
     }
 
-  /* temp.x = cobra[0].x; */
-  /* temp.y = cobra[0].y; */
-  cobra[0].x += posInc->x; /* calcula a posição da cabeça */
+  cobra[0].x += posInc->x; /* calcula a posição da cabeça */ 
   cobra[0].y += posInc->y;
   move(cobra[0].y, cobra[0].x);
   (*passos)++;
