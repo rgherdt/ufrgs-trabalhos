@@ -1,8 +1,15 @@
-
   TODO:
 
 - investigar bug: ocorre um delay de input se uma tecla direcional (ou qualquer outra,
 mesmo sem função) é pressionada continuamente 
+
+- BUG: terminal resizing: a adição do comando "system("resize -s 30 83")" no início do main (antes de iniciar
+o ncurses) faz com que o terminal (gnome-terminal, a princípio; comando incompatível com xterm, por exemplo)
+automaticamente fique no mínimo tamanho exigido. Se o usuário aumentar o tamanho do terminal, nada acontece.
+No entanto, se diminuir o tamanho de modo que invada os dados definidos pelo curses, ele apaga sumariamente o que
+está escrito na tela. A adição dos comandos resizeterm/resize_term (http://linux.die.net/man/3/resizeterm) logo após
+o initscr() nada faz. Se este comando for posto no laço play, ele faz com que o texto-informação (passos/alimentos)
+vá para o fundo do novo terminal. No entanto, os outros dados (como o cenário), são apagados.
 
 - implementar função salvarJogo() e atrelar à tecla 'g'
 
