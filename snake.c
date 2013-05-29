@@ -89,12 +89,9 @@ int main(int argc, char *argv[])
   init_pair(1, COLOR_CYAN, COLOR_BLACK);
   init_pair(2, COLOR_RED, COLOR_BLACK);
   init_pair(3, COLOR_YELLOW, COLOR_BLACK);
-  init_pair(4, COLOR_YELLOW, COLOR_BLUE);
-  init_pair(5, COLOR_BLUE, COLOR_GREEN);
 
   jogo_win = newwin(25, 81, 1, 1);
   info_win = newwin(2, 30, 27, 5);
-  /* wbkgd(jogo_win, COLOR_PAIR(5)); */
 
   levelSettings.velocidade = 10000;
   levelSettings.unidadesInc = 1;
@@ -136,8 +133,7 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
   getmaxyx(jogo_win,maxY,maxX);
   
   /* Bordas */
-  //  bkgd(COLOR_PAIR(4));
-  /* wbkgd(jogo_win, COLOR_PAIR(5)); */
+
   wattron(jogo_win, COLOR_PAIR(3));
   for(i=0; i<maxX; i++)
     {
@@ -188,7 +184,7 @@ void imprimeInfos(int *alimCount, int *passos)
 
   getyx(info_win, y, x);
   wmove(info_win, 0, 0);
-  wbkgd(info_win, COLOR_PAIR(5));
+  //  wbkgd(info_win, COLOR_PAIR(5));
   wprintw(info_win, "Tamanho da cobra: %d", *alimCount+4);
   wprintw(info_win, " Passos: %d", *passos);
   wmove(info_win, y, x);
