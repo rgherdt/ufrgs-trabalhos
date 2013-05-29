@@ -8,6 +8,9 @@
 #define MAXY 24
 #define MAXX 80
 
+WINDOW *jogo_win;
+WINDOW *info_win;
+
 struct pos;
 
 struct pos{
@@ -41,6 +44,8 @@ void morre(void);
 void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount, int *passos);
 
 void imprimeInfos(int *alimCount, int *passos);
+
+
  
 int main(int argc, char *argv[])
 {
@@ -53,16 +58,17 @@ int main(int argc, char *argv[])
   int alimCount=-1;
   int passos = 0;
   FILE *cenario;
-  
+
   system("resize -s 30 83"); // define o tamanho do terminal
   setlocale(LC_ALL,""); /* Unicode */
-  initscr(); /* inicializa o modo curses */
+  initscr(); /* inicializa o modo curses */  
   keypad(stdscr, TRUE); // possibilita o uso das setas
-  resize_term(30, 83); // permite com que o usuário mude o tamanho do terminal
+  //  resize_term(30, 83); // permite com que o usuário mude o tamanho do terminal
   clear();
   noecho(); /* evita que teclas digitadas sejam impressas na tela */
   cbreak(); /* desabilita buffer de linha */
   curs_set(0); /* esconde o cursor */
+
  
   if(has_colors() == FALSE)
     {
@@ -74,6 +80,12 @@ int main(int argc, char *argv[])
   init_pair(1, COLOR_CYAN, COLOR_BLACK);
   init_pair(2, COLOR_RED, COLOR_BLACK);
   init_pair(3, COLOR_YELLOW, COLOR_BLACK);
+  init_pair(4, COLOR_YELLOW, COLOR_BLUE);
+  init_pair(5, COLOR_BLUE, COLOR_GREEN);
+
+  jogo_win = newwin(26, 80, 5, 5);
+  info_win = derwin(jogo_win, 2, 30, 20, 35);
+  /* wbkgd(jogo_win, COLOR_PAIR(5)); */
 
   levelSettings.velocidade = 10000;
   levelSettings.unidadesInc = 1;
@@ -83,11 +95,13 @@ int main(int argc, char *argv[])
   desenhaCenario(cenario, alimentos);
   addAlimento(alimentos, &alimCount);
   initCobra(cobra, &tam);
-  move(cobra[0].y, cobra[0].x);
+  wmove(jogo_win, cobra[0].y, cobra[0].x);
   desenhaCobra(cobra, &tam);
   
   play(cobra, &posInc, &tam, &sair, &levelSettings, alimentos, &alimCount, &passos);
-  
+  refresh();
+  wrefresh(jogo_win);
+  //  refresh();
   endwin();
   return 0;
 }
@@ -106,23 +120,25 @@ void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair, struct lev
 
 void desenhaCenario(FILE *cenario, struct pos *alimentos)
 {
-  int i, alimInd, alimCount=0;
+  int i, alimInd, alimCount=0, maxY, maxX;
   int x, y, len;
   char obj, linha[20];
 
-  // getmaxyx(stdscr,maxY,maxX);
+  getmaxyx(jogo_win,maxY,maxX);
   
   /* Bordas */
-  attron(COLOR_PAIR(3));
-  for(i=0; i<MAXX; i++)
+  //  bkgd(COLOR_PAIR(4));
+  /* wbkgd(jogo_win, COLOR_PAIR(5)); */
+  wattron(jogo_win, COLOR_PAIR(3));
+  for(i=0; i<maxX; i++)
     {
-      mvprintw(0, i, "\u2588"); //superior
-      mvprintw(MAXY, i, "\u2588"); //inferior
+      mvwprintw(jogo_win, 0, i, "\u2588"); //superior
+      mvwprintw(jogo_win, maxY-1, i, "\u2588"); //inferior
     }
-  for(i=0; i<MAXY; i++)
+  for(i=0; i<maxY; i++)
     {
-      mvprintw(i, 0, "\u2588"); //esquerda
-      mvprintw(i, MAXX, "\u2588"); //direita
+      mvwprintw(jogo_win, i, 0, "\u2588"); //esquerda
+      mvwprintw(jogo_win, i, maxX-1, "\u2588"); //direita
     }
 
   cenario = fopen("cenario1.txt", "r");
@@ -136,10 +152,10 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
 	  sscanf(linha, "%c %d %d %d ", &obj, &x, &y, &len);
 	  if(obj == 'H') /* muro horizontal */
 	    for(i=0; i<len; i++)
-	      mvprintw(y, x+i, "\u2588");
+	      mvwprintw(jogo_win, y, x+i, "\u2588");
 	  else if(obj == 'V') /* muro vertical */
 	    for(i=0; i<len; i++)
-	      mvprintw(y+i, x, "\u2588");
+	      mvwprintw(jogo_win, y+i, x, "\u2588");
 	}
       else if
 	(linha[0] == 'A') /* passa coordenadas de alimentos para o array */
@@ -150,20 +166,26 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
 	  alimInd++;
 	}
     }
-  attroff(COLOR_PAIR(3));
+  wattroff(jogo_win, COLOR_PAIR(3));
   fclose(cenario);
-
+  
   refresh();
+  wrefresh(jogo_win);
 }
 
 void imprimeInfos(int *alimCount, int *passos)
 {
   int x, y;
-  getyx(stdscr, y, x);
-  move(27, 5);
-  printw("Tamanho da cobra: %d", *alimCount+4);
-  printw(" Passos: %d", *passos);
-  move(y, x);
+
+  //  getyx(info_win, y, x);
+  wmove(info_win, 0, 0);
+  wbkgd(info_win, COLOR_PAIR(5));
+  wprintw(info_win, "Tamanho da cobra: %d", *alimCount+4);
+  wprintw(info_win, " Passos: %d", *passos);
+  //  wmove(info_win, y, x);
+  //  refresh();
+  //  wrefresh(jogo_win);
+  wrefresh(info_win);
 }
 
 /* inicializa a estrutura da cobra povoando o array cobra com as coordenadas */
@@ -188,7 +210,7 @@ void initCobra(struct pos *cobra, int *tam)
 void scanPos(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount)
 {
   char elem;
-  elem = (inch() & A_CHARTEXT);
+  elem = (winch(jogo_win) & A_CHARTEXT);
   
   if(elem == -120 || elem == 35) /* Caractere bloco ou própria cobra */
     morre();
@@ -197,7 +219,7 @@ void scanPos(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSet
       incCobra(cobra, appendPos, tam, levelSettings);
       addAlimento(alimentos, alimCount);
     }
-  move(cobra[0].y, cobra[0].x); /* restaura posição */
+  wmove(jogo_win, cobra[0].y, cobra[0].x); /* restaura posição */
 }
 
 void morre(void)
@@ -217,13 +239,13 @@ void addAlimento(struct pos *alimentos, int *alimCount)
 
   while(valido==0)
     {
-      move(y, x);
+      wmove(jogo_win, y, x);
       elem = (inch() & A_CHARTEXT);
       if(elem == 32)
 	{
-	  attron(COLOR_PAIR(2)); /* maças vermelhas */
-	  addch('*');
-	  attroff(COLOR_PAIR(2));
+	  wattron(jogo_win, COLOR_PAIR(2)); /* maças vermelhas */
+	  waddch(jogo_win, '*');
+	  wattroff(jogo_win, COLOR_PAIR(2));
 	  valido = 1;
 	}
       else
@@ -255,22 +277,22 @@ void addAlimento(struct pos *alimentos, int *alimCount)
   alimentos[*alimCount].y = y;
   (*alimCount)++;
 
-  refresh();
+  wrefresh(jogo_win);
 }
 
 void desenhaCobra(struct pos *cobra, int *tam)
 {
   int i, x, y;
 
-  attron(COLOR_PAIR(1)); /* habilita cor */
-  addch('Q'); /* cabeça */
+  wattron(jogo_win, COLOR_PAIR(1)); /* habilita cor */
+  waddch(jogo_win, 'Q'); /* cabeça */
   for(i=1; i<(*tam); i++) /* corpo */
     {
-      mvaddch(cobra[i].y, cobra[i].x, '#');
+      mvwaddch(jogo_win, cobra[i].y, cobra[i].x, '#');
     }
-  mvaddch(cobra[(*tam)].y, cobra[(*tam)].x, ' '); /* fim da cobra com espaço para 'limpar o rastro' */
-  attroff(COLOR_PAIR(1));
-  refresh();
+  mvwaddch(jogo_win, cobra[(*tam)].y, cobra[(*tam)].x, ' '); /* fim da cobra com espaço para 'limpar o rastro' */
+  wattroff(jogo_win, COLOR_PAIR(1));
+  wrefresh(jogo_win);
 }
 
 void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSettings *levelSettings)
@@ -350,7 +372,7 @@ void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSett
 
   cobra[0].x += posInc->x; /* calcula a posição da cabeça */ 
   cobra[0].y += posInc->y;
-  move(cobra[0].y, cobra[0].x);
+  wmove(jogo_win, cobra[0].y, cobra[0].x);
   (*passos)++;
 
   scanPos(cobra, &temp, tam, levelSettings, alimentos, alimCount);
