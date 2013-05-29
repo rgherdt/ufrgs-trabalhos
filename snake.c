@@ -45,6 +45,15 @@ void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair, struct lev
 
 void imprimeInfos(int *alimCount, int *passos);
 
+/* void mudaNivel
+1- testa se alimCount = 30
+2- atualizar arquivo cenario.txt
+3- atualizar struct levelSettings
+4- chamar desenhaCenario
+5- addAlimento
+6- setar cobra no início
+7- zerar alimCount
+ */
 
  
 int main(int argc, char *argv[])
@@ -59,7 +68,7 @@ int main(int argc, char *argv[])
   int passos = 0;
   FILE *cenario;
 
-  system("resize -s 30 83"); // define o tamanho do terminal
+  //system("resize -s 30 83"); // define o tamanho do terminal
   setlocale(LC_ALL,""); /* Unicode */
   initscr(); /* inicializa o modo curses */  
   keypad(stdscr, TRUE); // possibilita o uso das setas
@@ -83,8 +92,8 @@ int main(int argc, char *argv[])
   init_pair(4, COLOR_YELLOW, COLOR_BLUE);
   init_pair(5, COLOR_BLUE, COLOR_GREEN);
 
-  jogo_win = newwin(26, 80, 5, 5);
-  info_win = derwin(jogo_win, 2, 30, 20, 35);
+  jogo_win = newwin(25, 81, 1, 1);
+  info_win = newwin(2, 30, 27, 5);
   /* wbkgd(jogo_win, COLOR_PAIR(5)); */
 
   levelSettings.velocidade = 10000;
@@ -177,12 +186,12 @@ void imprimeInfos(int *alimCount, int *passos)
 {
   int x, y;
 
-  //  getyx(info_win, y, x);
+  getyx(info_win, y, x);
   wmove(info_win, 0, 0);
   wbkgd(info_win, COLOR_PAIR(5));
   wprintw(info_win, "Tamanho da cobra: %d", *alimCount+4);
   wprintw(info_win, " Passos: %d", *passos);
-  //  wmove(info_win, y, x);
+  wmove(info_win, y, x);
   //  refresh();
   //  wrefresh(jogo_win);
   wrefresh(info_win);
@@ -343,7 +352,7 @@ void input(struct pos *posInc, int *sair)
 	}
       break;
     case 'X':
-    case KEY_DOWN: // seta down
+    case KEY_DOWN: // seta "down"
       if(posInc->y != -1)
 	{
 	  posInc->x = 0;
@@ -379,5 +388,3 @@ void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSett
 
   desenhaCobra(cobra, tam);
 }
-
-
