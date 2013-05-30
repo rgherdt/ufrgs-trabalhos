@@ -10,6 +10,7 @@
 
 WINDOW *jogo_win;
 WINDOW *info_win;
+WINDOW *aviso_win;
 
 struct pos{
   int x;
@@ -46,7 +47,7 @@ void desenhaCobra(struct pos *cobra, int *tam);
 
 void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSettings *levelSettings);
 
-void input(struct pos *posInc, int *sair);
+void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, int *sair);
 
 void moveCobra(snakeData *thisSnake, struct levelSettings *levelSettings, roundData *thisRound);
 
@@ -130,7 +131,7 @@ void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, 
       timeout(0);
       if((thisRound->alimCount) >= 30) /* testa se o usuário já chegou ao objetivo */
 	mudaNivel(thisRound, cenario, levelSettings, thisSnake); /* se já, muda nível */
-      input(&(thisSnake->posInc), sair);
+      input(thisSnake, thisRound, cenario, levelSettings, sair); //input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, int *sair)
       moveCobra(thisSnake, levelSettings, thisRound);
       imprimeInfos(thisRound);
       usleep(levelSettings->velocidade);
@@ -365,7 +366,7 @@ void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSe
     }
 }
 
-void input(struct pos *posInc, int *sair)
+void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, int *sair)
 {
   int dir; // tipo int necessário para reconhecer setas
   dir = toupper(getch());
@@ -374,43 +375,43 @@ void input(struct pos *posInc, int *sair)
       /* Ordenadas iniciam no topo superior da tela */
     case 'D':
     case KEY_RIGHT: // seta direita
-      if(posInc->x != -1)
+      if(thisSnake->posInc.x != -1)
 	{
-	  posInc->x = 1;
-	  posInc->y = 0;
+	  thisSnake->posInc.x = 1;
+	  thisSnake->posInc.y = 0; 
 	}
       break;
     case 'A':
     case KEY_LEFT: // seta esquerda
-      if(posInc->x != 1)
+      if(thisSnake->posInc.x != 1)
 	{
-	  posInc->x = -1;
-	  posInc->y = 0;
+	  thisSnake->posInc.x = -1;
+	  thisSnake->posInc.y = 0;
 	}
       break;
     case 'W':
     case KEY_UP: // seta "up"
-      if(posInc->y != 1)
+      if(thisSnake->posInc.y != 1)
 	{
-	  posInc->x = 0;
-	  posInc->y = -1;
+	  thisSnake->posInc.x = 0;
+	  thisSnake->posInc.y = -1;
 	}
       break;
     case 'X':
     case KEY_DOWN: // seta "down"
-      if(posInc->y != -1)
+      if(thisSnake->posInc.y != -1)
 	{
-	  posInc->x = 0;
-	  posInc->y = 1;
+	  thisSnake->posInc.x = 0;
+	  thisSnake->posInc.y = 1;
 	}
       break;
 
     case 'Q':
       *sair = 1;
 
-      //    case 'T':
-      //    mudaNivel(roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, snakeData *thisSnake);
-      //  break;
+    case 'T':
+      mudaNivel(thisRound, cenario, levelSettings, thisSnake);
+      break;
     }
 }
 
