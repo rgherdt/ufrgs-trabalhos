@@ -47,7 +47,7 @@ void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSe
 
 void input(struct pos *posInc, int *sair);
 
-void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings, roundData *thisRound);
+void moveCobra(snakeData *thisSnake, struct levelSettings *levelSettings, roundData *thisRound);
 
 void desenhaCenario(FILE *cenario, struct pos *alimentos);
 
@@ -140,7 +140,7 @@ void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, 
     {
       timeout(0);
       input(&(thisSnake->posInc), sair);
-      moveCobra(thisSnake->cobra, &(thisSnake->posInc), &(thisSnake->tam), levelSettings, thisRound);
+      moveCobra(thisSnake, levelSettings, thisRound);
       imprimeInfos(&(thisRound->alimCount), &(thisRound->passos));
       usleep(100000);
     }
@@ -382,27 +382,27 @@ void input(struct pos *posInc, int *sair)
     }
 }
 
-void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings, roundData *thisRound)
+void moveCobra(snakeData *thisSnake, struct levelSettings *levelSettings, roundData *thisRound)
 {
   int i;
   struct pos temp;
   int incFlag = 1;
 
-  temp.x = cobra[*tam].x;
-  temp.y = cobra[*tam].y;
+  temp.x = thisSnake->cobra[thisSnake->tam].x;
+  temp.y = thisSnake->cobra[thisSnake->tam].y;
   /* transfere as coordenadas dos elos de trás pra frente */
-  for(i=(*tam); i>0; i--)
+  for(i=thisSnake->tam; i>0; i--)
     {
-      cobra[i].x = cobra[i-1].x;
-      cobra[i].y = cobra[i-1].y;
+      thisSnake->cobra[i].x = thisSnake->cobra[i-1].x;
+      thisSnake->cobra[i].y = thisSnake->cobra[i-1].y;
     }
 
-  cobra[0].x += posInc->x; /* calcula a posição da cabeça */ 
-  cobra[0].y += posInc->y;
-  wmove(jogo_win, cobra[0].y, cobra[0].x);
+  thisSnake->cobra[0].x += thisSnake->posInc.x; /* calcula a posição da cabeça */ 
+  thisSnake->cobra[0].y += thisSnake->posInc.y;
+  wmove(jogo_win, thisSnake->cobra[0].y, thisSnake->cobra[0].x);
   thisRound->passos++;
 
-  scanPos(cobra, &temp, tam, levelSettings, thisRound->alimentos, &(thisRound->alimCount));
+  scanPos(thisSnake->cobra, &temp, &(thisSnake->tam), levelSettings, thisRound->alimentos, &(thisRound->alimCount));
 
-  desenhaCobra(cobra, tam);
+  desenhaCobra(thisSnake->cobra, &(thisSnake->tam));
 }
