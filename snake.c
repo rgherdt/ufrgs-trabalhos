@@ -29,7 +29,7 @@ struct snakeData {
   int tam;
 };
 
-struct matchData {
+struct roundData {
   int passos;
   int alimCount;
   struct pos alimentos[29];
@@ -37,7 +37,7 @@ struct matchData {
 
 typedef struct snakeData snakeData;
 
-typedef struct matchData matchData;
+typedef struct roundData roundData;
 
 void initCobra(struct pos *cobra, int *tam);
 
@@ -47,7 +47,7 @@ void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSe
 
 void input(struct pos *posInc, int *sair);
 
-void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings, matchData *thisMatch);
+void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings, roundData *thisRound);
 
 void desenhaCenario(FILE *cenario, struct pos *alimentos);
 
@@ -57,7 +57,7 @@ void scanPos(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSet
 
 void morre(void);
 
-void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, matchData *thisMatch);
+void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, roundData *thisRound);
 
 void imprimeInfos(int *alimCount, int *passos);
 
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
   int i, sair=0;
 
   snakeData thisSnake;  
-  matchData thisMatch;
+  roundData thisRound;
   //int tam = 4;
   //struct pos cobra[MAXTAM]; /* array de pos, formando o corpo inteiro da cobra */
   struct levelSettings levelSettings;
@@ -87,8 +87,8 @@ int main(int argc, char *argv[])
   FILE *cenario;
 
   thisSnake.tam = 4;
-  thisMatch.passos = 0;
-  thisMatch.alimCount = -1;
+  thisRound.passos = 0;
+  thisRound.alimCount = -1;
 
   //system("resize -s 30 83"); // define o tamanho do terminal
   setlocale(LC_ALL,""); /* Unicode */
@@ -120,13 +120,13 @@ int main(int argc, char *argv[])
   thisSnake.posInc.x = 1;
   thisSnake.posInc.y = 0; /* cobra inicia movendo-se para a direita */
 
-  desenhaCenario(cenario, thisMatch.alimentos);
-  addAlimento(thisMatch.alimentos, &(thisMatch.alimCount));
+  desenhaCenario(cenario, thisRound.alimentos);
+  addAlimento(thisRound.alimentos, &(thisRound.alimCount));
   initCobra(thisSnake.cobra, &(thisSnake.tam));
   wmove(jogo_win, thisSnake.cobra[0].y, thisSnake.cobra[0].x);
   desenhaCobra(thisSnake.cobra, &(thisSnake.tam));
   
-  play(&thisSnake, &sair, &levelSettings, &thisMatch);
+  play(&thisSnake, &sair, &levelSettings, &thisRound);
   refresh();
   wrefresh(jogo_win);
   //  refresh();
@@ -134,14 +134,14 @@ int main(int argc, char *argv[])
   return 0;
 }
 
-void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, matchData *thisMatch)
+void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, roundData *thisRound)
 {
   while(!(*sair))
     {
       timeout(0);
       input(&(thisSnake->posInc), sair);
-      moveCobra(thisSnake->cobra, &(thisSnake->posInc), &(thisSnake->tam), levelSettings, thisMatch);
-      imprimeInfos(&(thisMatch->alimCount), &(thisMatch->passos));
+      moveCobra(thisSnake->cobra, &(thisSnake->posInc), &(thisSnake->tam), levelSettings, thisRound);
+      imprimeInfos(&(thisRound->alimCount), &(thisRound->passos));
       usleep(100000);
     }
 }
@@ -382,7 +382,7 @@ void input(struct pos *posInc, int *sair)
     }
 }
 
-void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings, matchData *thisMatch)
+void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings, roundData *thisRound)
 {
   int i;
   struct pos temp;
@@ -400,9 +400,9 @@ void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSett
   cobra[0].x += posInc->x; /* calcula a posição da cabeça */ 
   cobra[0].y += posInc->y;
   wmove(jogo_win, cobra[0].y, cobra[0].x);
-  thisMatch->passos++;
+  thisRound->passos++;
 
-  scanPos(cobra, &temp, tam, levelSettings, thisMatch->alimentos, &(thisMatch->alimCount));
+  scanPos(cobra, &temp, tam, levelSettings, thisRound->alimentos, &(thisRound->alimCount));
 
   desenhaCobra(cobra, tam);
 }
