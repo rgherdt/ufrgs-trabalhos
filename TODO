@@ -1,6 +1,8 @@
   TODO:
+----> BUG: após a mudança de nível, a cada novo alimento posto no cenário há um '#' kamikaze que aparece muito
+rapidamente na tela. Normalmente nada causa, mas se surge em pontos do cenário ele destrói tal ponto.
 
-- investigar bug: ocorre um delay de input se uma tecla direcional (ou qualquer outra,
+- BUG: ocorre um delay de input se uma tecla direcional (ou qualquer outra,
 mesmo sem função) é pressionada continuamente 
 
 - BUG: terminal resizing: a adição do comando "system("resize -s 30 83")" no início do main (antes de iniciar
@@ -13,7 +15,9 @@ vá para o fundo do novo terminal. No entanto, os outros dados (como o cenário)
 
 - implementar função salvarJogo() e atrelar à tecla 'g'
 
-- implementar função mudaNivel e opção "trapaça" atrelada à tecla 't' - em andamento
+- menu de seleção
+
+
 
 
 
@@ -24,4 +28,5 @@ vá para o fundo do novo terminal. No entanto, os outros dados (como o cenário)
 - investigar um bug que ocorreu onde a cobra dividiu-se, deixando uma parte para trás - RESOLVIDO
 - implementar contador de passos - FEITO
 - portar direcionais para as setas do teclado - FEITO
+- implementar a função mudaNivel - FEITO
 
