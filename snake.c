@@ -11,17 +11,33 @@
 WINDOW *jogo_win;
 WINDOW *info_win;
 
-struct pos;
-
 struct pos{
   int x;
   int y;
 };
 
+typedef struct pos pos;
+
 struct levelSettings{
   int velocidade;
   int unidadesInc; /* unidades de incremento */
 };
+
+struct snakeData {
+  struct pos cobra[MAXTAM];
+  struct pos posInc;
+  int tam;
+};
+
+struct matchData {
+  int passos;
+  int alimCount;
+  struct pos alimentos[29];
+};
+
+typedef struct snakeData snakeData;
+
+typedef struct matchData matchData;
 
 void initCobra(struct pos *cobra, int *tam);
 
@@ -31,7 +47,7 @@ void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSe
 
 void input(struct pos *posInc, int *sair);
 
-void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount, int *passos);
+void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings, matchData *thisMatch);
 
 void desenhaCenario(FILE *cenario, struct pos *alimentos);
 
@@ -41,7 +57,7 @@ void scanPos(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSet
 
 void morre(void);
 
-void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount, int *passos);
+void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, matchData *thisMatch);
 
 void imprimeInfos(int *alimCount, int *passos);
 
@@ -59,14 +75,20 @@ void imprimeInfos(int *alimCount, int *passos);
 int main(int argc, char *argv[])
 {
   int i, sair=0;
-  int tam = 4;
-  struct pos cobra[MAXTAM]; /* array de pos, formando o corpo inteiro da cobra */
-  struct pos posInc;
+
+  snakeData thisSnake;  
+  matchData thisMatch;
+  //int tam = 4;
+  //struct pos cobra[MAXTAM]; /* array de pos, formando o corpo inteiro da cobra */
   struct levelSettings levelSettings;
   struct pos alimentos[29];
-  int alimCount=-1;
-  int passos = 0;
+  /* int alimCount=-1; */
+  /* int passos = 0; */
   FILE *cenario;
+
+  thisSnake.tam = 4;
+  thisMatch.passos = 0;
+  thisMatch.alimCount = -1;
 
   //system("resize -s 30 83"); // define o tamanho do terminal
   setlocale(LC_ALL,""); /* Unicode */
@@ -95,16 +117,16 @@ int main(int argc, char *argv[])
 
   levelSettings.velocidade = 10000;
   levelSettings.unidadesInc = 1;
-  posInc.x = 1;
-  posInc.y = 0; /* cobra inicia movendo-se para a direita */
+  thisSnake.posInc.x = 1;
+  thisSnake.posInc.y = 0; /* cobra inicia movendo-se para a direita */
 
-  desenhaCenario(cenario, alimentos);
-  addAlimento(alimentos, &alimCount);
-  initCobra(cobra, &tam);
-  wmove(jogo_win, cobra[0].y, cobra[0].x);
-  desenhaCobra(cobra, &tam);
+  desenhaCenario(cenario, thisMatch.alimentos);
+  addAlimento(thisMatch.alimentos, &(thisMatch.alimCount));
+  initCobra(thisSnake.cobra, &(thisSnake.tam));
+  wmove(jogo_win, thisSnake.cobra[0].y, thisSnake.cobra[0].x);
+  desenhaCobra(thisSnake.cobra, &(thisSnake.tam));
   
-  play(cobra, &posInc, &tam, &sair, &levelSettings, alimentos, &alimCount, &passos);
+  play(&thisSnake, &sair, &levelSettings, &thisMatch);
   refresh();
   wrefresh(jogo_win);
   //  refresh();
@@ -112,14 +134,14 @@ int main(int argc, char *argv[])
   return 0;
 }
 
-void play(struct pos *cobra, struct pos *posInc, int *tam, int *sair, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount, int *passos)
+void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, matchData *thisMatch)
 {
   while(!(*sair))
     {
       timeout(0);
-      input(posInc, sair);
-      moveCobra(cobra, posInc, tam, levelSettings, alimentos, alimCount, passos);
-      imprimeInfos(alimCount, passos);
+      input(&(thisSnake->posInc), sair);
+      moveCobra(thisSnake->cobra, &(thisSnake->posInc), &(thisSnake->tam), levelSettings, thisMatch);
+      imprimeInfos(&(thisMatch->alimCount), &(thisMatch->passos));
       usleep(100000);
     }
 }
@@ -360,7 +382,7 @@ void input(struct pos *posInc, int *sair)
     }
 }
 
-void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount, int *passos)
+void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSettings *levelSettings, matchData *thisMatch)
 {
   int i;
   struct pos temp;
@@ -378,9 +400,9 @@ void moveCobra(struct pos *cobra, struct pos *posInc, int *tam, struct levelSett
   cobra[0].x += posInc->x; /* calcula a posição da cabeça */ 
   cobra[0].y += posInc->y;
   wmove(jogo_win, cobra[0].y, cobra[0].x);
-  (*passos)++;
+  thisMatch->passos++;
 
-  scanPos(cobra, &temp, tam, levelSettings, alimentos, alimCount);
+  scanPos(cobra, &temp, tam, levelSettings, thisMatch->alimentos, &(thisMatch->alimCount));
 
   desenhaCobra(cobra, tam);
 }
