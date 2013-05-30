@@ -63,7 +63,7 @@ void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, 
 
 void imprimeInfos(roundData *thisRound);
 
-void mudaNivel(roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, snakeData *thisSnake);
+void setNivel(roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, snakeData *thisSnake);
 		
 int main(int argc, char *argv[])
 {
@@ -75,11 +75,7 @@ int main(int argc, char *argv[])
   struct pos alimentos[29];
   FILE *cenario;
 
-  thisSnake.tam = 4;
-  thisRound.passos = 0;
-  thisRound.alimCount = -1;
-  thisRound.nivel = 1;
-  cenario = fopen("cenario1.txt", "r");
+  thisRound.nivel = 0;
 
   //system("resize -s 30 83"); // define o tamanho do terminal
   setlocale(LC_ALL,""); /* Unicode */
@@ -105,18 +101,7 @@ int main(int argc, char *argv[])
 
   jogo_win = newwin(25, 81, 1, 1);
   info_win = newwin(2, 35, 27, 5);
-
-  levelSettings.velocidade = 100000;
-  levelSettings.unidadesInc = 1;
-  thisSnake.posInc.x = 1;
-  thisSnake.posInc.y = 0; /* cobra inicia movendo-se para a direita */
-
-  desenhaCenario(cenario, thisRound.alimentos);
-  addAlimento(thisRound.alimentos, &(thisRound.alimCount));
-  initCobra(thisSnake.cobra, &(thisSnake.tam));
-  wmove(jogo_win, thisSnake.cobra[0].y, thisSnake.cobra[0].x);
-  desenhaCobra(thisSnake.cobra, &(thisSnake.tam));
-  
+  setNivel(&thisRound, cenario, &levelSettings, &thisSnake);
   play(&thisSnake, &sair, &levelSettings, &thisRound, cenario);
   refresh();
   wrefresh(jogo_win);
@@ -130,8 +115,8 @@ void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, 
     {
       timeout(0);
       if((thisRound->alimCount) >= 30) /* testa se o usuário já chegou ao objetivo */
-	mudaNivel(thisRound, cenario, levelSettings, thisSnake); /* se já, muda nível */
-      input(thisSnake, thisRound, cenario, levelSettings, sair); //input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, int *sair)
+	setNivel(thisRound, cenario, levelSettings, thisSnake); /* se já, muda nível */
+      input(thisSnake, thisRound, cenario, levelSettings, sair);
       moveCobra(thisSnake, levelSettings, thisRound);
       imprimeInfos(thisRound);
       usleep(levelSettings->velocidade);
@@ -140,7 +125,7 @@ void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, 
 
 
 /* reseta todos os atributos da cobra e atualiza settings de nível (cenário, levelSettings) */
-void mudaNivel(roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, snakeData *thisSnake)
+void setNivel(roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, snakeData *thisSnake)
 {
   (thisRound->nivel)++; /* nivel: variável de teste do atual cenário */
   (thisRound->alimCount) = -1;
@@ -150,29 +135,32 @@ void mudaNivel(roundData *thisRound, FILE *cenario, struct levelSettings *levelS
   wclear(jogo_win); /* limpa o cenário antigo */
   wrefresh(jogo_win);
   usleep(1000000); /* delay de entrada do novo cenário, colocarei mensagem "LEVEL 2/3" */
-  if(thisRound->nivel == 2)
+  if(thisRound->nivel == 1)
+    {
+      cenario = fopen("cenario1.txt", "r");
+      levelSettings->velocidade = 100000;
+      levelSettings->unidadesInc = 1;
+    }
+  else if(thisRound->nivel == 2)
     {
       cenario = fopen("cenario2.txt", "r"); /* carregamento do cenário é feito por aqui, não na função desenha */
       levelSettings->velocidade = 84500; /* settings do novo cenário */
       levelSettings->unidadesInc = 2; /* settings do novo cenário */
-      desenhaCenario(cenario, thisRound->alimentos); /* desenha novo cenário */
-      addAlimento(thisRound->alimentos, &(thisRound->alimCount)); 
-      initCobra(thisSnake->cobra, &(thisSnake->tam)); /* reinicia a cobra */
-      wmove(jogo_win, thisSnake->cobra[0].y, thisSnake->cobra[0].x);
-      desenhaCobra(thisSnake->cobra, &(thisSnake->tam));	
     }
   else if(thisRound->nivel == 3)
     {
       cenario = fopen("cenario3.txt", "r");
       levelSettings->velocidade = 69500;
-      levelSettings->unidadesInc = 3;
-      desenhaCenario(cenario, thisRound->alimentos);
-      addAlimento(thisRound->alimentos, &(thisRound->alimCount));
-      initCobra(thisSnake->cobra, &(thisSnake->tam));
-      wmove(jogo_win, thisSnake->cobra[0].y, thisSnake->cobra[0].x);
-      desenhaCobra(thisSnake->cobra, &(thisSnake->tam));	
+      levelSettings->unidadesInc = 3;	
     }
   else morre();
+
+  desenhaCenario(cenario, thisRound->alimentos); /* desenha novo cenário */
+  addAlimento(thisRound->alimentos, &(thisRound->alimCount)); 
+  initCobra(thisSnake->cobra, &(thisSnake->tam)); /* reinicia a cobra */
+  wmove(jogo_win, thisSnake->cobra[0].y, thisSnake->cobra[0].x);
+  desenhaCobra(thisSnake->cobra, &(thisSnake->tam));
+  
 }
 
 
@@ -410,7 +398,7 @@ void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct lev
       *sair = 1;
 
     case 'T':
-      mudaNivel(thisRound, cenario, levelSettings, thisSnake);
+      setNivel(thisRound, cenario, levelSettings, thisSnake);
       break;
     }
 }
