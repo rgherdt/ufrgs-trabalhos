@@ -24,7 +24,7 @@ struct levelSettings{
 };
 
 struct snakeData {
-  struct pos cobra[MAXTAM];
+  struct pos cobra[MAXTAM]; /* array de pos, formando o corpo inteiro da cobra */
   struct pos posInc;
   int tam;
 };
@@ -78,12 +78,8 @@ int main(int argc, char *argv[])
 
   snakeData thisSnake;  
   roundData thisRound;
-  //int tam = 4;
-  //struct pos cobra[MAXTAM]; /* array de pos, formando o corpo inteiro da cobra */
   struct levelSettings levelSettings;
   struct pos alimentos[29];
-  /* int alimCount=-1; */
-  /* int passos = 0; */
   FILE *cenario;
 
   thisSnake.tam = 4;
@@ -129,7 +125,6 @@ int main(int argc, char *argv[])
   play(&thisSnake, &sair, &levelSettings, &thisRound);
   refresh();
   wrefresh(jogo_win);
-  //  refresh();
   endwin();
   return 0;
 }
@@ -206,12 +201,9 @@ void imprimeInfos(int *alimCount, int *passos)
 
   getyx(info_win, y, x);
   wmove(info_win, 0, 0);
-  //  wbkgd(info_win, COLOR_PAIR(5));
   wprintw(info_win, "Tamanho da cobra: %d", *alimCount+4);
   wprintw(info_win, " Passos: %d", *passos);
   wmove(info_win, y, x);
-  //  refresh();
-  //  wrefresh(jogo_win);
   wrefresh(info_win);
 }
 
