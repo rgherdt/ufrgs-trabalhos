@@ -10,7 +10,7 @@
 
 WINDOW *jogo_win;
 WINDOW *info_win;
-WINDOW *aviso_win;
+WINDOW *save_game;
 
 struct pos{
   int x;
@@ -41,29 +41,35 @@ typedef struct snakeData snakeData;
 
 typedef struct roundData roundData;
 
-void initCobra(struct pos *cobra, int *tam);
 
-void desenhaCobra(struct pos *cobra, int *tam);
+void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, roundData *thisRound, FILE *cenario, FILE *savegame);
 
-void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSettings *levelSettings);
+void storeGame(FILE *savegame, struct roundData *thisRound, struct snakeData *thisSnake, struct levelSettings *levelSettings);
 
-void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, int *sair);
+void loadGame(FILE *savegame, struct roundData *thisRound, struct snakeData *thisSnake, struct levelSettings *levelSettings);
 
-void moveCobra(snakeData *thisSnake, struct levelSettings *levelSettings, roundData *thisRound);
+void setNivel(roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, snakeData *thisSnake);
 
 void desenhaCenario(FILE *cenario, struct pos *alimentos);
 
-void addAlimento(struct pos *alimentos, int *alimCount);
+void imprimeInfos(roundData *thisRound);
+
+void initCobra(struct pos *cobra, int *tam);
 
 void scanPos(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSettings *levelSettings, struct pos *alimentos, int *alimCount);
 
 void morre(void);
 
-void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, roundData *thisRound, FILE *cenario);
+void addAlimento(struct pos *alimentos, int *alimCount);
 
-void imprimeInfos(roundData *thisRound);
+void desenhaCobra(struct pos *cobra, int *tam);
 
-void setNivel(roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, snakeData *thisSnake);
+void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSettings *levelSettings);
+
+void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, int *sair, FILE *savegame);
+
+void moveCobra(snakeData *thisSnake, struct levelSettings *levelSettings, roundData *thisRound);
+
 		
 int main(int argc, char *argv[])
 {
@@ -74,6 +80,7 @@ int main(int argc, char *argv[])
   struct levelSettings levelSettings;
   struct pos alimentos[29];
   FILE *cenario;
+  FILE *savegame;
 
   thisRound.nivel = 0;
 
@@ -99,32 +106,93 @@ int main(int argc, char *argv[])
   init_pair(2, COLOR_RED, COLOR_BLACK);
   init_pair(3, COLOR_YELLOW, COLOR_BLACK);
 
-  jogo_win = newwin(25, 81, 1, 1);
-  info_win = newwin(2, 35, 27, 5);
+  jogo_win = newwin(25, 81, 1, 1); /* janela do jogo */
+  save_game = newwin(25, 81, 1, 1);
+  info_win = newwin(2, 35, 27, 5); /* janela de informações */
   setNivel(&thisRound, cenario, &levelSettings, &thisSnake);
-  play(&thisSnake, &sair, &levelSettings, &thisRound, cenario);
+  play(&thisSnake, &sair, &levelSettings, &thisRound, cenario, savegame);
   refresh();
   wrefresh(jogo_win);
   endwin();
   return 0;
 }
 
-void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, roundData *thisRound, FILE *cenario)
+void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, roundData *thisRound, FILE *cenario, FILE *savegame)
 {
   while(!(*sair))
     {
       timeout(0);
       if((thisRound->alimCount) >= 30) /* testa se o usuário já chegou ao objetivo */
 	setNivel(thisRound, cenario, levelSettings, thisSnake); /* se já, muda nível */
-      input(thisSnake, thisRound, cenario, levelSettings, sair);
+      input(thisSnake, thisRound, cenario, levelSettings, sair, savegame);
       moveCobra(thisSnake, levelSettings, thisRound);
       imprimeInfos(thisRound);
       usleep(levelSettings->velocidade);
     }
 }
 
+/* SALVA OS SEGUINTES ATRIBUTOS EM jogo_salvo.bin:
+   -thisRound  -levelSettings
+   -tam   -posInc.x  -posInc.y  */
+void storeGame(FILE *savegame, struct roundData *thisRound, struct snakeData *thisSnake, struct levelSettings *levelSettings)
+{
+  int i;
+  if((savegame = fopen("jogo_salvo.bin", "w+b")) != NULL)
+    {
+      fwrite(levelSettings, sizeof(*levelSettings), 1, savegame); /* salva estrutura inteira */
+      fwrite(thisRound, sizeof(*thisRound), 1, savegame); /* salva estrutura inteira */
+      fwrite(&(thisSnake->tam), sizeof(int), 1, savegame); /* salva tamanho da cobra */
+      fwrite(&(thisSnake->posInc.x), sizeof(int), 1, savegame); /* salva direção em que a cobra se movimentava */
+      fwrite(&(thisSnake->posInc.y), sizeof(int), 1, savegame);
+      for(i = 0; i < thisSnake->tam; i++) /* laço para salvar a posição da cobra */
+	{
+	  fwrite(&(thisSnake->cobra[i].x), sizeof(int), 1, savegame); 
+	  fwrite(&(thisSnake->cobra[i].y), sizeof(int), 1, savegame);
+	}
+      putwin(jogo_win, savegame); /* salva o cenário/evita rebuilding do mesmo */
+      fclose(savegame);
+    }
+  else 
+    {
+      wclear(info_win);
+      wrefresh(info_win);
+      wprintw(info_win, "O ARQUIVO NAO PODE SER ABERTO!");
+    }
+}
 
-/* reseta todos os atributos da cobra e atualiza settings de nível (cenário, levelSettings) */
+/* CARREGA OS SEGUINTES ATRIBUTOS DE jogo_salvo.bin:
+   -thisRound  -levelSettings
+   -tam   -posInc.x  -posInc.y  */
+void loadGame(FILE *savegame, struct roundData *thisRound, struct snakeData *thisSnake, struct levelSettings *levelSettings)
+{
+  int i;
+  wclear(jogo_win);
+  if((savegame = fopen("jogo_salvo.bin", "r+b")) != NULL)
+    {
+      fread(levelSettings, sizeof(*levelSettings), 1, savegame); /* lê os settings do nível */
+      fread(thisRound, sizeof(*thisRound), 1, savegame); /* lê as informações referentes ao estado do jogo */
+      fread(&(thisSnake->tam), sizeof(int), 1, savegame); /* lê tamanho da cobra */
+      fread(&(thisSnake->posInc.x), sizeof(int), 1, savegame); /* lê direção de movimentação da cobra */
+      fread(&(thisSnake->posInc.y), sizeof(int), 1, savegame);
+      for(i = 0; i < thisSnake->tam; i++) /* lê posição da cobra */
+	{
+	  fread(&(thisSnake->cobra[i].x), sizeof(int), 1, savegame);
+	  fread(&(thisSnake->cobra[i].y), sizeof(int), 1, savegame);
+	}
+      jogo_win = getwin(savegame); /* restaura cenário/evita rebuilding do mesmo */
+      //setNivel(&thisRound, cenario, &levelSettings, &thisSnake);
+      fclose(savegame);
+      wrefresh(jogo_win);
+    }
+  else 
+    {
+      wclear(info_win);
+      wrefresh(info_win);
+      wprintw(info_win, "O ARQUIVO NAO PODE SER ABERTO!");
+    }
+}
+
+/* reseta todos os atributos da cobra, atualiza settings de nível (cenário, levelSettings), e inicia o jogo */
 void setNivel(roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, snakeData *thisSnake)
 {
   (thisRound->nivel)++; /* nivel: variável de teste do atual cenário */
@@ -189,7 +257,7 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
   alimInd = 0; /* inicializa i para controlar adição de alimentos */
 
   /* Muros */
-  while(fgets(linha, 20, cenario) != NULL)
+  while(fgets(linha, 80, cenario) != NULL)
     {
       if(linha[0] == 'H' || linha[0] == 'V')
 	{
@@ -209,6 +277,9 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
 	  alimentos[alimInd].y = y;
 	  alimInd++;
 	}
+      else if
+	(linha[0] == '#') /*ignora comentários. Desnecessário, mas por segurança...*/
+	{}
     }
   wattroff(jogo_win, COLOR_PAIR(3));
   fclose(cenario);
@@ -216,6 +287,7 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
   refresh();
   wrefresh(jogo_win);
 }
+
 
 void imprimeInfos(roundData *thisRound)
 {
@@ -286,7 +358,7 @@ void addAlimento(struct pos *alimentos, int *alimCount)
       elem = (inch() & A_CHARTEXT);
       if(elem == 32)
 	{
-	  wattron(jogo_win, COLOR_PAIR(2)); /* maças vermelhas */
+	  wattron(jogo_win, COLOR_PAIR(2)); /* maçãs vermelhas */
 	  waddch(jogo_win, '*');
 	  wattroff(jogo_win, COLOR_PAIR(2));
 	  valido = 1;
@@ -354,10 +426,11 @@ void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSe
     }
 }
 
-void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, int *sair)
+void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, int *sair, FILE *savegame)
 {
   int dir; // tipo int necessário para reconhecer setas
   dir = toupper(getch());
+  //usleep(levelSettings->velocidade);
   switch(dir)
     {
       /* Ordenadas iniciam no topo superior da tela */
@@ -397,8 +470,16 @@ void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct lev
     case 'Q':
       *sair = 1;
 
-    case 'T':
+    case 'T': /* trapaça */
       setNivel(thisRound, cenario, levelSettings, thisSnake);
+      break;
+
+    case 'G': /* salva jogo */
+      storeGame(savegame, thisRound, thisSnake, levelSettings);
+      break;
+
+    case 'C': //int overwrite(const WINDOW *srcwin, WINDOW *dstwin)
+      loadGame(savegame, thisRound, thisSnake, levelSettings);
       break;
     }
 }
