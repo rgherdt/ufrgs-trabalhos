@@ -257,7 +257,7 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
   alimInd = 0; /* inicializa i para controlar adição de alimentos */
 
   /* Muros */
-  while(fgets(linha, 80, cenario) != NULL)
+  while(fgets(linha, 20, cenario) != NULL)
     {
       if(linha[0] == 'H' || linha[0] == 'V')
 	{
@@ -277,9 +277,6 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
 	  alimentos[alimInd].y = y;
 	  alimInd++;
 	}
-      else if
-	(linha[0] == '#') /*ignora comentários. Desnecessário, mas por segurança...*/
-	{}
     }
   wattroff(jogo_win, COLOR_PAIR(3));
   fclose(cenario);
