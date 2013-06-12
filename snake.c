@@ -7,10 +7,12 @@
 #define MAXTAM 95
 #define MAXY 24
 #define MAXX 80
+#define HEAD 'Q'
+#define CORPO '#'
 
 WINDOW *jogo_win;
 WINDOW *info_win;
-WINDOW *save_game;
+WINDOW *aviso_win;
 
 struct pos{
   int x;
@@ -70,6 +72,7 @@ void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct lev
 
 void moveCobra(snakeData *thisSnake, struct levelSettings *levelSettings, roundData *thisRound);
 
+void gamePause(int *sair, roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, snakeData *thisSnake);
 		
 int main(int argc, char *argv[])
 {
@@ -107,7 +110,7 @@ int main(int argc, char *argv[])
   init_pair(3, COLOR_YELLOW, COLOR_BLACK);
 
   jogo_win = newwin(25, 81, 1, 1); /* janela do jogo */
-  save_game = newwin(25, 81, 1, 1);
+  aviso_win = newwin(2, 35, 27, 47);
   info_win = newwin(2, 35, 27, 5); /* janela de informações */
   setNivel(&thisRound, cenario, &levelSettings, &thisSnake);
   play(&thisSnake, &sair, &levelSettings, &thisRound, cenario, savegame);
@@ -137,26 +140,22 @@ void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, 
 void storeGame(FILE *savegame, struct roundData *thisRound, struct snakeData *thisSnake, struct levelSettings *levelSettings)
 {
   int i;
-  if((savegame = fopen("jogo_salvo.bin", "w+b")) != NULL)
+  savegame = fopen("jogo_salvo.bin", "w+b");
+  if(savegame != NULL)
     {
       fwrite(levelSettings, sizeof(*levelSettings), 1, savegame); /* salva estrutura inteira */
-      fwrite(thisRound, sizeof(*thisRound), 1, savegame); /* salva estrutura inteira */
+      fwrite(thisRound, sizeof(roundData), 1, savegame); /* salva estrutura inteira */
       fwrite(&(thisSnake->tam), sizeof(int), 1, savegame); /* salva tamanho da cobra */
-      fwrite(&(thisSnake->posInc.x), sizeof(int), 1, savegame); /* salva direção em que a cobra se movimentava */
-      fwrite(&(thisSnake->posInc.y), sizeof(int), 1, savegame);
-      for(i = 0; i < thisSnake->tam; i++) /* laço para salvar a posição da cobra */
-	{
-	  fwrite(&(thisSnake->cobra[i].x), sizeof(int), 1, savegame); 
-	  fwrite(&(thisSnake->cobra[i].y), sizeof(int), 1, savegame);
-	}
+      fwrite(&(thisSnake->posInc), sizeof(pos), 1, savegame); /* salva direção em que a cobra se movimentava */
+      fwrite(&(thisSnake->cobra), sizeof(pos), thisSnake->tam, savegame);
       putwin(jogo_win, savegame); /* salva o cenário/evita rebuilding do mesmo */
       fclose(savegame);
     }
   else 
     {
-      wclear(info_win);
-      wrefresh(info_win);
-      wprintw(info_win, "O ARQUIVO NAO PODE SER ABERTO!");
+      wclear(aviso_win);
+      wrefresh(aviso_win);
+      wprintw(aviso_win, "O SAVEGAME NAO PODE SER ABERTO!");
     }
 }
 
@@ -166,19 +165,15 @@ void storeGame(FILE *savegame, struct roundData *thisRound, struct snakeData *th
 void loadGame(FILE *savegame, struct roundData *thisRound, struct snakeData *thisSnake, struct levelSettings *levelSettings)
 {
   int i;
-  wclear(jogo_win);
-  if((savegame = fopen("jogo_salvo.bin", "r+b")) != NULL)
+  savegame = fopen("jogo_salvo.bin", "rb");
+  if(savegame != NULL)
     {
+      wclear(jogo_win);
       fread(levelSettings, sizeof(*levelSettings), 1, savegame); /* lê os settings do nível */
-      fread(thisRound, sizeof(*thisRound), 1, savegame); /* lê as informações referentes ao estado do jogo */
+      fread(thisRound, sizeof(roundData), 1, savegame); /* lê as informações referentes ao estado do jogo */
       fread(&(thisSnake->tam), sizeof(int), 1, savegame); /* lê tamanho da cobra */
-      fread(&(thisSnake->posInc.x), sizeof(int), 1, savegame); /* lê direção de movimentação da cobra */
-      fread(&(thisSnake->posInc.y), sizeof(int), 1, savegame);
-      for(i = 0; i < thisSnake->tam; i++) /* lê posição da cobra */
-	{
-	  fread(&(thisSnake->cobra[i].x), sizeof(int), 1, savegame);
-	  fread(&(thisSnake->cobra[i].y), sizeof(int), 1, savegame);
-	}
+      fread(&(thisSnake->posInc), sizeof(pos), 1, savegame); /* lê direção de movimentação da cobra */
+      fread(&(thisSnake->cobra), sizeof(pos), thisSnake->tam, savegame); /*posição das partes da cobra */
       jogo_win = getwin(savegame); /* restaura cenário/evita rebuilding do mesmo */
       //setNivel(&thisRound, cenario, &levelSettings, &thisSnake);
       fclose(savegame);
@@ -186,9 +181,9 @@ void loadGame(FILE *savegame, struct roundData *thisRound, struct snakeData *thi
     }
   else 
     {
-      wclear(info_win);
-      wrefresh(info_win);
-      wprintw(info_win, "O ARQUIVO NAO PODE SER ABERTO!");
+      wclear(aviso_win);
+      wprintw(aviso_win, "O SAVEGAME NAO PODE SER ABERTO!");
+      wrefresh(aviso_win);
     }
 }
 
@@ -257,7 +252,7 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
   alimInd = 0; /* inicializa i para controlar adição de alimentos */
 
   /* Muros */
-  while(fgets(linha, 80, cenario) != NULL)
+  while(fgets(linha, 20, cenario) != NULL)
     {
       if(linha[0] == 'H' || linha[0] == 'V')
 	{
@@ -277,9 +272,6 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
 	  alimentos[alimInd].y = y;
 	  alimInd++;
 	}
-      else if
-	(linha[0] == '#') /*ignora comentários. Desnecessário, mas por segurança...*/
-	{}
     }
   wattroff(jogo_win, COLOR_PAIR(3));
   fclose(cenario);
@@ -400,10 +392,10 @@ void desenhaCobra(struct pos *cobra, int *tam)
   int i, x, y;
 
   wattron(jogo_win, COLOR_PAIR(1)); /* habilita cor */
-  waddch(jogo_win, 'Q'); /* cabeça */
+  waddch(jogo_win, HEAD); /* cabeça */
   for(i=1; i<(*tam); i++) /* corpo */
     {
-      mvwaddch(jogo_win, cobra[i].y, cobra[i].x, '#');
+      mvwaddch(jogo_win, cobra[i].y, cobra[i].x, CORPO);
     }
   mvwaddch(jogo_win, cobra[(*tam)].y, cobra[(*tam)].x, ' '); /* fim da cobra com espaço para 'limpar o rastro' */
   wattroff(jogo_win, COLOR_PAIR(1));
@@ -428,9 +420,8 @@ void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSe
 
 void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, int *sair, FILE *savegame)
 {
-  int dir; // tipo int necessário para reconhecer setas
+  int dir; /* tipo int necessário para reconhecer setas */
   dir = toupper(getch());
-  //usleep(levelSettings->velocidade);
   switch(dir)
     {
       /* Ordenadas iniciam no topo superior da tela */
@@ -442,6 +433,7 @@ void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct lev
 	  thisSnake->posInc.y = 0; 
 	}
       break;
+
     case 'A':
     case KEY_LEFT: // seta esquerda
       if(thisSnake->posInc.x != 1)
@@ -450,6 +442,7 @@ void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct lev
 	  thisSnake->posInc.y = 0;
 	}
       break;
+
     case 'W':
     case KEY_UP: // seta "up"
       if(thisSnake->posInc.y != 1)
@@ -458,6 +451,7 @@ void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct lev
 	  thisSnake->posInc.y = -1;
 	}
       break;
+
     case 'X':
     case KEY_DOWN: // seta "down"
       if(thisSnake->posInc.y != -1)
@@ -469,20 +463,80 @@ void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct lev
 
     case 'Q':
       *sair = 1;
+      gamePause(sair, thisRound, cenario, levelSettings, thisSnake);
+      break;
 
     case 'T': /* trapaça */
-      setNivel(thisRound, cenario, levelSettings, thisSnake);
+      gamePause(sair, thisRound, cenario, levelSettings, thisSnake);
       break;
 
     case 'G': /* salva jogo */
       storeGame(savegame, thisRound, thisSnake, levelSettings);
       break;
 
-    case 'C': //int overwrite(const WINDOW *srcwin, WINDOW *dstwin)
+    case 'C': /*carrega jogo*/
       loadGame(savegame, thisRound, thisSnake, levelSettings);
+      break;
+
+    case 'R': /*reinicia jogo*/
+      {
+	thisRound->nivel = 0;
+	thisRound->passos = 0;
+	setNivel(thisRound, cenario, levelSettings, thisSnake);
+      }
       break;
     }
 }
+
+void gamePause(int *sair, roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, snakeData *thisSnake)
+{
+  int flag;
+  timeout(-1); /* pausa jogo */
+  do
+    {
+      if(*sair == 1) /* se usuário solicitou saída do jogo */
+	{
+	  wclear(aviso_win);
+	  wprintw(aviso_win, "DESEJA MESMO SAIR? :( (S/N)");
+	  wrefresh(aviso_win);
+
+	  if((flag = toupper(getch())) == 'S') /* confirma saída do jogo */
+	    *sair = 1;
+
+	  else if((flag = toupper(getch())) == 'N') /* regride a saída do jogo */
+	    {
+	      *sair = 0;
+	      wclear(aviso_win);
+	      wrefresh(aviso_win);
+	      timeout(0); /* descongela jogo */
+	    }
+	}
+
+      else if(*sair == 0) /*  sair == 0 indica que usuário não optou por saída, e sim trapaça */
+	{
+	  wclear(aviso_win);
+	  wprintw(aviso_win, "DESEJA MESMO TRAPACEAR? :( (S/N)");
+	  wrefresh(aviso_win);
+	  if((flag = toupper(getch())) == 'S')  /* confirma trapaça */
+	    {
+	      setNivel(thisRound, cenario, levelSettings, thisSnake); /* avança nível */
+	      wclear(aviso_win);
+	      wrefresh(aviso_win);
+	    }
+
+	  else if((flag = toupper(getch())) == 'N') /* regride trapaça */
+	    {
+	      wclear(aviso_win);
+	      wrefresh(aviso_win);
+	      timeout(0); /* descongela jogo */
+	    }
+	}
+    }
+  while(flag != 'N' && flag != 'S'); /* consistência */
+  wclear(aviso_win);
+  wrefresh(aviso_win);
+}
+	
 
 void moveCobra(snakeData *thisSnake, struct levelSettings *levelSettings, roundData *thisRound)
 {
