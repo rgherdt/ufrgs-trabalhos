@@ -16,9 +16,9 @@ vá para o fundo do novo terminal. No entanto, os outros dados (como o cenário)
 - implementar certificação de que o alimento irá nascer em outro lugar se a cobra estiver em cima da posição original
 no momento em que este aparecer. Em testes que fiz, se isso acontecesse, o alimento desaparecia.
 
-- implementar função salvarJogo() e atrelar à tecla 'g'
-
 - menu de seleção
+
+- refazer sistema de cenários
 
 
 
@@ -32,4 +32,4 @@ no momento em que este aparecer. Em testes que fiz, se isso acontecesse, o alime
 - implementar contador de passos - FEITO
 - portar direcionais para as setas do teclado - FEITO
 - implementar a função mudaNivel e opção trapaça - FEITO
-
+- implementar função salvarJogo() e atrelar à tecla 'g'
