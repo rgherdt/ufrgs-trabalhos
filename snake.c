@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
   init_pair(2, COLOR_RED, COLOR_BLACK);
   init_pair(3, COLOR_YELLOW, COLOR_BLACK);
 
-  jogo_win = newwin(25, 81, 1, 1); /* janela do jogo */
+  jogo_win = newwin(MAXY+2, MAXX+2, 1, 1); /* janela do jogo */
   aviso_win = newwin(2, 35, 27, 47);
   info_win = newwin(2, 35, 27, 5); /* janela de informações */
   setNivel(&thisRound, cenario, &levelSettings, &thisSnake);
@@ -232,30 +232,16 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
   int i, j, alimInd, maxY, maxX;
   int x, y, len;
   char obj;
-  /* wchar_t mapa[MAXY][MAXX]; */
-  wchar_t mapa[MAXY][MAXX];
+  wchar_t mapa[MAXY][MAXX+1];
   wchar_t linha[MAXX+1];
   wchar_t *stopwcs, *temp1, *temp2;
 
   
   getmaxyx(jogo_win,maxY,maxX);
   
-  /* Bordas */
-
-
   wattron(jogo_win, COLOR_PAIR(3));
-  /* for(i=0; i<maxX; i++) */
-  /*   { */
-  /*     mvwprintw(jogo_win, 0, i, "\u2588"); //superior */
-  /*     mvwprintw(jogo_win, maxY-1, i, "\u2588"); //inferior */
-  /*   } */
-  /* for(i=0; i<maxY; i++) */
-  /*   { */
-  /*     mvwprintw(jogo_win, i, 0, "\u2588"); //esquerda */
-  /*     mvwprintw(jogo_win, i, maxX-1, "\u2588"); //direita */
-  /*   } */
 
-  alimInd = 0; /* inicializa i para controlar adição de alimentos */
+  alimInd = 0; /* inicializa alimInd para controlar adição de alimentos */
 
   /* zera mapa */
   for(i=0; i<MAXY; i++)
@@ -264,27 +250,15 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
 
   /* Lê arquivo de cenário e armazena dados numa matriz */
   i=0;
-  //  while((fgetws(linha, MAXX+1, cenario) != NULL) && i<MAXY+10)
   while(fgetws(linha, MAXX+1, cenario) != NULL)
-  /* while((fgetws(mapa[i], MAXX+1, cenario) != NULL) && i<MAXY-1) */
     {    
-      /* if(mapa[i][0] == 9608) */
-      /* 	mapa[i][0] = L'b'; */
-      if(linha[0] > 48 && linha[0] < 57) /* passa coordenadas de alimentos para o array */
-      /* if(i>24) */
+      if(linha[0] > 48 && linha[0] < 57) /* é dígito: passa coordenadas de alimentos para o array */
+
       	{
-	  //      	  swscanf(linha, L"%d %d", &alimentos[alimInd].x, &alimentos[alimInd].y);
-      	  /* swscanf(linha, L"%d %d", &x, &y); */
-	  temp1 = wcstok(linha, L" ,", &stopwcs);
+	  temp1 = wcstok(linha, L" ,", &stopwcs); /* armazena coordenadas em variáveis temp*/
 	  temp2 = wcstok(NULL, L" ,", &stopwcs);
-	  x = wcstol(temp1, &stopwcs, 10);
+	  x = wcstol(temp1, &stopwcs, 10); /* converte temp de wide char para inteiro */
 	  y = wcstol(temp2, &stopwcs, 10);
-	  /* printf("%d", x); */
-	  /* printf("\n%d", y); */
-      	  /* x = wcstol(x, &pEnd, 10); */
-      	  /* y = wcstol(y, &pEnd, 10); */
-	  //	  test = linha[0];
-	  //	  x = 0; y = 0;
       	  alimentos[alimInd].x = x;
       	  alimentos[alimInd].y = y;
       	  alimInd++;
@@ -293,55 +267,12 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
       	wcscpy(mapa[i], linha);
 	i++;
       }
-      /* for(j=0; j<MAXX; j++) */
-      /* 	if(mapa[i][j] == 35) */
-      /* 	  mapa[i][j] == 'b'; */
     }
 
-  /* for(i=0; i<MAXY; i++) */
-  /*   fgetws(mapa[i], MAXX, cenario); */
-  /* mvwprintw(jogo_win, 9, 10, "%s", "Ola mundo"); */
-
-  /* refresh(); */
-
-  /* mvwaddwstr(jogo_win, 0, 0, ' '); */
-  for(i=0; i<MAXY; i++)
-    /* for(j=0; j<MAXX; j++) */
-      /* mvwprintw(jogo_win, i, j, L"%lc", mapa[i][j]); */
-    /* mvwaddwstr(jogo_win, i, 0, mapa[i]); */
+  /* desenha cenário propriamente dito */
+  for(i=0; i<MAXY+1; i++)
     mvwprintw(jogo_win, i, 0, "%ls", mapa[i]);
-      /* mvwprintw(jogo_win, i, j, "%d", i); */
-//      mvwprintw(jogo_win, i, j, "%ls", mapa[i]);
-	
-      /* if(linha[0] == 'H' || linha[0] == 'V') */
-      /* 	{ */
-      /* 	  sscanf(linha, "%c %d %d %d ", &obj, &x, &y, &len); */
-      /* 	  if(obj == 'H') /\* muro horizontal *\/ */
-      /* 	    for(i=0; i<len; i++) */
-      /* 	      mvwprintw(jogo_win, y, x+i, "\u2588"); */
-      /* 	  else if(obj == 'V') /\* muro vertical *\/ */
-      /* 	    for(i=0; i<len; i++) */
-      /* 	      mvwprintw(jogo_win, y+i, x, "\u2588"); */
-      /* 	} */
-      /* else if */
-      /* 	(linha[0] == 'A') /\* passa coordenadas de alimentos para o array *\/ */
-      /* 	{ */
-      /* 	  sscanf(linha, "%c %d %d ", &obj, &x, &y); */
-      /* 	  alimentos[alimInd].x = x; */
-      /* 	  alimentos[alimInd].y = y; */
-      /* 	  alimInd++; */
-      /* 	} */
-    /* } */
-  /* mvwprintw(jogo_win, 10, 30, "%d", mapa[1][2]); */
-   /* mvwprintw(jogo_win, 10, 30, "%d %d", alimentos[0].x, alimentos[0].y); */
-   /* mvwprintw(jogo_win, 11, 30, "%d %d", alimentos[1].x, alimentos[1].y); */
-   /* mvwprintw(jogo_win, 12, 30, "%d %d", alimentos[2].x, alimentos[2].y); */
-   /* mvwprintw(jogo_win, 12, 30, "%ls", linha); */
-  /* swscanf(linha, L"%d %d", &x, &y); */
-  /* mvwprintw(jogo_win, 12, 30, "%d %d", x, y); */
 
-  /* mvwprintw(jogo_win, 10, 30, "%d %d", alimentos[0].x, y); */
-  /* mvwprintw(jogo_win, 10, 30, "%d", alimentos[1].x); */
   wattroff(jogo_win, COLOR_PAIR(3));
   fclose(cenario);
   
@@ -417,7 +348,7 @@ void addAlimento(struct pos *alimentos, int *alimCount)
     {
       wmove(jogo_win, y, x);
       elem = (inch() & A_CHARTEXT);
-      if(elem == 32)
+      if(elem == 32 /* espaço */)
 	{
 	  wattron(jogo_win, COLOR_PAIR(2)); /* maçãs vermelhas */
 	  waddch(jogo_win, '*');
