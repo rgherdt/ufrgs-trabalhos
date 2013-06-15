@@ -192,7 +192,7 @@ void setNivel(roundData *thisRound, FILE *cenario, struct levelSettings *levelSe
 {
   (thisRound->nivel)++; /* nivel: variável de teste do atual cenário */
   (thisRound->alimCount) = 0;
-  (thisSnake->tam) = 4;
+  (thisSnake->tam) = 5;
   thisSnake->posInc.x = 1;
   thisSnake->posInc.y = 0;
   wclear(jogo_win); /* limpa o cenário antigo */
