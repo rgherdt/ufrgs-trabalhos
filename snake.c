@@ -191,7 +191,7 @@ void loadGame(FILE *savegame, struct roundData *thisRound, struct snakeData *thi
 void setNivel(roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, snakeData *thisSnake)
 {
   (thisRound->nivel)++; /* nivel: variável de teste do atual cenário */
-  (thisRound->alimCount) = -1;
+  (thisRound->alimCount) = 0;
   (thisSnake->tam) = 4;
   thisSnake->posInc.x = 1;
   thisSnake->posInc.y = 0;
@@ -229,50 +229,119 @@ void setNivel(roundData *thisRound, FILE *cenario, struct levelSettings *levelSe
 
 void desenhaCenario(FILE *cenario, struct pos *alimentos)
 {
-  int i, alimInd, alimCount=0, maxY, maxX;
+  int i, j, alimInd, maxY, maxX;
   int x, y, len;
-  char obj, linha[20];
+  char obj;
+  /* wchar_t mapa[MAXY][MAXX]; */
+  wchar_t mapa[MAXY][MAXX];
+  wchar_t linha[MAXX+1];
+  wchar_t *stopwcs, *temp1, *temp2;
+
   
   getmaxyx(jogo_win,maxY,maxX);
   
   /* Bordas */
 
+
   wattron(jogo_win, COLOR_PAIR(3));
-  for(i=0; i<maxX; i++)
-    {
-      mvwprintw(jogo_win, 0, i, "\u2588"); //superior
-      mvwprintw(jogo_win, maxY-1, i, "\u2588"); //inferior
-    }
-  for(i=0; i<maxY; i++)
-    {
-      mvwprintw(jogo_win, i, 0, "\u2588"); //esquerda
-      mvwprintw(jogo_win, i, maxX-1, "\u2588"); //direita
-    }
+  /* for(i=0; i<maxX; i++) */
+  /*   { */
+  /*     mvwprintw(jogo_win, 0, i, "\u2588"); //superior */
+  /*     mvwprintw(jogo_win, maxY-1, i, "\u2588"); //inferior */
+  /*   } */
+  /* for(i=0; i<maxY; i++) */
+  /*   { */
+  /*     mvwprintw(jogo_win, i, 0, "\u2588"); //esquerda */
+  /*     mvwprintw(jogo_win, i, maxX-1, "\u2588"); //direita */
+  /*   } */
 
   alimInd = 0; /* inicializa i para controlar adição de alimentos */
 
-  /* Muros */
-  while(fgets(linha, 20, cenario) != NULL)
-    {
-      if(linha[0] == 'H' || linha[0] == 'V')
-	{
-	  sscanf(linha, "%c %d %d %d ", &obj, &x, &y, &len);
-	  if(obj == 'H') /* muro horizontal */
-	    for(i=0; i<len; i++)
-	      mvwprintw(jogo_win, y, x+i, "\u2588");
-	  else if(obj == 'V') /* muro vertical */
-	    for(i=0; i<len; i++)
-	      mvwprintw(jogo_win, y+i, x, "\u2588");
-	}
-      else if
-	(linha[0] == 'A') /* passa coordenadas de alimentos para o array */
-	{
-	  sscanf(linha, "%c %d %d ", &obj, &x, &y);
-	  alimentos[alimInd].x = x;
-	  alimentos[alimInd].y = y;
-	  alimInd++;
-	}
+  /* zera mapa */
+  for(i=0; i<MAXY; i++)
+    for(j=0; j<MAXX; j++)
+      mapa[i][j] = L' ';
+
+  /* Lê arquivo de cenário e armazena dados numa matriz */
+  i=0;
+  //  while((fgetws(linha, MAXX+1, cenario) != NULL) && i<MAXY+10)
+  while(fgetws(linha, MAXX+1, cenario) != NULL)
+  /* while((fgetws(mapa[i], MAXX+1, cenario) != NULL) && i<MAXY-1) */
+    {    
+      /* if(mapa[i][0] == 9608) */
+      /* 	mapa[i][0] = L'b'; */
+      if(linha[0] > 48 && linha[0] < 57) /* passa coordenadas de alimentos para o array */
+      /* if(i>24) */
+      	{
+	  //      	  swscanf(linha, L"%d %d", &alimentos[alimInd].x, &alimentos[alimInd].y);
+      	  /* swscanf(linha, L"%d %d", &x, &y); */
+	  temp1 = wcstok(linha, L" ,", &stopwcs);
+	  temp2 = wcstok(NULL, L" ,", &stopwcs);
+	  x = wcstol(temp1, &stopwcs, 10);
+	  y = wcstol(temp2, &stopwcs, 10);
+	  /* printf("%d", x); */
+	  /* printf("\n%d", y); */
+      	  /* x = wcstol(x, &pEnd, 10); */
+      	  /* y = wcstol(y, &pEnd, 10); */
+	  //	  test = linha[0];
+	  //	  x = 0; y = 0;
+      	  alimentos[alimInd].x = x;
+      	  alimentos[alimInd].y = y;
+      	  alimInd++;
+      	}
+      else {
+      	wcscpy(mapa[i], linha);
+	i++;
+      }
+      /* for(j=0; j<MAXX; j++) */
+      /* 	if(mapa[i][j] == 35) */
+      /* 	  mapa[i][j] == 'b'; */
     }
+
+  /* for(i=0; i<MAXY; i++) */
+  /*   fgetws(mapa[i], MAXX, cenario); */
+  /* mvwprintw(jogo_win, 9, 10, "%s", "Ola mundo"); */
+
+  /* refresh(); */
+
+  /* mvwaddwstr(jogo_win, 0, 0, ' '); */
+  for(i=0; i<MAXY; i++)
+    /* for(j=0; j<MAXX; j++) */
+      /* mvwprintw(jogo_win, i, j, L"%lc", mapa[i][j]); */
+    /* mvwaddwstr(jogo_win, i, 0, mapa[i]); */
+    mvwprintw(jogo_win, i, 0, "%ls", mapa[i]);
+      /* mvwprintw(jogo_win, i, j, "%d", i); */
+//      mvwprintw(jogo_win, i, j, "%ls", mapa[i]);
+	
+      /* if(linha[0] == 'H' || linha[0] == 'V') */
+      /* 	{ */
+      /* 	  sscanf(linha, "%c %d %d %d ", &obj, &x, &y, &len); */
+      /* 	  if(obj == 'H') /\* muro horizontal *\/ */
+      /* 	    for(i=0; i<len; i++) */
+      /* 	      mvwprintw(jogo_win, y, x+i, "\u2588"); */
+      /* 	  else if(obj == 'V') /\* muro vertical *\/ */
+      /* 	    for(i=0; i<len; i++) */
+      /* 	      mvwprintw(jogo_win, y+i, x, "\u2588"); */
+      /* 	} */
+      /* else if */
+      /* 	(linha[0] == 'A') /\* passa coordenadas de alimentos para o array *\/ */
+      /* 	{ */
+      /* 	  sscanf(linha, "%c %d %d ", &obj, &x, &y); */
+      /* 	  alimentos[alimInd].x = x; */
+      /* 	  alimentos[alimInd].y = y; */
+      /* 	  alimInd++; */
+      /* 	} */
+    /* } */
+  /* mvwprintw(jogo_win, 10, 30, "%d", mapa[1][2]); */
+   /* mvwprintw(jogo_win, 10, 30, "%d %d", alimentos[0].x, alimentos[0].y); */
+   /* mvwprintw(jogo_win, 11, 30, "%d %d", alimentos[1].x, alimentos[1].y); */
+   /* mvwprintw(jogo_win, 12, 30, "%d %d", alimentos[2].x, alimentos[2].y); */
+   /* mvwprintw(jogo_win, 12, 30, "%ls", linha); */
+  /* swscanf(linha, L"%d %d", &x, &y); */
+  /* mvwprintw(jogo_win, 12, 30, "%d %d", x, y); */
+
+  /* mvwprintw(jogo_win, 10, 30, "%d %d", alimentos[0].x, y); */
+  /* mvwprintw(jogo_win, 10, 30, "%d", alimentos[1].x); */
   wattroff(jogo_win, COLOR_PAIR(3));
   fclose(cenario);
   
