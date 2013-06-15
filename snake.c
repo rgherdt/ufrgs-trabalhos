@@ -246,7 +246,7 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
   /* zera mapa */
   for(i=0; i<MAXY; i++)
     for(j=0; j<MAXX; j++)
-      mapa[i][j] = L' ';
+      mapa[i][j] = L'0';
 
   /* Lê arquivo de cenário e armazena dados numa matriz */
   i=0;
@@ -272,6 +272,7 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
   /* desenha cenário propriamente dito */
   for(i=0; i<MAXY+1; i++)
     mvwprintw(jogo_win, i, 0, "%ls", mapa[i]);
+
 
   wattroff(jogo_win, COLOR_PAIR(3));
   fclose(cenario);
@@ -347,7 +348,7 @@ void addAlimento(struct pos *alimentos, int *alimCount)
   while(valido==0)
     {
       wmove(jogo_win, y, x);
-      elem = (inch() & A_CHARTEXT);
+      elem = (winch(jogo_win) & A_CHARTEXT);
       if(elem == 32 /* espaço */)
 	{
 	  wattron(jogo_win, COLOR_PAIR(2)); /* maçãs vermelhas */
