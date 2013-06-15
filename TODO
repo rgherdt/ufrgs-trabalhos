@@ -22,10 +22,6 @@ no momento em que este aparecer. Em testes que fiz, se isso acontecesse, o alime
 
 
 
-
-
-
-
   FEITOS:
   
 - investigar um bug que ocorreu onde a cobra dividiu-se, deixando uma parte para trás - RESOLVIDO
@@ -33,3 +29,7 @@ no momento em que este aparecer. Em testes que fiz, se isso acontecesse, o alime
 - portar direcionais para as setas do teclado - FEITO
 - implementar a função mudaNivel e opção trapaça - FEITO
 - implementar função salvarJogo() e atrelar à tecla 'g'
+- desenhaCenario(): adicionar suporte a arquivos de cenário em ASCII
+- morre(): modificar para apresentar dados do jogo ao usuário, além de retornar ao menu
+
+
