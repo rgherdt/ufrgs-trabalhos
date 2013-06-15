@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
   init_pair(2, COLOR_RED, COLOR_BLACK);
   init_pair(3, COLOR_YELLOW, COLOR_BLACK);
 
-  jogo_win = newwin(MAXY+2, MAXX+2, 1, 1); /* janela do jogo */
+  jogo_win = newwin(MAXY+1, MAXX+1, 1, 1); /* janela do jogo */
   aviso_win = newwin(2, 35, 27, 47);
   info_win = newwin(2, 35, 27, 5); /* janela de informações */
   setNivel(&thisRound, cenario, &levelSettings, &thisSnake);
@@ -232,7 +232,7 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
   int i, j, alimInd, maxY, maxX;
   int x, y, len;
   char obj;
-  wchar_t mapa[MAXY][MAXX+1];
+  wchar_t mapa[MAXY+1][MAXX+1];
   wchar_t linha[MAXX+1];
   wchar_t *stopwcs, *temp1, *temp2;
 
@@ -244,8 +244,8 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
   alimInd = 0; /* inicializa alimInd para controlar adição de alimentos */
 
   /* zera mapa */
-  for(i=0; i<MAXY; i++)
-    for(j=0; j<MAXX; j++)
+  for(i=0; i<MAXY+1; i++)
+    for(j=0; j<MAXX+1; j++)
       mapa[i][j] = L'0';
 
   /* Lê arquivo de cenário e armazena dados numa matriz */
@@ -271,9 +271,13 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
 
   /* desenha cenário propriamente dito */
   for(i=0; i<MAXY+1; i++)
-    mvwprintw(jogo_win, i, 0, "%ls", mapa[i]);
+    {
+    /* mvwprintw(jogo_win, i, 0, "%ls", mapa[i]); */
+      wmove(jogo_win, i, 0);
+      waddnwstr(jogo_win, mapa[i], 80);
+    }
 
-
+  //  mvwprintw(jogo_win, 0, 79, "%ls", L"\u2588"); 
   wattroff(jogo_win, COLOR_PAIR(3));
   fclose(cenario);
   
