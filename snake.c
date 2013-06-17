@@ -79,70 +79,8 @@ void moveCobra(snakeData *thisSnake, struct levelSettings *levelSettings, roundD
 
 void gamePause(int *sair, int dir, roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, snakeData *thisSnake);	
 
-void menu(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, roundData *thisRound, FILE *cenario, FILE *savegame)
-{
-  char *opcoes[] = {"NOVO JOGO", "ABRIR JOGO SALVO", "HIGHSCORES", "CREDITOS", "SAIR"}; /* array para itens do menu */
+void menu(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, roundData *thisRound, FILE *cenario, FILE *savegame);
 
-  int input, numop, i, flag = 0;
-  ITEM *itens[sizeof(opcoes)], *itematual, *selec;
-  MENU *menu;
-
-  numop = sizeof(opcoes); /* número de itens do menu */
-  for(i = 0; i < numop; i++) /* armazena os itens na variável itens de tipo ITEM */
-    itens[i] = new_item(opcoes[i], " ");
-  menu = new_menu(itens); /* cria novo menu com os itens determinados no array opcoes */
-  set_menu_win(menu, jogo_win); /* seta a janela do menu */
-  set_menu_sub(menu, derwin(jogo_win, 8, 20, 10, 30)); /* seta a subjanela do menu (que serve às opções) */
-  set_menu_mark(menu, "->"); /* apontador do menu (estético) */
-
-  /* Bordas do menu (estético) */
-  box(jogo_win, 0, 0);	
-  wattron(jogo_win, COLOR_PAIR(1));
-  mvwprintw(jogo_win, 8, 32, "S   N   A   K   E");
-  wattron(jogo_win, COLOR_PAIR(3));
-  set_menu_fore(menu, COLOR_PAIR(3));
-  wborder(jogo_win, '#', '#', '#', '#', 'Q', 'Q', 'Q', 'Q');
-  wattroff(jogo_win, COLOR_PAIR(3));  
-  refresh();
-  post_menu(menu); /* imprime menu */
-  wrefresh(jogo_win);
-  while(flag != 1)
-    {  
-      input = getch();
-      switch(input)
-	{
-	case KEY_DOWN:/* rola para baixo */
-	  menu_driver(menu, REQ_DOWN_ITEM); /* menu_driver() e definição REQ_DOWN_ITEM nativos de menu.h */
-	  break;
-	case KEY_UP: /* rola para cima */
-	  menu_driver(menu, REQ_UP_ITEM); /* menu_driver() e definição REQ_UP_ITEM nativos de menu.h */
-	  break;
-	case ENTER:
-	  selec = current_item(menu); /* armazena o item selecionado pelo usuário */
-	  if(item_name(selec) == "NOVO JOGO"){ /* item_name() analisa o nome do item dentro do array de strings */
-	    wclear(jogo_win);
-	    setNivel(thisRound, cenario, levelSettings, thisSnake);
-	    play(thisSnake, sair, levelSettings, thisRound, cenario, savegame); /* inicia jogo / loop principal */
-	  }
-	  if(item_name(selec) == "ABRIR JOGO SALVO"){ /* abre último jogo salvo */
-	    loadGame(savegame, thisRound, thisSnake, levelSettings);
-	    play(thisSnake, sair, levelSettings, thisRound, cenario, savegame);
-	    wclear(jogo_win);
-	    wrefresh(jogo_win);
-	  }
-	  if(item_name(selec) == "SAIR") /* finaliza o jogo */
-	    flag = 1;	
-	  break;
-	}
-      wrefresh(jogo_win);
-    }
-
-  /* libera os espaços alocados na memória por itens e menu (segurança) */
-  free_item(itens[0]);
-  free_item(itens[1]);
-  free_menu(menu);
-};
-	
 int main(int argc, char *argv[])
 {
   int i, sair=0;
@@ -654,3 +592,67 @@ void moveCobra(snakeData *thisSnake, struct levelSettings *levelSettings, roundD
 
   desenhaCobra(thisSnake->cobra, &(thisSnake->tam));
 }
+
+void menu(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, roundData *thisRound, FILE *cenario, FILE *savegame)
+{
+  char *opcoes[] = {"NOVO JOGO", "ABRIR JOGO SALVO", "HIGHSCORES", "CREDITOS", "SAIR"}; /* array para itens do menu */
+
+  int input, numop, i, flag = 0;
+  ITEM *itens[sizeof(opcoes)], *itematual, *selec;
+  MENU *menu;
+
+  numop = sizeof(opcoes); /* número de itens do menu */
+  for(i = 0; i < numop; i++) /* armazena os itens na variável itens de tipo ITEM */
+    itens[i] = new_item(opcoes[i], " ");
+  menu = new_menu(itens); /* cria novo menu com os itens determinados no array opcoes */
+  set_menu_win(menu, jogo_win); /* seta a janela do menu */
+  set_menu_sub(menu, derwin(jogo_win, 8, 20, 10, 30)); /* seta a subjanela do menu (que serve às opções) */
+  set_menu_mark(menu, "->"); /* apontador do menu (estético) */
+
+  /* Bordas do menu (estético) */
+  box(jogo_win, 0, 0);	
+  wattron(jogo_win, COLOR_PAIR(1));
+  mvwprintw(jogo_win, 8, 32, "S   N   A   K   E");
+  wattron(jogo_win, COLOR_PAIR(3));
+  set_menu_fore(menu, COLOR_PAIR(3));
+  wborder(jogo_win, '#', '#', '#', '#', 'Q', 'Q', 'Q', 'Q');
+  wattroff(jogo_win, COLOR_PAIR(3));  
+  refresh();
+  post_menu(menu); /* imprime menu */
+  wrefresh(jogo_win);
+  while(flag != 1)
+    {  
+      input = getch();
+      switch(input)
+	{
+	case KEY_DOWN:/* rola para baixo */
+	  menu_driver(menu, REQ_DOWN_ITEM); /* menu_driver() e definição REQ_DOWN_ITEM nativos de menu.h */
+	  break;
+	case KEY_UP: /* rola para cima */
+	  menu_driver(menu, REQ_UP_ITEM); /* menu_driver() e definição REQ_UP_ITEM nativos de menu.h */
+	  break;
+	case ENTER:
+	  selec = current_item(menu); /* armazena o item selecionado pelo usuário */
+	  if(item_name(selec) == "NOVO JOGO"){ /* item_name() analisa o nome do item dentro do array de strings */
+	    wclear(jogo_win);
+	    setNivel(thisRound, cenario, levelSettings, thisSnake);
+	    play(thisSnake, sair, levelSettings, thisRound, cenario, savegame); /* inicia jogo / loop principal */
+	  }
+	  if(item_name(selec) == "ABRIR JOGO SALVO"){ /* abre último jogo salvo */
+	    loadGame(savegame, thisRound, thisSnake, levelSettings);
+	    play(thisSnake, sair, levelSettings, thisRound, cenario, savegame);
+	    wclear(jogo_win);
+	    wrefresh(jogo_win);
+	  }
+	  if(item_name(selec) == "SAIR") /* finaliza o jogo */
+	    flag = 1;	
+	  break;
+	}
+      wrefresh(jogo_win);
+    }
+
+  /* libera os espaços alocados na memória por itens e menu (segurança) */
+  free_item(itens[0]);
+  free_item(itens[1]);
+  free_menu(menu);
+};
