@@ -1,18 +1,23 @@
 #include <ncurses.h>
+#include <termios.h>
 #include <stdlib.h>
 #include <unistd.h> /* usleep */
 #include <locale.h> /* para codificar em Unicode */
 #include <wchar.h>
 #include <string.h>
+#include <menu.h>
 #define MAXTAM 95
 #define MAXY 24
 #define MAXX 80
 #define HEAD 'Q'
 #define CORPO '#'
+#define TAMINIC 5
+#define ENTER 10
 
 WINDOW *jogo_win;
 WINDOW *info_win;
 WINDOW *aviso_win;
+
 
 struct pos{
   int x;
@@ -54,7 +59,7 @@ void setNivel(roundData *thisRound, FILE *cenario, struct levelSettings *levelSe
 
 void desenhaCenario(FILE *cenario, struct pos *alimentos);
 
-void imprimeInfos(roundData *thisRound);
+void imprimeInfos(roundData *thisRound, snakeData *thisSnake);
 
 void initCobra(struct pos *cobra, int *tam);
 
@@ -72,8 +77,78 @@ void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct lev
 
 void moveCobra(snakeData *thisSnake, struct levelSettings *levelSettings, roundData *thisRound);
 
-void gamePause(int *sair, roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, snakeData *thisSnake);
-		
+void gamePause(int *sair, int dir, roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, snakeData *thisSnake);	
+
+void menu(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, roundData *thisRound, FILE *cenario, FILE *savegame)
+{
+	char *opcoes[] = {
+                        "NOVO JOGO",
+                        "ABRIR JOGO SALVO",
+                        "HIGHSCORES",
+                        "CREDITOS",
+                        "SAIR",
+                  };
+
+	int input, numop, i;
+	ITEM *itens[sizeof(opcoes)];
+	ITEM *itematual;
+	ITEM *selec;
+	MENU *menu;
+
+	numop = sizeof(opcoes);
+	for(i = 0; i < numop; i++)
+	        itens[i] = new_item(opcoes[i], " ");
+
+	menu = new_menu(itens);
+
+	set_menu_win(menu, jogo_win);
+	set_menu_sub(menu, derwin(jogo_win, 6, 32, 3, 1));
+	set_menu_mark(menu, "*");
+
+	box(jogo_win, 0, 0);	
+	wattron(jogo_win, COLOR_PAIR(1));
+	mvwprintw(jogo_win, 1, 20, "S N A K E");
+	wattroff(jogo_win, COLOR_PAIR(1));
+	//wattron(menu_win, COLOR_PAIR(1));
+	wborder(jogo_win, '|', '|', '-', '-', '*', '*', '*', '*');
+	refresh();
+	wrefresh(jogo_win);
+
+	
+	//itens[numop] = (ITEM*)NULL;
+
+	mvprintw(23, 0, "<ESC> para Sair");
+	post_menu(menu);
+	wrefresh(jogo_win);
+	while((input = getch()) != 27)
+	{   switch(input)
+	    {	case KEY_DOWN:
+		        menu_driver(menu, REQ_DOWN_ITEM);
+			wrefresh(jogo_win);
+				break;
+			case KEY_UP:
+				menu_driver(menu, REQ_UP_ITEM);
+				wrefresh(jogo_win);
+				break;
+		case ENTER:
+			selec = current_item(menu);
+			if(item_name(selec) == "NOVO JOGO"){
+				wclear(jogo_win);
+				  setNivel(thisRound, cenario, levelSettings, thisSnake);
+				wrefresh(jogo_win);
+ 				 play(thisSnake, sair, levelSettings, thisRound, cenario, savegame);
+}
+			
+			
+		break;
+		}
+}
+
+	free_item(itens[0]);
+	free_item(itens[1]);
+	free_menu(menu);
+};
+	
 int main(int argc, char *argv[])
 {
   int i, sair=0;
@@ -109,11 +184,14 @@ int main(int argc, char *argv[])
   init_pair(2, COLOR_RED, COLOR_BLACK);
   init_pair(3, COLOR_YELLOW, COLOR_BLACK);
 
+//	menu_win = newwin(10, 50, 7, 15);
+	keypad(jogo_win, TRUE);
   jogo_win = newwin(MAXY+1, MAXX+1, 1, 1); /* janela do jogo */
   aviso_win = newwin(2, 35, 27, 47);
   info_win = newwin(2, 35, 27, 5); /* janela de informações */
-  setNivel(&thisRound, cenario, &levelSettings, &thisSnake);
-  play(&thisSnake, &sair, &levelSettings, &thisRound, cenario, savegame);
+	menu(&thisSnake, &sair, &levelSettings, &thisRound, cenario, savegame);
+//  setNivel(&thisRound, cenario, &levelSettings, &thisSnake);
+ // play(&thisSnake, &sair, &levelSettings, &thisRound, cenario, savegame);
   refresh();
   wrefresh(jogo_win);
   endwin();
@@ -125,11 +203,15 @@ void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, 
   while(!(*sair))
     {
       timeout(0);
-      if((thisRound->alimCount) >= 30) /* testa se o usuário já chegou ao objetivo */
+      if((thisSnake->tam) >= (30*(thisRound->nivel)+TAMINIC)) /* testa se o usuário já chegou ao objetivo */
 	setNivel(thisRound, cenario, levelSettings, thisSnake); /* se já, muda nível */
       input(thisSnake, thisRound, cenario, levelSettings, sair, savegame);
       moveCobra(thisSnake, levelSettings, thisRound);
-      imprimeInfos(thisRound);
+      imprimeInfos(thisRound, thisSnake);
+	//tcflush(getch(), TCIFLUSH);
+	//tcdrain(getch());
+tcflush(thisSnake->posInc.x, TCIFLUSH);
+tcflush(thisSnake->posInc.y, TCIFLUSH);
       usleep(levelSettings->velocidade);
     }
 }
@@ -192,7 +274,7 @@ void setNivel(roundData *thisRound, FILE *cenario, struct levelSettings *levelSe
 {
   (thisRound->nivel)++; /* nivel: variável de teste do atual cenário */
   (thisRound->alimCount) = 0;
-  (thisSnake->tam) = 5;
+  (thisSnake->tam) = TAMINIC;
   thisSnake->posInc.x = 1;
   thisSnake->posInc.y = 0;
   wclear(jogo_win); /* limpa o cenário antigo */
@@ -286,15 +368,15 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
 }
 
 
-void imprimeInfos(roundData *thisRound)
+void imprimeInfos(roundData *thisRound, snakeData *thisSnake)
 {
   int x, y;
 
   getyx(info_win, y, x);
   wmove(info_win, 0, 0);
-  wprintw(info_win, "Tamanho da cobra: %d", ((thisRound->alimCount)*(thisRound->nivel)+4)); /* tamanho base + nivel */
+  wprintw(info_win, "Tamanho da cobra: %d", (thisSnake->tam)); /*tamanho base + nivel*/
   wprintw(info_win, "  Passos: %d", thisRound->passos); /* contador de passos */
-  wprintw(info_win, "\nObjetivo: %d", 30*(thisRound->nivel)+4); /* tamanho da cobra almejado */
+  wprintw(info_win, "\nObjetivo: %d", 30*(thisRound->nivel)+TAMINIC); /* tamanho da cobra almejado */
   wprintw(info_win, "  Nivel: %d", (thisRound->nivel)); /* nível atual */
   wmove(info_win, y, x);
   wrefresh(info_win);
@@ -468,11 +550,11 @@ void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct lev
 
     case 'Q':
       *sair = 1;
-      gamePause(sair, thisRound, cenario, levelSettings, thisSnake);
+      gamePause(sair, dir, thisRound, cenario, levelSettings, thisSnake);
       break;
 
     case 'T': /* trapaça */
-      gamePause(sair, thisRound, cenario, levelSettings, thisSnake);
+      gamePause(sair, dir, thisRound, cenario, levelSettings, thisSnake);
       break;
 
     case 'G': /* salva jogo */
@@ -490,58 +572,75 @@ void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct lev
 	setNivel(thisRound, cenario, levelSettings, thisSnake);
       }
       break;
+	case 'P': /*pausa jogo*/
+	      gamePause(sair, dir, thisRound, cenario, levelSettings, thisSnake);
+		break;
     }
 }
 
-void gamePause(int *sair, roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, snakeData *thisSnake)
+void gamePause(int *sair, int dir, roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, snakeData *thisSnake)
 {
   int flag;
   timeout(-1); /* pausa jogo */
   do
     {
-      if(*sair == 1) /* se usuário solicitou saída do jogo */
+      switch(dir)
 	{
-	  wclear(aviso_win);
-	  wprintw(aviso_win, "DESEJA MESMO SAIR? :( (S/N)");
-	  wrefresh(aviso_win);
-
-	  if((flag = toupper(getch())) == 'S') /* confirma saída do jogo */
-	    *sair = 1;
-
-	  else if((flag = toupper(getch())) == 'N') /* regride a saída do jogo */
+	case 'Q': /* se usuário solicitou saída do jogo */
 	    {
-	      *sair = 0;
 	      wclear(aviso_win);
+	      wprintw(aviso_win, "DESEJA MESMO SAIR? :( (S/N)");
 	      wrefresh(aviso_win);
-	      timeout(0); /* descongela jogo */
+	      flag = toupper(getch());
+	  
+	      if(flag == 'S') /* confirma saída do jogo */
+		*sair = 1;
+	      else if(flag == 'N') /* regride a saída do jogo */
+		{
+		  *sair = 0;
+		  wclear(aviso_win);
+		  wrefresh(aviso_win);
+		  timeout(0); /* descongela jogo */
+		}
 	    }
-	}
+	    break;
 
-      else if(*sair == 0) /*  sair == 0 indica que usuário não optou por saída, e sim trapaça */
+	case 'T': /*  se usuário optou por trapacear */
+	    {
+	      wclear(aviso_win);
+	      wprintw(aviso_win, "DESEJA MESMO TRAPACEAR? :( (S/N)");
+	      wrefresh(aviso_win);
+	      flag = toupper(getch());
+	      if(flag == 'S')  /* confirma trapaça */
+		{
+		  setNivel(thisRound, cenario, levelSettings, thisSnake); /* avança nível */
+		  wclear(aviso_win);
+		  wrefresh(aviso_win);
+		}
+
+	      else if(flag == 'N') /* regride trapaça */
+		{
+		  wclear(aviso_win);
+		  wrefresh(aviso_win);
+		  timeout(0); /* descongela jogo */
+		}
+	    }
+	    break;
+
+	case 'P':
 	{
-	  wclear(aviso_win);
-	  wprintw(aviso_win, "DESEJA MESMO TRAPACEAR? :( (S/N)");
-	  wrefresh(aviso_win);
-	  if((flag = toupper(getch())) == 'S')  /* confirma trapaça */
-	    {
-	      setNivel(thisRound, cenario, levelSettings, thisSnake); /* avança nível */
-	      wclear(aviso_win);
-	      wrefresh(aviso_win);
-	    }
-
-	  else if((flag = toupper(getch())) == 'N') /* regride trapaça */
-	    {
-	      wclear(aviso_win);
-	      wrefresh(aviso_win);
-	      timeout(0); /* descongela jogo */
-	    }
-	}
+		flag = toupper(getch());
+		if(flag == 'P')
+			timeout(0);
+	}    
     }
-  while(flag != 'N' && flag != 'S'); /* consistência */
+}
+  while(flag != 'N' && flag != 'S' && flag != 'P'); /* consistência */
+
   wclear(aviso_win);
   wrefresh(aviso_win);
 }
-	
+
 
 void moveCobra(snakeData *thisSnake, struct levelSettings *levelSettings, roundData *thisRound)
 {
