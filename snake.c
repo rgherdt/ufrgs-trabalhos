@@ -138,7 +138,7 @@ void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, 
     {
       timeout(0);
       if((thisSnake->tam) >= (30*(thisRound->nivel)+TAMINIC)) /* testa se o usuário já chegou ao objetivo */
-	setNivel(thisRound, cenario, levelSettings, thisSnake); /* se já, muda nível */
+	  setNivel(thisRound, cenario, levelSettings, thisSnake); /* seta novo nível */
       input(thisSnake, thisRound, cenario, levelSettings, sair, savegame);
       moveCobra(thisSnake, levelSettings, thisRound);
       imprimeInfos(thisRound, thisSnake);
@@ -200,7 +200,7 @@ void loadGame(FILE *savegame, struct roundData *thisRound, struct snakeData *thi
 /* reseta todos os atributos da cobra, atualiza settings de nível (cenário, levelSettings), e inicia cenário */
 void setNivel(roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, snakeData *thisSnake)
 {
-  (thisRound->nivel)++; /* nivel: variável de teste do atual cenário */
+  (thisRound->nivel)++;
   (thisRound->alimCount) = 0;
   (thisSnake->tam) = TAMINIC;
   thisSnake->posInc.x = 1;
@@ -513,11 +513,11 @@ void gamePause(int *sair, int dir, roundData *thisRound, FILE *cenario, struct l
   timeout(-1); /* pausa jogo */
   do
     {
+      wclear(aviso_win);
       switch(dir)
 	{
 	case 'Q': /* se usuário solicitou saída do jogo */
 	  {
-	    wclear(aviso_win);
 	    wprintw(aviso_win, "DESEJA MESMO SAIR? :( (S/N)");
 	    wrefresh(aviso_win);
 	    flag = toupper(getch());
@@ -528,7 +528,6 @@ void gamePause(int *sair, int dir, roundData *thisRound, FILE *cenario, struct l
 	      {
 		*sair = 0;
 		wclear(aviso_win);
-		wrefresh(aviso_win);
 		timeout(0); /* descongela jogo */
 	      }
 	  }
@@ -536,7 +535,6 @@ void gamePause(int *sair, int dir, roundData *thisRound, FILE *cenario, struct l
 
 	case 'T': /*  se usuário optou por trapacear */
 	  {
-	    wclear(aviso_win);
 	    wprintw(aviso_win, "DESEJA MESMO TRAPACEAR? :( (S/N)");
 	    wrefresh(aviso_win);
 	    flag = toupper(getch());
@@ -544,13 +542,11 @@ void gamePause(int *sair, int dir, roundData *thisRound, FILE *cenario, struct l
 	      {
 		setNivel(thisRound, cenario, levelSettings, thisSnake); /* avança nível */
 		wclear(aviso_win);
-		wrefresh(aviso_win);
 	      }
 
 	    else if(flag == 'N') /* regride trapaça */
 	      {
 		wclear(aviso_win);
-		wrefresh(aviso_win);
 		timeout(0); /* descongela jogo */
 	      }
 	  }
@@ -563,6 +559,7 @@ void gamePause(int *sair, int dir, roundData *thisRound, FILE *cenario, struct l
 	      timeout(0);
 	  }    
 	}
+      wrefresh(aviso_win);
     }
   while(flag != 'N' && flag != 'S' && flag != 'P'); /* consistência */
 
@@ -644,11 +641,9 @@ void menu(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, 
 	    play(thisSnake, sair, levelSettings, thisRound, cenario, savegame); /* inicia jogo / loop principal */
 	  }
 	  if(item_name(selec) == "ABRIR JOGO SALVO"){ /* abre último jogo salvo */
+	     wclear(jogo_win);
 	    loadGame(savegame, thisRound, thisSnake, levelSettings);
-	    setNivel(thisRound, cenario, levelSettings, thisSnake);
 	    play(thisSnake, sair, levelSettings, thisRound, cenario, savegame);
-	    wclear(jogo_win);
-	    wrefresh(jogo_win);
 	  }
 	  if(item_name(selec) == "SAIR") /* finaliza o jogo */
 	    flag = 1;	
