@@ -292,7 +292,7 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
   wattroff(jogo_win, COLOR_PAIR(3));
   fclose(cenario);
   
-  refresh();
+  //  refresh();
   wrefresh(jogo_win);
 }
 
