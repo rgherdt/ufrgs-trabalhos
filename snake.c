@@ -645,6 +645,7 @@ void menu(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, 
 	  }
 	  if(item_name(selec) == "ABRIR JOGO SALVO"){ /* abre último jogo salvo */
 	    loadGame(savegame, thisRound, thisSnake, levelSettings);
+	    setNivel(thisRound, cenario, levelSettings, thisSnake);
 	    play(thisSnake, sair, levelSettings, thisRound, cenario, savegame);
 	    wclear(jogo_win);
 	    wrefresh(jogo_win);
