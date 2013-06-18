@@ -13,6 +13,8 @@
 #define CORPO '#'
 #define TAMINIC 5
 #define ENTER 10
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
+
 
 WINDOW *jogo_win;
 WINDOW *info_win;
@@ -595,16 +597,18 @@ void moveCobra(snakeData *thisSnake, struct levelSettings *levelSettings, roundD
 
 void menu(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, roundData *thisRound, FILE *cenario, FILE *savegame)
 {
-  char *opcoes[] = {"NOVO JOGO", "ABRIR JOGO SALVO", "HIGHSCORES", "CREDITOS", "SAIR"}; /* array para itens do menu */
+  char *opcoes[] = {"NOVO JOGO", "ABRIR JOGO SALVO", "HIGHSCORES", "CREDITOS", "SAIR", (char *)NULL,}; /* array para itens do menu */
 
   int input, numop, i, flag = 0;
-  ITEM *itens[sizeof(opcoes)], *itematual, *selec;
+  ITEM **itens, *itematual, *selec;
   MENU *menu;
 
-  numop = sizeof(opcoes); /* número de itens do menu */
+  numop = ARRAY_SIZE(opcoes); /* número de itens do menu */
+  itens = (ITEM **)calloc(numop, sizeof(ITEM *)); /*alocação de memória*/
   for(i = 0; i < numop; i++) /* armazena os itens na variável itens de tipo ITEM */
     itens[i] = new_item(opcoes[i], " ");
-  menu = new_menu(itens); /* cria novo menu com os itens determinados no array opcoes */
+  menu = new_menu((ITEM **)itens); /* cria novo menu com os itens determinados no array opcoes */
+
   set_menu_win(menu, jogo_win); /* seta a janela do menu */
   set_menu_sub(menu, derwin(jogo_win, 8, 20, 10, 30)); /* seta a subjanela do menu (que serve às opções) */
   set_menu_mark(menu, "->"); /* apontador do menu (estético) */
@@ -651,8 +655,12 @@ void menu(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, 
       wrefresh(jogo_win);
     }
 
+  unpost_menu(menu);
   /* libera os espaços alocados na memória por itens e menu (segurança) */
-  free_item(itens[0]);
-  free_item(itens[1]);
   free_menu(menu);
+  for(i = 0; i < numop; i++)
+    {
+      free_item(itens[i]);
+    }
+
 };
