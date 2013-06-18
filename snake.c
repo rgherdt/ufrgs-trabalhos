@@ -95,6 +95,7 @@ int main(int argc, char *argv[])
   FILE *savegame;
 
   thisRound.nivel = 0;
+  thisRound.passos = 0;
 
   system("resize -s 30 83"); // define o tamanho do terminal
   setlocale(LC_ALL,""); /* Unicode */
