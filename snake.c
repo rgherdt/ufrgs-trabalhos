@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
   snakeData thisSnake;
   roundData thisRound;
   struct levelSettings levelSettings;
-  struct pos alimentos[30];
+  struct pos alimentos[29];
   FILE *cenario;
   FILE *savegame;
 
