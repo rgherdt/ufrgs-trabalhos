@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
   snakeData thisSnake;
   roundData thisRound;
   struct levelSettings levelSettings;
-  struct pos alimentos[29];
+  struct pos alimentos[30];
   FILE *cenario;
   FILE *savegame;
 
@@ -251,6 +251,8 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
   getmaxyx(jogo_win,maxY,maxX);
   
   alimInd = 0; /* inicializa alimInd para controlar adição de alimentos */
+
+     
 
   /* zera mapa */
   for(i=0; i<MAXY+1; i++)
@@ -427,7 +429,7 @@ void desenhaCobra(struct pos *cobra, int *tam)
 
   wattron(jogo_win, COLOR_PAIR(1)); /* habilita cor */
   waddch(jogo_win, HEAD); /* cabeça */
-  for(i=1; i<(*tam); i++) /* corpo */
+  for(i=1; i<(*tam-1); i++) /* corpo */
     {
       mvwaddch(jogo_win, cobra[i].y, cobra[i].x, CORPO);
     }
