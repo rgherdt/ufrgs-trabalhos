@@ -250,8 +250,6 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
   
   getmaxyx(jogo_win,maxY,maxX);
   
-  wattron(jogo_win, COLOR_PAIR(3));
-
   alimInd = 0; /* inicializa alimInd para controlar adição de alimentos */
 
   /* zera mapa */
@@ -280,16 +278,18 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
       }
     }
 
+  wattron(jogo_win, COLOR_PAIR(3)); /* cor do cenário */
+
   /* desenha cenário propriamente dito */
   for(i=0; i<MAXY+1; i++)
     {
       /* mvwprintw(jogo_win, i, 0, "%ls", mapa[i]); */
       wmove(jogo_win, i, 0);
-      waddnwstr(jogo_win, mapa[i], 80);
+      waddnwstr(jogo_win, mapa[i], 80); /* imprime string armazenada no índice i da matriz mapa */
     }
 
   //  mvwprintw(jogo_win, 0, 79, "%ls", L"\u2588"); 
-  wattroff(jogo_win, COLOR_PAIR(3));
+  wattroff(jogo_win, COLOR_PAIR(3)); /* restaura cor padrão */
   fclose(cenario);
   
   //  refresh();
