@@ -355,10 +355,10 @@ void morre(roundData *thisRound)
   wclear(aviso_win);
   wrefresh(aviso_win);
   wclear(jogo_win);
-  mvwprintw(jogo_win, 10, 32, "G A M E  O V E R !");
-  mvwprintw(jogo_win, 12, 36, "PASSOS: %d.", (thisRound->passos));
-  mvwprintw(jogo_win, 14, 31, "NIVEIS FINALIZADOS: %d.", (thisRound->nivel) - 1);
-  mvwprintw(jogo_win, 24, 1, "APERTE <ESC> PARA VOLTAR AO MENU.");
+  mvwprintw(jogo_win, 10, 33, "G A M E  O V E R ");
+  mvwprintw(jogo_win, 12, 36, "PASSOS: %d ", (thisRound->passos));
+  mvwprintw(jogo_win, 14, 31, "NIVEIS FINALIZADOS: %d ", (thisRound->nivel) - 1);
+  mvwprintw(jogo_win, 24, 1, "<ESC> PARA VOLTAR AO MENU ");
   wrefresh(jogo_win);
   do
     {
@@ -671,6 +671,7 @@ void menu(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, 
 	      mvwprintw(jogo_win, 4, 30, "DESENVOLVIDO POR:");
 	      mvwprintw(jogo_win, 6, 20, "RICARDO G. HERDT E PAULO R. LANZARIN");
 	      mvwprintw(jogo_win, 8, 18, "ALGORITMOS E PROGRAMAÇÃO, TURMA C. 2013/1");
+	      mvwprintw(jogo_win, 10, 22, "UFRGS - INSTITUTO DE INFORMÁTICA");
 	      wrefresh(jogo_win);
 	      usleep(5000000);
 	    }
