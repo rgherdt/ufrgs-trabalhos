@@ -16,35 +16,38 @@
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0])) /* macro para determinar tamanho do array de opções */
 
 
-WINDOW *jogo_win;
-WINDOW *info_win;
-WINDOW *aviso_win;
-WINDOW *menu1_win;
+WINDOW *jogo_win; /* janela principal do jogo */
+WINDOW *info_win; /* janela inferior esquerda, exibe informações úteis ao usuário */
+WINDOW *aviso_win; /* janela inferior direita, exibe avisos importantes ao usuário */
+WINDOW *menu1_win; /* janela que abriga o menu principal */
 
-
+/* estrutura para coordenadas da cobra */
 struct pos{
-  int x;
+  int x; 
   int y;
 };
 
 typedef struct pos pos;
 
+ /* estrutura para configurações do nível (incremento da cobra e velocidade) */
 struct levelSettings{
   int velocidade;
   int unidadesInc; /* unidades de incremento */
 };
 
+/* estrutura para os dados da cobra */
 struct snakeData {
   struct pos cobra[MAXTAM]; /* array de pos, formando o corpo inteiro da cobra */
-  struct pos posInc;
-  int tam;
+  struct pos posInc; /* posição de movimento da cobra */
+  int tam; /* tamanho da cobra */
 };
 
-struct roundData {
-  int passos;
-  int alimCount;
-  int nivel;
-  struct pos alimentos[29];
+/* estrutura para dados do nível */
+struct roundData { 
+  int passos; /* contador de passos */
+  int alimCount; /* contador de alimentos */
+  int nivel; /* controle de nível atual */
+  struct pos alimentos[29]; /* alimentos do mapa */
 };
 
 typedef struct snakeData snakeData;
@@ -132,21 +135,22 @@ int main(int argc, char *argv[])
   return 0;
 }
 
+/* loop principal de execução do jogo */
 void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, roundData *thisRound, FILE *cenario, FILE *savegame)
 {
   while(!(*sair))
     {
       timeout(0);
       if((thisSnake->tam) >= (30*(thisRound->nivel)+TAMINIC)) /* testa se o usuário já chegou ao objetivo */
-	setNivel(thisRound, cenario, levelSettings, thisSnake, sair); /* seta novo nível */
-      input(thisSnake, thisRound, cenario, levelSettings, sair, savegame);
+	setNivel(thisRound, cenario, levelSettings, thisSnake, sair); /* constrói novo nível */
+      input(thisSnake, thisRound, cenario, levelSettings, sair, savegame); 
       moveCobra(thisSnake, levelSettings, thisRound, sair);
       imprimeInfos(thisRound, thisSnake);
       tcflush(thisSnake->posInc.x, TCIFLUSH); /* limpa buffer de entrada do terminal */
       tcflush(thisSnake->posInc.y, TCIFLUSH); /* limpa buffer de entrada do terminal */
-      usleep(levelSettings->velocidade);
+      usleep(levelSettings->velocidade); /* garante a velocidade da cobra */
     }
-  morre(thisRound);
+  morre(thisRound); /* volta ao menu */
 }
 
 /* SALVA OS SEGUINTES ATRIBUTOS EM jogo_salvo.bin:
@@ -208,14 +212,15 @@ void loadGame(FILE *savegame, struct roundData *thisRound, struct snakeData *thi
   wrefresh(aviso_win);
 }
 
+/* checa consistência do arquivo cenario'x'.txt*/
 void checaCenario(FILE *cenario, roundData *thisRound, snakeData *thisSnake, int *sair)
 {
   if(cenario != NULL)
     {
       desenhaCenario(cenario, thisRound->alimentos); /* desenha novo cenário */
-      addAlimento(thisRound->alimentos, &(thisRound->alimCount)); 
+      addAlimento(thisRound->alimentos, &(thisRound->alimCount)); /* adiciona alimento */
       initCobra(thisSnake->cobra, &(thisSnake->tam)); /* reinicia a cobra */
-      wmove(jogo_win, thisSnake->cobra[0].y, thisSnake->cobra[0].x);
+      wmove(jogo_win, thisSnake->cobra[0].y, thisSnake->cobra[0].x); 
       desenhaCobra(thisSnake->cobra, &(thisSnake->tam));
     }
   else {
@@ -238,11 +243,11 @@ void setNivel(roundData *thisRound, FILE *cenario, struct levelSettings *levelSe
   thisSnake->posInc.y = 0;
   if(thisRound->nivel <= 3){
     wclear(jogo_win);
-    mvwprintw(jogo_win, 12, 34, "L  E  V  E  L  %d", thisRound->nivel);
+    mvwprintw(jogo_win, 12, 34, "L  E  V  E  L  %d", thisRound->nivel); /* indica o próximo nível ao usuário */
     wrefresh(jogo_win);
     wclear(jogo_win); /* limpa o cenário antigo */
     usleep(1000000); /* delay de entrada do novo cenário */
-    /* abertura do cenariox.txt é feita por aqui, de acordo com o nível, e não na função desenha*/
+    /* abertura do cenariox.txt é feita por aqui, de acordo com o nível*/
     if(thisRound->nivel == 1)
       {
 	cenario = fopen("cenario1.txt", "r");
@@ -265,10 +270,11 @@ void setNivel(roundData *thisRound, FILE *cenario, struct levelSettings *levelSe
 	levelSettings->unidadesInc = 3;	
       }
   }
-  else *sair = 1;
+  else *sair = 1; /* volta ao menu */
 
 }
 
+/* desenha o cenário, presente num arquivo cenario'x'.txt, na janela jogo_win */
 void desenhaCenario(FILE *cenario, struct pos *alimentos)
 {
   int i, j, alimInd, maxY, maxX;
@@ -331,7 +337,7 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
   wrefresh(jogo_win);
 }
 
-
+/* imprime informações úteis ao usuário na janela info_win */
 void imprimeInfos(roundData *thisRound, snakeData *thisSnake)
 {
   int x, y;
@@ -382,20 +388,23 @@ void scanPos(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSet
   wmove(jogo_win, cobra[0].y, cobra[0].x); /* restaura posição */
 }
 
+/* exibe a pontuação e níveis finalizados ao usuário.
+   Após isso, volta ao menu */
 void morre(roundData *thisRound)
 {
   int flag;
-  wclear(info_win);
+  /* clear e refreshes para apagar janelas de informações */
+  wclear(info_win); 
   wrefresh(info_win);
   wclear(aviso_win);
   wrefresh(aviso_win);
   wclear(jogo_win);
   mvwprintw(jogo_win, 10, 33, "G A M E  O V E R ");
-  mvwprintw(jogo_win, 12, 36, "PASSOS: %d ", (thisRound->passos));
-  mvwprintw(jogo_win, 14, 31, "NIVEIS FINALIZADOS: %d ", (thisRound->nivel) - 1);
+  mvwprintw(jogo_win, 12, 36, "PASSOS: %d ", (thisRound->passos)); /* passos totais */
+  mvwprintw(jogo_win, 14, 31, "NIVEIS FINALIZADOS: %d ", (thisRound->nivel) - 1); /* níveis FINALIZADOS */
   mvwprintw(jogo_win, 24, 1, "<ESC> PARA VOLTAR AO MENU ");
   wrefresh(jogo_win);
-  do
+  do /* usuário tem de apertar ESC para voltar ao menu */
     {
       flag = toupper(getch());
     }
@@ -404,6 +413,8 @@ void morre(roundData *thisRound)
   thisRound->passos = 0;
 }
 
+/* Atua na colocação de alimentos presentes no array no cenário
+   Também há a validação e consistência da posição do alimento */
 void addAlimento(struct pos *alimentos, int *alimCount)
 {
   char elem;
@@ -456,6 +467,7 @@ void addAlimento(struct pos *alimentos, int *alimCount)
   wrefresh(jogo_win);
 }
 
+/* desenha a cobra através de um laço */
 void desenhaCobra(struct pos *cobra, int *tam)
 {
   int i, x, y;
@@ -471,6 +483,7 @@ void desenhaCobra(struct pos *cobra, int *tam)
   wrefresh(jogo_win);
 }
 
+/* atua no incremento da cobra quando está ingere um alimento */
 void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSettings *levelSettings)
 {
   int diffX, diffY, i;
@@ -487,6 +500,8 @@ void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSe
     }
 }
 
+/* analisa a entrada do usuário e espera um tempo 
+   indefinido até que o usuário entre algo válido */
 void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, int *sair, FILE *savegame)
 {
   int dir; /* tipo int necessário para reconhecer setas */
@@ -600,6 +615,8 @@ void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct lev
   wrefresh(aviso_win);
 }
 
+/* atua somente na obtenção de confirmação do usuário
+   quando solicitado a responder S/N */
 int opGet(void)
 {
   int flag;
@@ -612,6 +629,7 @@ int opGet(void)
   return flag;
 }
 
+/* atua no deslocamento da cobra no cenário */
 void moveCobra(snakeData *thisSnake, struct levelSettings *levelSettings, roundData *thisRound, int *sair)
 {
   int i;
@@ -637,6 +655,9 @@ void moveCobra(snakeData *thisSnake, struct levelSettings *levelSettings, roundD
     desenhaCobra(thisSnake->cobra, &(thisSnake->tam));
 }
 
+/* função que imprime o menu na tela e o mantém na janela
+   menu1_win até que o programa seja finalizado. É o laço maior
+   que abrange a função play. */
 void menu(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, roundData *thisRound, FILE *cenario, FILE *savegame)
 {
   char *opcoes[] = {"NOVO JOGO", "ABRIR JOGO SALVO", "HIGHSCORES", "CREDITOS", "SAIR", (char *)NULL,}; /* array para itens do menu */
@@ -715,7 +736,7 @@ void menu(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, 
 	  }	
 	}
     }
-  unpost_menu(menu);
-  free(itens);
-  free_menu(menu);
+  unpost_menu(menu); /* tira o menu da tela */
+  free(itens); /* libera memória usada por itens */
+  free_menu(menu); /* libera memória usada pelo menu */
 }
