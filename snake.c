@@ -300,6 +300,8 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
 	i++;
       }
     }
+  wcscpy(mapa[1], mapa[23]);
+  //  wcscpy(mapa[0], mapa[24]);
 
   wattron(jogo_win, COLOR_PAIR(3)); /* cor do cenário */
 
