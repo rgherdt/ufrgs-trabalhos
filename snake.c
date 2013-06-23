@@ -168,8 +168,13 @@ void storeGame(FILE *savegame, struct roundData *thisRound, struct snakeData *th
       wprintw(aviso_win, "O JOGO FOI SALVO!");
       fclose(savegame);
     }
-  else 
-    wprintw(aviso_win, "O SAVEGAME NAO PODE SER ABERTO!");
+  else
+    {
+      wclear(aviso_win);
+      wprintw(aviso_win, "O SAVEGAME NAO PODE SER ABERTO!");
+      wrefresh(aviso_win);
+      usleep(2000000);
+    }
   wrefresh(aviso_win);
 }
 
@@ -193,7 +198,12 @@ void loadGame(FILE *savegame, struct roundData *thisRound, struct snakeData *thi
       fclose(savegame);
     }
   else 
-    wprintw(aviso_win, "O SAVEGAME NAO PÔDE SER ABERTO!\n");
+    {
+      wclear(aviso_win);
+      wprintw(aviso_win, "O SAVEGAME NAO PÔDE SER ABERTO!\n");
+      wrefresh(aviso_win);
+      usleep(2000000);
+    }
 
   wrefresh(aviso_win);
 }
@@ -681,8 +691,14 @@ void menu(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, 
 	    else if(item_name(selec) == "ABRIR JOGO SALVO"){ /* abre último jogo salvo */
 	      wclear(jogo_win);
 	      *sair = 0;
-	      loadGame(savegame, thisRound, thisSnake, levelSettings);
-	      play(thisSnake, sair, levelSettings, thisRound, cenario, savegame);
+	      savegame = fopen("jogo_salvo.bin", "rb");
+	      if(savegame != NULL){
+		fclose(savegame);
+		loadGame(savegame, thisRound, thisSnake, levelSettings);
+		play(thisSnake, sair, levelSettings, thisRound, cenario, savegame);
+	      }
+	      else wprintw(aviso_win, "O JOGO NÃO PÔDE SER CARREGADO");
+	      wrefresh(aviso_win);
 	    }
 	    else if(item_name(selec) == "CREDITOS"){
 	      wclear(jogo_win);
@@ -699,9 +715,7 @@ void menu(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, 
 	  }	
 	}
     }
-  	unpost_menu(menu);
-        free(itens);
-	free_menu(menu);
-  endwin();
+  unpost_menu(menu);
+  free(itens);
+  free_menu(menu);
 }
-
