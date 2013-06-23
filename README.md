@@ -19,11 +19,13 @@ Execução:
 ===========================================================================================
 
 MENU:
+
 	OPÇÕES OFERECIDAS:
-		NOVO JOGO: inicia novo jogo.
-		ABRIR JOGO SALVO: abre o último jogo salvo (se houver algum).
-		CRÉDITOS: mostra os créditos do jogo.
-		SAIR: interrompe a execução.
+		-NOVO JOGO: inicia novo jogo.
+		-ABRIR JOGO SALVO: abre o último jogo salvo (se houver algum).
+		-CRÉDITOS: mostra os créditos do jogo.
+		-SAIR: interrompe a execução.
+
 	OBS.: a interação com o menu se dá com as setas UP e DOWN do teclado
 	e o uso da tecla ENTER para selecionar a opção desejada.
 
@@ -57,7 +59,9 @@ Deve-se atentar às barreiras presentes no cenário: o contato da cobra com as m
 com as bordas do cenário (em amarelo) acarretará na morte da cobra e no fim de jogo.
 
 OBJETIVO DO PRIMEIRO NÍVEL: 35
+
 OBJETIVO DO SEGUNDO NÍVEL: 65
+
 OBJETIVO DO TERCEIRO NÍVEL: 95
 
 ===========================================================================================
