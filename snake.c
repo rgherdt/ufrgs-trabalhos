@@ -141,7 +141,7 @@ void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, 
   while(!(*sair))
     {
       timeout(0);
-      if((thisSnake->tam) >= (29*(levelSettings->unidadesInc)+TAMINIC)) /* testa se o usuário já chegou ao objetivo */
+      if((thisSnake->tam) >= (30*(thisRound->nivel)+TAMINIC)) /* testa se o usuário já chegou ao objetivo */
 	setNivel(thisRound, cenario, levelSettings, thisSnake, sair); /* constrói novo nível */
       input(thisSnake, thisRound, cenario, levelSettings, sair, savegame); 
       moveCobra(thisSnake, levelSettings, thisRound, sair);
@@ -312,6 +312,7 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
       }
     }
   wcscpy(mapa[1], mapa[23]); /* corrige bug da linha extra */
+  //  wcscpy(mapa[0], mapa[24]); /* corrige bug da linha extra */
 
   wattron(jogo_win, COLOR_PAIR(3)); /* cor do cenário */
 
