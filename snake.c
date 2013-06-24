@@ -142,7 +142,7 @@ void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, 
     {
       timeout(0);
       //      if((thisSnake->tam) >= (30*(thisRound->nivel)+TAMINIC)) /* testa se o usuário já chegou ao objetivo */
-      if(thisRound->alimCount >= 31)/* testa se o usuário já chegou ao objetivo */
+      if(thisRound->alimCount >= 30)/* testa se o usuário já chegou ao objetivo */
 	setNivel(thisRound, cenario, levelSettings, thisSnake, sair); /* constrói novo nível */
       input(thisSnake, thisRound, cenario, levelSettings, sair, savegame); 
       moveCobra(thisSnake, levelSettings, thisRound, sair);
@@ -469,7 +469,7 @@ void desenhaCobra(struct pos *cobra, int *tam)
 
   wattron(jogo_win, COLOR_PAIR(1)); /* habilita cor */
   waddch(jogo_win, HEAD); /* cabeça */
-  for(i=1; i<(*tam-3); i++) /* corpo */
+  for(i=1; i<(*tam-2); i++) /* corpo */
     {
       mvwaddch(jogo_win, cobra[i].y, cobra[i].x, CORPO);
     }
