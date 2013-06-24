@@ -312,6 +312,7 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
       }
     }
   wcscpy(mapa[1], mapa[23]); /* corrige bug da linha extra */
+  wcscpy(mapa[0], mapa[24]); /* corrige bug da linha extra */
 
   wattron(jogo_win, COLOR_PAIR(3)); /* cor do cenário */
 
