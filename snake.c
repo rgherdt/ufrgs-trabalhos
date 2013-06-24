@@ -468,7 +468,7 @@ void desenhaCobra(struct pos *cobra, int *tam)
 
   wattron(jogo_win, COLOR_PAIR(1)); /* habilita cor */
   waddch(jogo_win, HEAD); /* cabeça */
-  for(i=1; i<(*tam-1); i++) /* corpo */
+  for(i=1; i<(*tam-2); i++) /* corpo */
     {
       mvwaddch(jogo_win, cobra[i].y, cobra[i].x, CORPO);
     }
