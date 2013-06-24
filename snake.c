@@ -472,7 +472,7 @@ void desenhaCobra(struct pos *cobra, int *tam)
     {
       mvwaddch(jogo_win, cobra[i].y, cobra[i].x, CORPO);
     }
-  mvwaddch(jogo_win, cobra[(*tam)].y, cobra[(*tam)].x, ' '); /* fim da cobra com espaço para 'limpar o rastro' */
+  mvwaddch(jogo_win, cobra[(*tam-1)].y, cobra[(*tam-1)].x, ' '); /* fim da cobra com espaço para 'limpar o rastro' */
   wattroff(jogo_win, COLOR_PAIR(1));
   wrefresh(jogo_win);
 }
