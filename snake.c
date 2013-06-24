@@ -141,8 +141,8 @@ void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, 
   while(!(*sair))
     {
       timeout(0);
-      //      if((thisSnake->tam) >= (30*(thisRound->nivel)+TAMINIC)) /* testa se o usuário já chegou ao objetivo */
-      if(thisRound->alimCount >= 31)/* testa se o usuário já chegou ao objetivo */
+      if((thisSnake->tam) >= (30*(thisRound->nivel)+TAMINIC)) /* testa se o usuário já chegou ao objetivo */
+      /* if(thisRound->alimCount >= 31)/\* testa se o usuário já chegou ao objetivo *\/ */
 	setNivel(thisRound, cenario, levelSettings, thisSnake, sair); /* constrói novo nível */
       input(thisSnake, thisRound, cenario, levelSettings, sair, savegame); 
       moveCobra(thisSnake, levelSettings, thisRound, sair);
@@ -404,6 +404,7 @@ void morre(roundData *thisRound)
       flag = toupper(getch());
     }
   while(flag != 27);
+  thisRound->alimCount = 0;
   thisRound->nivel = 0;
   thisRound->passos = 0;
 }
@@ -592,6 +593,7 @@ void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct lev
       {
 	thisRound->nivel = 0;
 	thisRound->passos = 0;
+	thisRound->alimCount = 0;
 	setNivel(thisRound, cenario, levelSettings, thisSnake, sair);
       }
       break;
