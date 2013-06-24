@@ -141,7 +141,8 @@ void play(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, 
   while(!(*sair))
     {
       timeout(0);
-      if((thisSnake->tam) >= (30*(thisRound->nivel)+TAMINIC)) /* testa se o usuário já chegou ao objetivo */
+      //      if((thisSnake->tam) >= (30*(thisRound->nivel)+TAMINIC)) /* testa se o usuário já chegou ao objetivo */
+      if(thisRound->alimCount >= 30)/* testa se o usuário já chegou ao objetivo */
 	setNivel(thisRound, cenario, levelSettings, thisSnake, sair); /* constrói novo nível */
       input(thisSnake, thisRound, cenario, levelSettings, sair, savegame); 
       moveCobra(thisSnake, levelSettings, thisRound, sair);
@@ -243,7 +244,7 @@ void setNivel(roundData *thisRound, FILE *cenario, struct levelSettings *levelSe
   thisSnake->posInc.y = 0;
   if(thisRound->nivel <= 3){
     wclear(jogo_win);
-    mvwprintw(jogo_win, 12, 34, "L  E  V  E  L  %d", thisRound->nivel); /* indica o próximo nível ao usuário */
+    mvwprintw(jogo_win, 12, 34, "N  I  V  E  L  %d", thisRound->nivel); /* indica o próximo nível ao usuário */
     wrefresh(jogo_win);
     wclear(jogo_win); /* limpa o cenário antigo */
     usleep(1000000); /* delay de entrada do novo cenário */
