@@ -11,7 +11,11 @@ Desenvolvido por: Ricardo Gabriel Herdt e Paulo Renato Lanzarin.
 #libncursesw5-dev
 
 Compilação:
-gcc snake.c -o snake -Wl,-rpath=lib -Llib -lncursesw -lmenu
+- com libncurses instalado no sistema:
+gcc snake.c -o snake -lncursesw lmenu
+
+- com libncurses compilado localmente 
+gcc snake.c -o snake -Wl,-rpath=path-to-lib -L path-to-lib -lncursesw -lmenu
 
 Execução:
 ./snake
