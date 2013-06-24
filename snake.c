@@ -277,19 +277,14 @@ void setNivel(roundData *thisRound, FILE *cenario, struct levelSettings *levelSe
 /* desenha o cenário, presente num arquivo cenario'x'.txt, na janela jogo_win */
 void desenhaCenario(FILE *cenario, struct pos *alimentos)
 {
-  int i, j, alimInd, maxY, maxX;
+  int i, j, alimInd;
   int x, y, len;
   char obj;
   wchar_t mapa[MAXY+1][MAXX+1];
   wchar_t linha[MAXX+1];
   wchar_t *stopwcs, *temp1, *temp2;
 
-  
-  getmaxyx(jogo_win,maxY,maxX);
-  
   alimInd = 0; /* inicializa alimInd para controlar adição de alimentos */
-
-     
 
   /* zera mapa */
   for(i=0; i<MAXY+1; i++)
@@ -316,8 +311,7 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
 	i++;
       }
     }
-  wcscpy(mapa[1], mapa[23]);
-  //  wcscpy(mapa[0], mapa[24]);
+  wcscpy(mapa[1], mapa[23]); /* corrige bug da linha extra */
 
   wattron(jogo_win, COLOR_PAIR(3)); /* cor do cenário */
 
@@ -333,7 +327,6 @@ void desenhaCenario(FILE *cenario, struct pos *alimentos)
   wattroff(jogo_win, COLOR_PAIR(3)); /* restaura cor padrão */
   fclose(cenario);
   
-  //  refresh();
   wrefresh(jogo_win);
 }
 
@@ -370,7 +363,7 @@ void initCobra(struct pos *cobra, int *tam)
     }
 }
 
-/* analisa elementos contidos na posição atual */
+/* analisa elementos contidos na posição atual e chama as ações apropriadas */
 void scanPos(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSettings *levelSettings, roundData *thisRound, int *sair)
 {
   char elem;
@@ -489,7 +482,7 @@ void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSe
   int diffX, diffY, i;
   for(i=0; i<levelSettings->unidadesInc; i++)
     (*tam)++;
-  cobra[*tam].x = appendPos->x;
+  cobra[*tam].x = appendPos->x; /* transmite antigas coordenadas do fim da cobra (obtidas de appendPos) ao novo fim */
   cobra[*tam].y = appendPos->y;
   diffX = cobra[*tam - 1].x - cobra[*tam].x; /* diffX e diffY calculam o sentido de crescimento */
   diffY = cobra[*tam - 1].y - cobra[*tam].y;
@@ -505,7 +498,6 @@ void incCobra(struct pos *cobra, struct pos *appendPos, int *tam, struct levelSe
 void input(snakeData *thisSnake, roundData *thisRound, FILE *cenario, struct levelSettings *levelSettings, int *sair, FILE *savegame)
 {
   int dir; /* tipo int necessário para reconhecer setas */
-
 
   dir = toupper(getch());
   switch(dir)
@@ -636,7 +628,7 @@ void moveCobra(snakeData *thisSnake, struct levelSettings *levelSettings, roundD
   struct pos temp;
   int incFlag = 1;
 
-  temp.x = thisSnake->cobra[thisSnake->tam].x;
+  temp.x = thisSnake->cobra[thisSnake->tam].x; /* armazena coordenadas do final da cobra (uso em incCobra) */
   temp.y = thisSnake->cobra[thisSnake->tam].y;
   /* transfere as coordenadas dos elos de trás pra frente */
   for(i=thisSnake->tam; i>0; i--)
@@ -650,7 +642,7 @@ void moveCobra(snakeData *thisSnake, struct levelSettings *levelSettings, roundD
   wmove(jogo_win, thisSnake->cobra[0].y, thisSnake->cobra[0].x);
   (thisRound->passos)++;
 
-  scanPos(thisSnake->cobra, &temp, &(thisSnake->tam), levelSettings, thisRound, sair);
+  scanPos(thisSnake->cobra, &temp, &(thisSnake->tam), levelSettings, thisRound, sair); 
   if(!(*sair))
     desenhaCobra(thisSnake->cobra, &(thisSnake->tam));
 }
