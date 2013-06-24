@@ -466,6 +466,7 @@ void addAlimento(struct pos *alimentos, int *alimCount)
 void desenhaCobra(struct pos *cobra, int *tam)
 {
   int i, x, y;
+  char elem;
 
   wattron(jogo_win, COLOR_PAIR(1)); /* habilita cor */
   waddch(jogo_win, HEAD); /* cabeça */
@@ -473,7 +474,10 @@ void desenhaCobra(struct pos *cobra, int *tam)
     {
       mvwaddch(jogo_win, cobra[i].y, cobra[i].x, CORPO);
     }
-  mvwaddch(jogo_win, cobra[(*tam)].y, cobra[(*tam)].x, ' '); /* fim da cobra com espaço para 'limpar o rastro' */
+  wmove(jogo_win, cobra[(*tam)].y, cobra[(*tam)].x);
+  elem = (winch(jogo_win) & A_CHARTEXT);
+  if(elem != -120) /* é bloco */
+    waddch(jogo_win, ' '); /* fim da cobra com espaço para 'limpar o rastro' */
   wattroff(jogo_win, COLOR_PAIR(1));
   wrefresh(jogo_win);
 }
