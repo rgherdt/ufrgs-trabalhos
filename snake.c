@@ -660,7 +660,7 @@ void moveCobra(snakeData *thisSnake, struct levelSettings *levelSettings, roundD
    que abrange a função play. */
 void menu(snakeData *thisSnake, int *sair, struct levelSettings *levelSettings, roundData *thisRound, FILE *cenario, FILE *savegame)
 {
-  char *opcoes[] = {"NOVO JOGO", "ABRIR JOGO SALVO", "HIGHSCORES", "CREDITOS", "SAIR", (char *)NULL,}; /* array para itens do menu */
+  char *opcoes[] = {"NOVO JOGO", "ABRIR JOGO SALVO", "CREDITOS", "SAIR", (char *)NULL, " ",}; /* array para itens do menu */
 
   int input, numop, i, menuexit = 0;
   ITEM **itens, *itematual, *selec; /* **itens é o array do tipo ITEM */
