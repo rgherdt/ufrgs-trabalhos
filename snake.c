@@ -6,7 +6,7 @@
 #include <wchar.h>
 #include <string.h>
 #include <menu.h> /* biblioteca de menu do ncurses */
-#define MAXTAM 100 /* tamanho máximo da cobra */
+#define MAXTAM 105 /* tamanho máximo da cobra */
 #define MAXY 24 
 #define MAXX 80
 #define HEAD 'Q'
