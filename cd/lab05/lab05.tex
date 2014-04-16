@@ -1,0 +1,94 @@
+% Created 2013-05-07 Ter 00:37
+\documentclass[a4paper]{article}
+\usepackage{times}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\linespread{1.5}	% double spaces lines
+\usepackage[hmargin=3cm,vmargin=3cm]{geometry}
+\usepackage{indentfirst}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{sectsty}
+\usepackage{enumitem}
+\usepackage[brazil]{babel}
+\usepackage{placeins}
+\hypersetup{%
+    pdfborder = {0 0 0}
+}
+
+
+
+
+\begin{document}
+
+\begin{center}
+
+
+\large{ 
+\uppercase{ Universidade Federal do Rio Grande do Sul\\
+
+Instituto de Informática \\
+
+Curso de Ciência da Computação \\
+
+Circuitos Digitais (2014/1)\\
+}
+
+Prof. Dr. Marcelo de Oliveira Johann \\
+
+Graduandos: \\ Paulo Renato Lanzarin (228818), Ricardo Gabriel Herdt (160622) \\[1cm]
+
+% Title
+\bfseries Relatório do laboratório 05\\[1.0cm]
+}
+
+\end{center}
+\section{Introdução}
+
+	O experimento consistiu em construir no programa Max Plus II os
+circuitos de um meio-somador (\emph{half-adder}, um somador-completo
+(\emph{full-adder}) e um somador de 4-bit.  Objetivou-se com isso, além de
+obter a necessária familiarização com os recursos do programa, estudar tais
+circuitos através da simulação funcional e temporal de suas execuções.
+
+
+\section{Circuitos}
+
+Foram desenvolvidos três circuitos: meio-somador, somador-completo e somador de
+4 bits.
+
+\subsection{Meio-somador (\emph{half-adder})}
+
+Define-se pelas equações:
+
+\begin{equation*}
+	S = \overline{A}B + A\overline{B} = A \oplus B
+\end{equation*}
+
+\begin{center}
+\begin{tabular}{| l | l | l | l |}
+	\hline
+	A	&B	&S	&C	\\
+	\hline
+	0	&0	&0	&0	\\
+	0	&1	&1	&0	\\
+	1	&0	&1	&0	\\
+	1	&1	&1	&1	\\
+	\hline
+\end{tabular}
+\end{center}
+
+
+% Bottom of the page
+
+
+
+
+%\includegraphics[scale=0.7]{verifica_www.png}
+
+
+
+\end{document}
