@@ -125,7 +125,7 @@ $ S = X \oplus Y \oplus C_{in} $
 \FloatBarrier
 \subsection{Somador de 4 bits}
 	Construído com quatro somadores completos, de modo que a saída e o 
-vai-um de cada somador servem de entrada para os somadores seguintes.
+vai-um de cada somador servem de entrada para os somadores seguintes:
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.5]{4bit_adder.png}
@@ -152,8 +152,24 @@ vai-um de cada somador servem de entrada para os somadores seguintes.
 \FloatBarrier
 \subsection{Simulação Temporal}
 	A natureza sequencial do somador completo (construído como um \emph{ripple
-carry}) ocasiona um nítido atraso, o qual pode ser observado nos seguintes
-exemplos de simulação.
+carry}) ocasiona um nítido atraso na propagação do sinal. Não obstante, a
+simulação do atraso via software é arbitrária, uma vez que o atraso independe
+dos valores somados. Isso fica evidente ao comparar-se as somas de 1100 + 0011
+e 1111 + 0001. Como o último provoca um deslocamento e a consequente propagação
+do vai-um a todos os bits, esperava-se um atraso maior que o primeiro, o que
+não refletiu-se nos resultados obtidos:
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.4]{sim_temp_4bit-1.png}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.4]{sim_temp_4bit-2.png}
+  \caption{Simulação Temporal do somador de 4 bits}
+\end{figure}
+
 
 \FloatBarrier
 \section{Conclusão}
