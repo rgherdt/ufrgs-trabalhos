@@ -1,4 +1,3 @@
-% Created 2013-05-07 Ter 00:37
 \documentclass[a4paper]{article}
 \usepackage{times}
 \usepackage[utf8]{inputenc}
@@ -20,11 +19,9 @@
     pdfborder = {0 0 0}
 }
 
-
-
-
 \begin{document}
 
+\begin{titlepage}
 \begin{center}
 
 
@@ -41,13 +38,21 @@ Circuitos Digitais (2014/1)\\
 Prof. Dr. Marcelo de Oliveira Johann \\
 
 Graduandos: \\ Paulo Renato Lanzarin (228818)
-			\\ Ricardo Gabriel Herdt (160622) \\[1cm]
+			\\ Ricardo Gabriel Herdt (160622) \\ [4.5cm]
+
 
 % Title
-\bfseries Relatório do laboratório 05\\[1.0cm]
-}
+\LARGE {\bfseries Relatório do laboratório 05: \\
+	Projeto de somadores simples\\[1.0cm]
+}}
+
+
+\vfill
+
+Porto Alegre, 10 de abril de 2014
 
 \end{center}
+\end{titlepage}
 \section{Introdução}
 
 	O experimento consistiu em construir no programa Max Plus II os
@@ -132,6 +137,7 @@ vai-um de cada somador servem de entrada para os somadores seguintes:
   \caption{Diagrama de um somador de 4 bits}
 \end{figure}
 
+\newpage
 \FloatBarrier
 \section{Resultados das Simulações}
 
@@ -147,6 +153,13 @@ vai-um de cada somador servem de entrada para os somadores seguintes:
   \includegraphics[scale=0.3]{sim_func_full_adder.png}
   \caption{Simulação Funcional do somador completo}
 \end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.3]{sim_func_4bit_adder.png}
+  \caption{Simulação Funcional do somador completo}
+\end{figure}
+
 
 
 \FloatBarrier
@@ -180,7 +193,8 @@ abstração. Este desenvolvimento em etapas fica evidente no uso de uma porta
 XOR para o projeto do meio somador, o qual por sua vez é empregado como unidade
 lógica na composição do somador completo. Por fim, pôde-se obter facilmente
 um somador de 4 bits através da combinação de diversos somadores completos.
-	As simulações realizadas, embora careçam de realismo, transmitem uma
-noção do comportamento temporal dos circuitos, bem como de suas implicações. [desenvolver]
-
+	As simulações funcionais realizadas permitiram comprovar a correção do sistema.
+O recurso de simulação temporal, por outro lado, embora útil para introduzir
+a noção do atraso ao circuito, carece de precisão, como ficou evidente no experimento
+realizado.
 \end{document}
