@@ -40,7 +40,8 @@ Circuitos Digitais (2014/1)\\
 
 Prof. Dr. Marcelo de Oliveira Johann \\
 
-Graduandos: \\ Paulo Renato Lanzarin (228818), Ricardo Gabriel Herdt (160622) \\[1cm]
+Graduandos: \\ Paulo Renato Lanzarin (228818)
+			\\ Ricardo Gabriel Herdt (160622) \\[1cm]
 
 % Title
 \bfseries Relatório do laboratório 05\\[1.0cm]
@@ -50,7 +51,7 @@ Graduandos: \\ Paulo Renato Lanzarin (228818), Ricardo Gabriel Herdt (160622) \\
 \section{Introdução}
 
 	O experimento consistiu em construir no programa Max Plus II os
-circuitos de um meio-somador (\emph{half-adder}, um somador-completo
+circuitos de um meio-somador (\emph{half-adder}), um somador-completo
 (\emph{full-adder}) e um somador de 4-bit.  Objetivou-se com isso, além de
 obter a necessária familiarização com os recursos do programa, estudar tais
 circuitos através da simulação funcional e temporal de suas execuções.
@@ -130,6 +131,29 @@ vai-um de cada somador servem de entrada para os somadores seguintes.
   \includegraphics[scale=0.5]{4bit_adder.png}
   \caption{Diagrama de um somador de 4 bits}
 \end{figure}
+
+\FloatBarrier
+\section{Resultados das Simulações}
+
+\subsection{Simulações Funcionais}
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.3]{sim_func_half_adder.png}
+  \caption{Simulação Funcional do meio somador}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.3]{sim_func_full_adder.png}
+  \caption{Simulação Funcional do somador completo}
+\end{figure}
+
+
+\FloatBarrier
+\subsection{Simulação Temporal}
+	A natureza sequencial do somador completo (construído como um \emph{ripple
+carry}) ocasiona um nítido atraso, o qual pode ser observado nos seguintes
+exemplos de simulação.
 
 \FloatBarrier
 \section{Conclusão}
