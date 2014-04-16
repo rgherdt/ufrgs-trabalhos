@@ -14,7 +14,8 @@
 \usepackage{sectsty}
 \usepackage{enumitem}
 \usepackage[brazil]{babel}
-\usepackage{placeins}
+\usepackage{placeins} %mantem figuras na secao com \FloatBarrier
+\usepackage{fixltx2e} %\textsubscript
 \hypersetup{%
     pdfborder = {0 0 0}
 }
@@ -57,18 +58,17 @@ circuitos através da simulação funcional e temporal de suas execuções.
 
 \section{Circuitos}
 
-Foram desenvolvidos três circuitos: meio-somador, somador-completo e somador de
+Foram desenvolvidos três circuitos: meio somador, somador completo e somador de
 4 bits.
 
-\subsection{Meio-somador (\emph{half-adder})}
+\subsection{Meio somador (\emph{half-adder})}
 
-Define-se pelas equações:
+$S = \overline{A}B + A\overline{B} = A \oplus B $
 
-\begin{equation*}
-	S = \overline{A}B + A\overline{B} = A \oplus B
-\end{equation*}
+$C = A . B$
 
-\begin{center}
+\begin{table}[h]
+\centering
 \begin{tabular}{| l | l | l | l |}
 	\hline
 	A	&B	&S	&C	\\
@@ -79,16 +79,68 @@ Define-se pelas equações:
 	1	&1	&1	&1	\\
 	\hline
 \end{tabular}
-\end{center}
+\caption{Tabela verdade do meio somador}
+\end{table}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=0.9]{half_adder.png}
+  \caption{Diagrama de um meio somador}
+\end{figure}
 
 
-% Bottom of the page
+
+\FloatBarrier
+\subsection{Somador Completo (\emph{full-adder})}
+
+$ S = X \oplus Y \oplus C_{in} $
+
+\begin{table}[h]
+\centering
+\begin{tabular}{| *{3}{p{0.6cm} |} | *{2}{p{0.6cm}|}}
+	\hline
+	A	&B	&C\textsubscript{in}	&S	&C\textsubscript{out}\\
+	\hline
+	0	&0	&0	&0	&0	\\
+	0	&0	&1	&1	&0	\\
+	0	&1	&0	&1	&0	\\
+	0	&1	&1	&0	&1	\\
+	1	&0	&0	&1	&0	\\
+	1	&0	&1	&0	&1	\\
+	1	&1	&0	&0	&1	\\
+	1	&1	&1	&1	&1	\\
+	\hline
+\end{tabular}
+\caption{Tabela verdade do somador completo}
+\end{table}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=0.5]{full_adder.png}
+  \caption{Diagrama de um somador completo}
+\end{figure}
 
 
+\FloatBarrier
+\subsection{Somador de 4 bits}
+	Construído com quatro somadores completos, de modo que a saída e o 
+vai-um de cada somador servem de entrada para os somadores seguintes.
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.5]{4bit_adder.png}
+  \caption{Diagrama de um somador de 4 bits}
+\end{figure}
 
-
-%\includegraphics[scale=0.7]{verifica_www.png}
-
-
+\FloatBarrier
+\section{Conclusão}
+	Este simples experimento torna nítidas as vantagens de se encapsular 
+circuitos inteiros e utilizá-los na construção de estruturas mais complexas,
+permitindo ao projetista do circuito raciocinar em níveis mais elevados de
+abstração. Este desenvolvimento em etapas fica evidente no uso de uma porta
+XOR para o projeto do meio somador, o qual por sua vez é empregado como unidade
+lógica na composição do somador completo. Por fim, pôde-se obter facilmente
+um somador de 4 bits através da combinação de diversos somadores completos.
+	As simulações realizadas, embora careçam de realismo, transmitem uma
+noção do comportamento temporal dos circuitos, bem como de suas implicações. [desenvolver]
 
 \end{document}
