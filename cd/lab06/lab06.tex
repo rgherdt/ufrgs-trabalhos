@@ -44,28 +44,31 @@ Graduandos: \\ Paulo Renato Lanzarin (228818)
 
 % Title
 \LARGE {\bfseries Relatório do laboratório 06: \\
-	Projeto de um decodificador para 7 segmentos\\[1.0cm]
+	Projeto de decodificador para 7 segmentos\\[1.0cm]
 }}
 
 
 \vfill
 
-Porto Alegre, 10 de abril de 2014
+Porto Alegre, 24 de abril de 2014
 
 \end{center}
 \end{titlepage}
-\section{Experimento}
+\section{Descrição}
 
 	O projeto deste laboratório consistiu na elaboração de um decodificador
 para 7 segmentos. Mais precisamente, os 4 bits de entrada são decodificados
-para o correspondente dígito de 0 a 9, desenhado em um conjunto de 7 LEDs. Para
- tanto, a partir de uma tabela verdade construída relacionando cada valor de
-entrada com os segmentos acionados, minimizou-se a correspondente função
-booleana através de mapas de Karnaugh e construiu-se o circuito.
+para o correspondente dígito de 0 a 9 (os quais são "desenhados" em segmentos
+de LED's enumerados de 'a' a 'g'). Para tanto, a partir de uma tabela verdade
+construída relacionando cada valor de entrada com os segmentos acionados,
+minimizou-se a correspondente função booleana através de mapas de Karnaugh e
+construiu-se o circuito.
 
 
 
-\section{Circuitos}
+\FloatBarrier
+\section{Experimento}
+
 
 \begin{table}[h]
 \centering
@@ -87,12 +90,85 @@ booleana através de mapas de Karnaugh e construiu-se o circuito.
 \caption{Tabela verdade}
 \end{table}
 
+\subsection{Equações minimizadas}
 
-%\begin{figure}[h!]
-%  \centering
-%  \includegraphics[scale=0.9]{half_adder.png}
-%  \caption{Diagrama de um meio somador}
-%\end{figure}
+$a: i_0.i_2 + i_1 + i_3 + \neg i_0.\neg i_2$
+
+$b: ~i_3.~i_2 + ~i_1.~i_0 + i_3 + i_1i_0$
+
+$c: i_0 + ~i_1 + i_2 + i_3$
+
+$d: ~i_2.~i_0 + i_2.~i_1.i_0 + i_1.~i_2 + i_1.i_0$
+
+$e: ~i_0.~i_2 + i_1.~i_0$
+
+$f: ~i_0.~i_1 + i_3 + ~i_0.i_2.~i_3 + ~i_1.i_2.~i_3$
+
+$g: i_1.~i_0 + ~i_1.i_2 + i_3 + i_1.~i_2$
+
+\FloatBarrier
+\subsection{Diagramas}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=0.7]{dec_4-7.png}
+  \caption{Visão geral do circuito}
+\end{figure}
+
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=0.7]{dec_a.png}
+  \caption{Decodificador 'a'}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=0.7]{dec_b.png}
+  \caption{Decodificador 'b'}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=0.7]{dec_c.png}
+  \caption{Decodificador 'c'}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=0.7]{dec_d.png}
+  \caption{Decodificador 'd'}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=0.7]{dec_e.png}
+  \caption{Decodificador 'e'}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=0.7]{dec_f.png}
+  \caption{Decodificador 'f'}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=0.7]{dec_g.png}
+  \caption{Decodificador 'g'}
+\end{figure}
+
+\FloatBarrier
+\subsection{Simulação}
+
+Segue o resultado da simulação funcional, onde os dígitos aparecem em ordem decrescente.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=0.4]{simulacao.png}
+  \caption{Simulação Funcional}
+\end{figure}
+
 
 
 \FloatBarrier
