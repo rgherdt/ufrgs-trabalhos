@@ -67,7 +67,10 @@ construiu-se o circuito.
 
 
 \FloatBarrier
-\section{Experimento}
+\section{Tabela Verdade}
+
+	As funções de decodificação para ativação de cada LED (obtidas a partir da minimização por mapa de Karnaugh através dos valores da tabela-verdade acima) e a montagem dos circuitos especificos são como seguem nas subseções.
+
 
 
 \begin{table}[h]
@@ -90,7 +93,7 @@ construiu-se o circuito.
 \caption{Tabela verdade}
 \end{table}
 
-\subsection{Equações minimizadas}
+\section{Equações minimizadas}
 
 $a: i_2.i_0 + i_1 + i_3 + \neg i_2.\neg i_0$
 
@@ -107,7 +110,13 @@ $f: \neg i_1.\neg i_0 + i_3 + \neg i_3.i_2.\neg i_0 + \neg i_3.i_2.\neg i_1$
 $g: i_1.\neg i_0 + i_2.\neg i_1 + i_3 + \neg i_2.i_1$
 
 \FloatBarrier
-\subsection{Diagramas}
+
+\section{Circuitos}
+
+	O decodificador de 7 segmentos foi projetado em blocos no programa \emph{Max+plus II}. Foram dispostas entradas de i0 a i3 que são conectadas em decodificadores menores projetados especificamentes para as funções de cada LED e que levam cada um a uma saída (que consistem dos correspondentes LEDs do dígito).
+	A tabela verdade do decodificador é como segue, com 0-9 representando os dígitos que são ativados e a-g representando os LEDs correspondentes do dígito.
+
+
 
 \begin{figure}[h!]
   \centering
@@ -159,9 +168,9 @@ $g: i_1.\neg i_0 + i_2.\neg i_1 + i_3 + \neg i_2.i_1$
 \end{figure}
 
 \FloatBarrier
-\subsection{Simulação}
+\section{Simulação}
 
-Segue o resultado da simulação funcional, onde os dígitos aparecem em ordem decrescente.
+A simulação funcional foi organizada de modo a cobrir todas as combinações possiveis para ativar os dígitos de 0 a 9 (como pode ser conferido na tabela verdade da seção 2). O resultado é tal como segue na figura:
 
 \begin{figure}[h!]
   \centering
@@ -173,6 +182,6 @@ Segue o resultado da simulação funcional, onde os dígitos aparecem em ordem d
 \FloatBarrier
 
 \section{Conclusão}
-
+O experimento foi importante ao concretizar a noção  de otimização de circuitos através da minimização por mapas de Karnaugh. Entrentanto, nota-se que isto foi possível levando em conta que o projeto em questao é de um circuito relativamente simples e, para algo mais complexo, seria impraticável proceder desta maneira.
 
 \end{document}
