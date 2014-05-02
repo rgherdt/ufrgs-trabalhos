@@ -80,11 +80,18 @@ Porto Alegre, 01 de Maiol de 2014
 \FloatBarrier
 
 \subsection{Mutiplexador de 8 para 16}
-	O MUX2:1 utilizado na composição do MUX8:16 é tal qual esta no diagrama a seguir:
+	O MUX2:1 utilizado na composição do MUX8:16 é tal qual está no seguinte diagrama:
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=0.9]{mux_2-1.jpg}
+  \includegraphics[scale=0.8]{mux_2-1.jpg}
   \caption{Diagrama esquemático do MUX2:1 retirado do \emph{Max+plus II}}
+\end{figure}
+	
+	O MUX16:8, o qual recebe 2 entradas de 8 bits e gera uma saida de 8 bits através de 8 multiplexadores de 2:1 com um bit de seleção s0 e tal como segue no diagrama:
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.73]{mux_16-8.jpg}
+  \caption{Diagrama esquemático do MUX16:8 retirado do \emph{Max+plus II}}
 \end{figure}
 
 
@@ -93,7 +100,7 @@ Porto Alegre, 01 de Maiol de 2014
 
 \section{Simulação}
 
-A simulação funcional dos circuitos projetados estão expostas nas subseções seguintes e foram retiradas do \emph{Max+plus II}.
+	A simulação funcional dos circuitos projetados estão expostas nas subseções seguintes e foram retiradas do \emph{Max+plus II}.
 
 \subsection{Simulação do decodificador de 4 para 16}
 \begin{figure}[h]
@@ -106,18 +113,20 @@ A simulação funcional dos circuitos projetados estão expostas nas subseções
 
 \FloatBarrier
 
-\subsection{Simulação do multiplexador de 8 para 16}
+\subsection{Simulação funcional do multiplexador de 8 para 16}
 
-
-
-
-\FloatBarrier
+	A simulação funcional exposta a seguir não pôde cobrir todas as possibilidades de entradas e saidas pelo fato de haver um alto número de combinações possíveis. A seguir, vê-se trechos da simulação com o bit de seleção s0 em '0' e em '1':
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.45]{mux_16-8_simulacao1.jpg}
+  \caption{Simulação funcional do MUX16:8}
+\end{figure}
 
 
 
 \FloatBarrier
 
 \section{Conclusão}
-O experimento foi importante ao concretizar a noção  de otimização de circuitos através da minimização por mapas de Karnaugh. Entrentanto, nota-se que isto foi possível levando em conta que o projeto em questao é de um circuito relativamente simples e, para algo mais complexo, seria impraticável proceder desta maneira.
+
 
 \end{document}

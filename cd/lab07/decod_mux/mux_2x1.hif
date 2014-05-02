@@ -28,28 +28,11 @@ FILES
 	{
 		mux_2x1 [] []
 		{
-			1 [] [];
-		}
-	}
-	mux_16x8.gdf
-	{
-		mux_16x8 [] []
-		{
 			0 [] [];
 		}
 	}
 }
 TREE
 {
-	mux_16x8::(0,0):(0): mux_16x8.gdf
-	{
-		mux_2x1::(0,0):(1): mux_2x1.gdf;
-		mux_2x1::(0,0):(2): mux_2x1.gdf;
-		mux_2x1::(0,0):(3): mux_2x1.gdf;
-		mux_2x1::(0,0):(4): mux_2x1.gdf;
-		mux_2x1::(0,0):(8): mux_2x1.gdf;
-		mux_2x1::(0,0):(7): mux_2x1.gdf;
-		mux_2x1::(0,0):(6): mux_2x1.gdf;
-		mux_2x1::(0,0):(5): mux_2x1.gdf;
-	}
+	mux_2x1::(0,0):(0): mux_2x1.gdf;
 }

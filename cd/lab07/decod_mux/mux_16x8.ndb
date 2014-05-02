@@ -14,7 +14,7 @@ j	|mux_2x1:3|
 v	|mux_2x1:2|
 "$	|mux_2x1:1|
 
-The number of name info structs is : 80
+The number of name info structs is : 73
 
 InsOrder BitField SymTableIndex NextSyn SynParent Loc ChainType NextChain ChainParent FanOut DirExp ParExp ShareExp NodeName
 -------- -------- ------------- ------- --------- --- --------- --------- ----------- ------ ------ ------ -------- --------
@@ -34,67 +34,60 @@ $	IGdp	!	a10	t
 /	IGdp	!	a7	w
 0	IGdp	!	a8	v
 1	IGdp	!	a9	u
-2	IGdq	!	d0	"0
-3	IGdq	!	d1	"/
-4	IGdq	!	d2	".
-5	IGdq	!	d3	"-
-6	IGdq	!	d4	",
-7	IGdq	!	d5	"+
-8	IGdq	!	d6	"*
-9	IGdq	!	d7	")
-:	IGdp	!	s0	"(
-;	IGdp	!	s1	"'
-<	IGdp	!	s2	"&
-=	IGdp	!	s3	"%
->	IGdp	!	s4	"$
-?	IGdp	!	s5	"#
-@	IGdp	!	s6	""
-A	IGdp	!	s7	"!
-B	IVOQ	"$	G	:10	#\
-C	IGdW	"$	:19	#]
-D	IGdW	"$	:20	#^
-E	IVOQ	"$	F	:21	#_
-F	INu}	"$	E	a0	#_
-G	INu}	"$	B	~s0	#\
-H	IVOQ	v	M	:10	#P
-I	IGdW	v	:19	#Q
-J	IGdW	v	:20	#R
-K	IVOQ	v	L	:21	#S
-L	INu}	v	K	a0	#S
-M	INu}	v	H	~s0	#P
-N	IVOQ	j	S	:10	#D
-O	IGdW	j	:19	#E
-P	IGdW	j	:20	#F
-Q	IVOQ	j	R	:21	#G
-R	INu}	j	Q	a0	#G
-S	INu}	j	N	~s0	#D
-T	IVOQ	^	Y	:10	#8
-U	IGdW	^	:19	#9
-V	IGdW	^	:20	#:
-W	IVOQ	^	X	:21	#;
-X	INu}	^	W	a0	#;
-Y	INu}	^	T	~s0	#8
-Z	IVOQ	R	_	:10	#,
-[	IGdW	R	:19	#-
-\	IGdW	R	:20	#.
-]	IVOQ	R	^	:21	#/
-^	INu}	R	]	a0	#/
-_	INu}	R	Z	~s0	#,
-`	IVOQ	F	e	:10	"~
-a	IGdW	F	:19	#!
-b	IGdW	F	:20	#"
-c	IVOQ	F	d	:21	##
-d	INu}	F	c	a0	##
-e	INu}	F	`	~s0	"~
-f	IVOQ	:	k	:10	"r
-g	IGdW	:	:19	"s
-h	IGdW	:	:20	"t
-i	IVOQ	:	j	:21	"u
-j	INu}	:	i	a0	"u
-k	INu}	:	f	~s0	"r
-l	IVOQ	.	q	:10	"e
-m	IGdW	.	:19	"f
-n	IGdW	.	:20	"g
-o	IVOQ	.	p	:21	"h
-p	INu}	.	o	a0	"h
-q	INu}	.	l	~s0	"e
+2	IGdq	!	d0	")
+3	IGdq	!	d1	"(
+4	IGdq	!	d2	"'
+5	IGdq	!	d3	"&
+6	IGdq	!	d4	"%
+7	IGdq	!	d5	"$
+8	IGdq	!	d6	"#
+9	IGdq	!	d7	""
+:	IGdp	!	s0	"!
+;	IVOQ	"$	@	:10	#T
+<	IGdW	"$	:19	#U
+=	IGdW	"$	:20	#V
+>	IVOQ	"$	?	:21	#W
+?	INu}	"$	>	a0	#W
+@	INu}	"$	;	~s0	#T
+A	IVOQ	v	F	:10	#H
+B	IGdW	v	:19	#I
+C	IGdW	v	:20	#J
+D	IVOQ	v	E	:21	#K
+E	INu}	v	D	a0	#K
+F	INu}	v	A	~s0	#H
+G	IVOQ	j	L	:10	#<
+H	IGdW	j	:19	#=
+I	IGdW	j	:20	#>
+J	IVOQ	j	K	:21	#?
+K	INu}	j	J	a0	#?
+L	INu}	j	G	~s0	#<
+M	IVOQ	^	R	:10	#0
+N	IGdW	^	:19	#1
+O	IGdW	^	:20	#2
+P	IVOQ	^	Q	:21	#3
+Q	INu}	^	P	a0	#3
+R	INu}	^	M	~s0	#0
+S	IVOQ	R	X	:10	#$
+T	IGdW	R	:19	#%
+U	IGdW	R	:20	#&
+V	IVOQ	R	W	:21	#'
+W	INu}	R	V	a0	#'
+X	INu}	R	S	~s0	#$
+Y	IVOQ	F	^	:10	"v
+Z	IGdW	F	:19	"w
+[	IGdW	F	:20	"x
+\	IVOQ	F	]	:21	"y
+]	INu}	F	\	a0	"y
+^	INu}	F	Y	~s0	"v
+_	IVOQ	:	d	:10	"j
+`	IGdW	:	:19	"k
+a	IGdW	:	:20	"l
+b	IVOQ	:	c	:21	"m
+c	INu}	:	b	a0	"m
+d	INu}	:	_	~s0	"j
+e	IVOQ	.	j	:10	"]
+f	IGdW	.	:19	"^
+g	IGdW	.	:20	"_
+h	IVOQ	.	i	:21	"`
+i	INu}	.	h	a0	"`
+j	INu}	.	e	~s0	"]
