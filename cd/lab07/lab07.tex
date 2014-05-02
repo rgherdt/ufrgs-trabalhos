@@ -56,7 +56,16 @@ Porto Alegre, 01 de Maiol de 2014
 \end{titlepage}
 \section{Descrição}
 
-	O projeto deste laboratório consistiu na elaboração de um decodificador de 4 para 16 e um multiplexador de 8 para 16, ambos desenvolvidos na ferramenta \emph{Max+plus II}. O decodificador, de entradas a[3..0], realiza a decodificação através de 16 portas OR que selecionam  as combinações binárias das entradas (0000, 0001, ..., 1111) em saídas b[15..0]. O multiplexador, por sua vez, foi desenvolvido em partes: primeiramente, foi projetado um MUX 2:1 com um sinal de seleção, entradas d[1..0] e saída a0 utilizando duas portas AND e uma OR selecionando as entradas. Tal MUX foi definido como um bloco e utilizado para compor o multiplexador 8:16, que nada mais é que oito MUX2:1 dispostos com um mesmo sinal de seleção s0.
+	O projeto deste laboratório consistiu na elaboração de um decodificador
+de 4 para 16 e um multiplexador de 8 para 16, ambos desenvolvidos na ferramenta
+\emph{Max+plus II}. O decodificador, de entradas a[3..0], realiza a
+decodificação através de 16 portas OR que selecionam  as combinações binárias
+das entradas (0000, 0001, ..., 1111) em saídas b[15..0]. O multiplexador, por
+sua vez, foi desenvolvido em partes: primeiramente, foi projetado um MUX 2:1
+com um sinal de seleção, entradas d[1..0] e saída a0 utilizando duas portas AND
+e uma OR selecionando as entradas. Tal MUX foi definido como um bloco e
+utilizado para compor o multiplexador 16:8, que nada mais é que oito MUX2:1
+dispostos com um mesmo sinal de seleção s0.
 
 
 
@@ -87,7 +96,7 @@ Porto Alegre, 01 de Maiol de 2014
   \caption{Diagrama esquemático do MUX2:1 retirado do \emph{Max+plus II}}
 \end{figure}
 	
-	O MUX16:8, o qual recebe 2 entradas de 8 bits e gera uma saida de 8 bits através de 8 multiplexadores de 2:1 com um bit de seleção s0 e tal como segue no diagrama:
+	O MUX16:8, o qual recebe 2 entradas de 8 bits e gera uma saída de 8 bits através de 8 multiplexadores de 2:1 com um bit de seleção s0 e tal como segue no diagrama:
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.73]{mux_16-8.jpg}
@@ -113,9 +122,12 @@ Porto Alegre, 01 de Maiol de 2014
 
 \FloatBarrier
 
-\subsection{Simulação funcional do multiplexador de 8 para 16}
+\subsection{Simulação funcional do multiplexador de 16 para 8}
 
-	A simulação funcional exposta a seguir não pôde cobrir todas as possibilidades de entradas e saidas pelo fato de haver um alto número de combinações possíveis. A seguir, vê-se trechos da simulação com o bit de seleção s0 em '0' e em '1':
+	A simulação funcional exposta a seguir não pôde cobrir todas as
+possibilidades de entradas e saídas pelo fato de haver um alto número de
+combinações possíveis. A seguir, vê-se trechos da simulação com o bit de
+seleção s0 em '0' e em '1':
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.45]{mux_16-8_simulacao1.jpg}
@@ -128,5 +140,12 @@ Porto Alegre, 01 de Maiol de 2014
 
 \section{Conclusão}
 
+Multiplexadores e decodificadores são componentes fundamentais na construção de
+estruturas computacionais mais complexas, seja na decodificação de instruções
+em um processador, endereçamento em memória, roteamento de sinais ou mesmo em
+seus usos na implementação de quaisquer funções lógicas. Não obstante, esta
+flexibilidade traz consigo a desvantagem do custo adicional devido ao
+desperdício, uma vez que todo o circuito precisa atuar, embora apenas um
+subconjunto do mesmo seja aproveitado a cada operação.
 
 \end{document}
