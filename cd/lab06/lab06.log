@@ -1,10 +1,7 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.4.23)  27 APR 2014 18:50
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.4.23)  24 APR 2014 00:44
 entering extended mode
-**C:/Users/Paulo/Documents/GitHub/ufrgs-trabalhos/teoria/fatorial_ordena/fatori
-al_ordena.tex
-
-(C:/Users/Paulo/Documents/GitHub/ufrgs-trabalhos/teoria/fatorial_ordena/fatoria
-l_ordena.tex
+**C:/Users/Paulo/Documents/GitHub/ufrgs-trabalhos/cd/lab06/lab06.tex
+(C:/Users/Paulo/Documents/GitHub/ufrgs-trabalhos/cd/lab06/lab06.tex
 LaTeX2e <2011/06/27>
 Babel <v3.8m> and hyphenation patterns for english, afrikaans, ancientgreek, ar
 abic, armenian, assamese, basque, bengali, bokmal, bulgarian, catalan, coptic, 
@@ -292,6 +289,17 @@ Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
 \Gin@req@height=\dimen103
 \Gin@req@width=\dimen104
 )
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\amssymb.sty"
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\amsfonts.sty"
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\@emptytoks=\toks17
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+))
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\hyperref\hyperref.sty"
 Package: hyperref 2012/11/06 v6.83m Hypertext links for LaTeX
 
@@ -422,7 +430,7 @@ Package: geometry 2010/09/12 v5.6 Page Geometry
 \Gm@layoutheight=\dimen114
 \Gm@layouthoffset=\dimen115
 \Gm@layoutvoffset=\dimen116
-\Gm@dimlist=\toks17
+\Gm@dimlist=\toks18
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\geometry\geometry.cfg"))
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\tools\indentfirst.sty"
@@ -438,7 +446,7 @@ Package: amstext 2000/06/29 v2.01
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsmath\amsgen.sty"
 File: amsgen.sty 1999/11/30 v2.0
-\@emptytoks=\toks18
+\@emptytoks=\toks19
 \ex@=\dimen117
 ))
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsmath\amsbsy.sty"
@@ -468,35 +476,35 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 567.
 \dotsspace@=\muskip11
 \c@parentequation=\count108
 \dspbrk@lvl=\count109
-\tag@help=\toks19
+\tag@help=\toks20
 \row@=\count110
 \column@=\count111
 \maxfields@=\count112
-\andhelp@=\toks20
+\andhelp@=\toks21
 \eqnshift@=\dimen120
 \alignsep@=\dimen121
 \tagshift@=\dimen122
 \tagwidth@=\dimen123
 \totwidth@=\dimen124
 \lineht@=\dimen125
-\@envbody=\toks21
+\@envbody=\toks22
 \multlinegap=\skip45
 \multlinetaggap=\skip46
-\mathdisplay@stack=\toks22
+\mathdisplay@stack=\toks23
 LaTeX Info: Redefining \[ on input line 2665.
 LaTeX Info: Redefining \] on input line 2666.
 )
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amscls\amsthm.sty"
 Package: amsthm 2004/08/06 v2.20
-\thm@style=\toks23
-\thm@bodyfont=\toks24
-\thm@headfont=\toks25
-\thm@notefont=\toks26
-\thm@headpunct=\toks27
+\thm@style=\toks24
+\thm@bodyfont=\toks25
+\thm@headfont=\toks26
+\thm@notefont=\toks27
+\thm@headpunct=\toks28
 \thm@preskip=\skip47
 \thm@postskip=\skip48
 \thm@headsep=\skip49
-\dth@everypar=\toks28
+\dth@everypar=\toks29
 )
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\sectsty\sectsty.sty"
 Package: sectsty 2002/02/25 v2.0.2 Commands to change all sectional heading sty
@@ -506,7 +514,7 @@ les
 Package: enumitem 2011/09/28 v3.5.2 Customized lists
 \labelindent=\skip50
 \enit@outerparindent=\dimen126
-\enit@toks=\toks29
+\enit@toks=\toks30
 \enit@inbox=\box28
 \enitdp@description=\count113
 )
@@ -533,83 +541,11 @@ Package babel Info: Making " an active character on input line 145.
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\placeins\placeins.sty"
 Package: placeins 2005/04/18  v 2.2
 )
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\txfonts\txfonts.sty"
-Package: txfonts 2008/01/22 v3.2.1
-LaTeX Font Info:    Redeclaring symbol font `operators' on input line 21.
-LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmr/m/n --> OT1/txr/m/n on input line 21.
-LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmr/bx/n --> OT1/txr/m/n on input line 21.
-LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/txr/m/n --> OT1/txr/bx/n on input line 22.
-\symitalic=\mathgroup4
-LaTeX Font Info:    Overwriting symbol font `italic' in version `bold'
-(Font)                  OT1/txr/m/it --> OT1/txr/bx/it on input line 26.
-LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 29.
-LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/cmr/bx/n --> OT1/txr/bx/n on input line 29.
-LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/cmr/bx/n --> OT1/txr/bx/n on input line 29.
-LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 30.
-LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/cmr/m/it --> OT1/txr/m/it on input line 30.
-LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmr/bx/it --> OT1/txr/m/it on input line 30.
-LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/txr/m/it --> OT1/txr/bx/it on input line 31.
-LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 40.
-LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> OT1/txss/m/n on input line 40.
-LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> OT1/txss/m/n on input line 40.
-LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/txss/m/n --> OT1/txss/b/n on input line 41.
-LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 50.
-LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/cmtt/m/n --> OT1/txtt/m/n on input line 50.
-LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> OT1/txtt/m/n on input line 50.
-LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/txtt/m/n --> OT1/txtt/b/n on input line 51.
-LaTeX Font Info:    Redeclaring symbol font `letters' on input line 58.
-LaTeX Font Info:    Overwriting symbol font `letters' in version `normal'
-(Font)                  OML/cmm/m/it --> OML/txmi/m/it on input line 58.
-LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
-(Font)                  OML/cmm/b/it --> OML/txmi/m/it on input line 58.
-LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
-(Font)                  OML/txmi/m/it --> OML/txmi/bx/it on input line 59.
-\symlettersA=\mathgroup5
-LaTeX Font Info:    Overwriting symbol font `lettersA' in version `bold'
-(Font)                  U/txmia/m/it --> U/txmia/bx/it on input line 67.
-LaTeX Font Info:    Redeclaring symbol font `symbols' on input line 77.
-LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
-(Font)                  OMS/cmsy/m/n --> OMS/txsy/m/n on input line 77.
-LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
-(Font)                  OMS/cmsy/b/n --> OMS/txsy/m/n on input line 77.
-LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
-(Font)                  OMS/txsy/m/n --> OMS/txsy/bx/n on input line 78.
-\symAMSa=\mathgroup6
-LaTeX Font Info:    Overwriting symbol font `AMSa' in version `bold'
-(Font)                  U/txsya/m/n --> U/txsya/bx/n on input line 94.
-\symAMSb=\mathgroup7
-LaTeX Font Info:    Overwriting symbol font `AMSb' in version `bold'
-(Font)                  U/txsyb/m/n --> U/txsyb/bx/n on input line 103.
-\symsymbolsC=\mathgroup8
-LaTeX Font Info:    Overwriting symbol font `symbolsC' in version `bold'
-(Font)                  U/txsyc/m/n --> U/txsyc/bx/n on input line 113.
-LaTeX Font Info:    Redeclaring symbol font `largesymbols' on input line 120.
-LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
-(Font)                  OMX/cmex/m/n --> OMX/txex/m/n on input line 120.
-LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
-(Font)                  OMX/cmex/m/n --> OMX/txex/m/n on input line 120.
-LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
-(Font)                  OMX/txex/m/n --> OMX/txex/bx/n on input line 121.
-\symlargesymbolsA=\mathgroup9
-LaTeX Font Info:    Overwriting symbol font `largesymbolsA' in version `bold'
-(Font)                  U/txexa/m/n --> U/txexa/bx/n on input line 129.
-LaTeX Info: Redefining \not on input line 1043.
-LaTeX Info: Redefining \textsquare on input line 1063.
-LaTeX Info: Redefining \openbox on input line 1064.
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\fixltx2e.sty"
+Package: fixltx2e 2006/09/13 v1.1m fixes to LaTeX
+LaTeX Info: Redefining \em on input line 420.
+LaTeX Info: The control sequence `\[' is already robust on input line 471.
+LaTeX Info: The control sequence `\]' is already robust on input line 472.
 )
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\textcomp.sty"
 Package: textcomp 2005/09/27 v1.99g Standard LaTeX package
@@ -766,54 +702,32 @@ Package textcomp Info: Setting pplj sub-encoding to TS1/3 on input line 338.
 Package textcomp Info: Setting ptmx sub-encoding to TS1/4 on input line 339.
 Package textcomp Info: Setting ptmj sub-encoding to TS1/4 on input line 340.
 )
-(C:\Users\Paulo\Documents\GitHub\ufrgs-trabalhos\teoria\fatorial_ordena\fatoria
-l_ordena.aux)
-LaTeX Font Info:    Checking defaults for OML/txmi/m/it on input line 27.
-LaTeX Font Info:    Try loading font information for OML+txmi on input line 27.
-
- ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\txfonts\omltxmi.fd"
-File: omltxmi.fd 2000/12/15 v3.1
-)
-LaTeX Font Info:    ... okay on input line 27.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 27.
-LaTeX Font Info:    ... okay on input line 27.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 27.
-LaTeX Font Info:    ... okay on input line 27.
-LaTeX Font Info:    Checking defaults for OMS/txsy/m/n on input line 27.
-LaTeX Font Info:    Try loading font information for OMS+txsy on input line 27.
-
- ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\txfonts\omstxsy.fd"
-File: omstxsy.fd 2000/12/15 v3.1
-)
-LaTeX Font Info:    ... okay on input line 27.
-LaTeX Font Info:    Checking defaults for OMX/txex/m/n on input line 27.
-LaTeX Font Info:    Try loading font information for OMX+txex on input line 27.
-
-
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\txfonts\omxtxex.fd"
-File: omxtxex.fd 2000/12/15 v3.1
-)
-LaTeX Font Info:    ... okay on input line 27.
-LaTeX Font Info:    Checking defaults for U/txexa/m/n on input line 27.
-LaTeX Font Info:    Try loading font information for U+txexa on input line 27.
-
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\txfonts\utxexa.fd"
-File: utxexa.fd 2000/12/15 v3.1
-)
-LaTeX Font Info:    ... okay on input line 27.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 27.
-LaTeX Font Info:    ... okay on input line 27.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 27.
-LaTeX Font Info:    Try loading font information for TS1+cmr on input line 27.
+(C:\Users\Paulo\Documents\GitHub\ufrgs-trabalhos\cd\lab06\lab06.aux)
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 23.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 23.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\ts1cmr.fd"
 File: ts1cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 27.
-LaTeX Font Info:    Try loading font information for T1+txr on input line 27.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Try loading font information for T1+ptm on input line 23.
 
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\txfonts\t1txr.fd"
-File: t1txr.fd 2000/12/15 v3.1
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\t1ptm.fd"
+File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
 )
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -822,15 +736,15 @@ File: t1txr.fd 2000/12/15 v3.1
 \scratchbox=\box29
 \nofMPsegments=\count116
 \nofMParguments=\count117
-\everyMPshowfont=\toks30
+\everyMPshowfont=\toks31
 \MPscratchCnt=\count118
 \MPscratchDim=\dimen129
 \MPnumerator=\count119
 \makeMPintoPDFobject=\count120
-\everyMPtoPDFconversion=\toks31
+\everyMPtoPDFconversion=\toks32
 )
 \AtBeginShipoutBox=\box30
-Package hyperref Info: Link coloring OFF on input line 27.
+Package hyperref Info: Link coloring OFF on input line 23.
  ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\hyperref\nameref.sty"
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
 
@@ -839,14 +753,12 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
 \c@section@level=\count121
 )
-LaTeX Info: Redefining \ref on input line 27.
-LaTeX Info: Redefining \pageref on input line 27.
-LaTeX Info: Redefining \nameref on input line 27.
+LaTeX Info: Redefining \ref on input line 23.
+LaTeX Info: Redefining \pageref on input line 23.
+LaTeX Info: Redefining \nameref on input line 23.
 
-(C:\Users\Paulo\Documents\GitHub\ufrgs-trabalhos\teoria\fatorial_ordena\fatoria
-l_ordena.out)
-(C:\Users\Paulo\Documents\GitHub\ufrgs-trabalhos\teoria\fatorial_ordena\fatoria
-l_ordena.out)
+(C:\Users\Paulo\Documents\GitHub\ufrgs-trabalhos\cd\lab06\lab06.out)
+(C:\Users\Paulo\Documents\GitHub\ufrgs-trabalhos\cd\lab06\lab06.out)
 \@outlinefile=\write3
 
 *geometry* driver: auto-detecting
@@ -883,92 +795,183 @@ l_ordena.out)
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-LaTeX Font Info:    Try loading font information for OT1+txr on input line 57.
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\txfonts\ot1txr.fd"
-File: ot1txr.fd 2000/12/15 v3.1
-)
-LaTeX Font Info:    Try loading font information for U+txmia on input line 57.
-
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\txfonts\utxmia.fd"
-File: utxmia.fd 2000/12/15 v3.1
-)
-LaTeX Font Info:    Try loading font information for U+txsya on input line 57.
-
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\txfonts\utxsya.fd"
-File: utxsya.fd 2000/12/15 v3.1
-)
-LaTeX Font Info:    Try loading font information for U+txsyb on input line 57.
-
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\txfonts\utxsyb.fd"
-File: utxsyb.fd 2000/12/15 v3.1
-)
-LaTeX Font Info:    Try loading font information for U+txsyc on input line 57.
-
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\txfonts\utxsyc.fd"
-File: utxsyc.fd 2000/12/15 v3.1
-)
-LaTeX Font Info:    Try loading font information for TS1+txr on input line 60.
-
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\txfonts\ts1txr.fd"
-File: ts1txr.fd 2000/12/15 v3.1
-)
-Underfull \hbox (badness 10000) in paragraph at lines 62--64
-
- []
-
-<fatorial_1.png, id=11, 655.44875pt x 437.635pt>
-File: fatorial_1.png Graphic file (type png)
- <use fatorial_1.png>
-Package pdftex.def Info: fatorial_1.png used on input line 67.
-(pdftex.def)             Requested size: 327.72357pt x 218.81696pt.
-
-<fatorial_2.png, id=13, 657.45625pt x 436.63126pt>
-File: fatorial_2.png Graphic file (type png)
- <use fatorial_2.png>
-Package pdftex.def Info: fatorial_2.png used on input line 72.
-(pdftex.def)             Requested size: 328.72733pt x 218.3151pt.
-
+LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <17.28> not available
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 46.
 [1
 
-{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map} <C:/Users/Paulo/Documents/
-GitHub/ufrgs-trabalhos/teoria/fatorial_ordena/fatorial_1.png>]
-<ordena.png, id=26, 490.83376pt x 413.545pt>
-File: ordena.png Graphic file (type png)
- <use ordena.png>
-Package pdftex.def Info: ordena.png used on input line 88.
-(pdftex.def)             Requested size: 245.41628pt x 206.77199pt.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 92.
- [2 <C:/Users/Paulo/Documents/GitHub/ufrgs-trabalhos/teoria/fatorial_ordena/fat
-orial_2.png> <C:/Users/Paulo/Documents/GitHub/ufrgs-trabalhos/teoria/fatorial_o
-rdena/ordena.png>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 92.
+{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}]
+LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <14.4> not available
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 57.
+LaTeX Font Info:    Try loading font information for U+msa on input line 78.
 
-(C:\Users\Paulo\Documents\GitHub\ufrgs-trabalhos\teoria\fatorial_ordena\fatoria
-l_ordena.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 92.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 92.
-Package rerunfilecheck Info: File `fatorial_ordena.out' has not changed.
-(rerunfilecheck)             Checksum: ECF6FA9DA1C851CEEA9ECF1D0C3DEF4C;86.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 92.
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 78.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd"
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+LaTeX Font Info:    Try loading font information for TS1+ptm on input line 80.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\ts1ptm.fd"
+File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
+)pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
+ been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.118 
+       [1] <dec_4-7.png, id=42, 738.50906pt x 482.55281pt>
+File: dec_4-7.png Graphic file (type png)
+ <use dec_4-7.png>
+Package pdftex.def Info: dec_4-7.png used on input line 123.
+(pdftex.def)             Requested size: 516.95282pt x 337.78465pt.
+
+Overfull \hbox (90.16147pt too wide) in paragraph at lines 123--124
+ [][] 
+ []
+
+<dec_a.png, id=43, 677.53125pt x 184.43906pt>
+File: dec_a.png Graphic file (type png)
+ <use dec_a.png>
+Package pdftex.def Info: dec_a.png used on input line 130.
+(pdftex.def)             Requested size: 474.26863pt x 129.10645pt.
+
+Overfull \hbox (47.47728pt too wide) in paragraph at lines 130--131
+ [][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<dec_b.png, id=44, 676.77844pt x 184.43906pt>
+File: dec_b.png Graphic file (type png)
+ <use dec_b.png>
+Package pdftex.def Info: dec_b.png used on input line 136.
+(pdftex.def)             Requested size: 473.74168pt x 129.10645pt.
+
+Overfull \hbox (46.95033pt too wide) in paragraph at lines 136--137
+ [][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<dec_c.png, id=45, 677.53125pt x 184.43906pt>
+File: dec_c.png Graphic file (type png)
+ <use dec_c.png>
+Package pdftex.def Info: dec_c.png used on input line 142.
+(pdftex.def)             Requested size: 474.26863pt x 129.10645pt.
+
+Overfull \hbox (47.47728pt too wide) in paragraph at lines 142--143
+ [][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<dec_d.png, id=46, 677.53125pt x 184.43906pt>
+File: dec_d.png Graphic file (type png)
+ <use dec_d.png>
+Package pdftex.def Info: dec_d.png used on input line 148.
+(pdftex.def)             Requested size: 474.26863pt x 129.10645pt.
+
+Overfull \hbox (47.47728pt too wide) in paragraph at lines 148--149
+ [][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<dec_e.png, id=47, 676.77844pt x 184.43906pt>
+File: dec_e.png Graphic file (type png)
+ <use dec_e.png>
+Package pdftex.def Info: dec_e.png used on input line 154.
+(pdftex.def)             Requested size: 473.74168pt x 129.10645pt.
+
+Overfull \hbox (46.95033pt too wide) in paragraph at lines 154--155
+ [][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<dec_f.png, id=48, 676.77844pt x 229.60782pt>
+File: dec_f.png Graphic file (type png)
+ <use dec_f.png>
+Package pdftex.def Info: dec_f.png used on input line 160.
+(pdftex.def)             Requested size: 473.74168pt x 160.72437pt.
+
+Overfull \hbox (46.95033pt too wide) in paragraph at lines 160--161
+ [][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<dec_g.png, id=49, 676.02562pt x 214.55156pt>
+File: dec_g.png Graphic file (type png)
+ <use dec_g.png>
+Package pdftex.def Info: dec_g.png used on input line 166.
+(pdftex.def)             Requested size: 473.21469pt x 150.18506pt.
+
+Overfull \hbox (46.42334pt too wide) in paragraph at lines 166--167
+ [][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[2 <C:/Users/Paulo/Documents/GitHub/ufrgs-trabalhos/cd/lab06/dec_4-7.png>]
+[3 <C:/Users/Paulo/Documents/GitHub/ufrgs-trabalhos/cd/lab06/dec_a.png> <C:/Use
+rs/Paulo/Documents/GitHub/ufrgs-trabalhos/cd/lab06/dec_b.png> <C:/Users/Paulo/D
+ocuments/GitHub/ufrgs-trabalhos/cd/lab06/dec_c.png> <C:/Users/Paulo/Documents/G
+itHub/ufrgs-trabalhos/cd/lab06/dec_d.png>] [4 <C:/Users/Paulo/Documents/GitHub/
+ufrgs-trabalhos/cd/lab06/dec_e.png> <C:/Users/Paulo/Documents/GitHub/ufrgs-trab
+alhos/cd/lab06/dec_f.png> <C:/Users/Paulo/Documents/GitHub/ufrgs-trabalhos/cd/l
+ab06/dec_g.png>] <simulacao.png, id=71, 1169.11781pt x 263.48438pt>
+File: simulacao.png Graphic file (type png)
+
+<use simulacao.png>
+Package pdftex.def Info: simulacao.png used on input line 177.
+(pdftex.def)             Requested size: 467.63884pt x 105.39188pt.
+
+Overfull \hbox (40.84749pt too wide) in paragraph at lines 177--178
+ [][] 
+ []
+
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 187.
+[5
+
+ <C:/Users/Paulo/Documents/GitHub/ufrgs-trabalhos/cd/lab06/simulacao.png>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 187.
+
+(C:\Users\Paulo\Documents\GitHub\ufrgs-trabalhos\cd\lab06\lab06.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 187.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 187.
+Package rerunfilecheck Info: File `lab06.out' has not changed.
+(rerunfilecheck)             Checksum: 1BD1F28E8B61F53381AFD21465A7D9C3;307.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 187.
  ) 
 Here is how much of TeX's memory you used:
- 8418 strings out of 493921
- 118678 string characters out of 3144876
- 196593 words of memory out of 3000000
- 11550 multiletter control sequences out of 15000+200000
- 42143 words of font info for 76 fonts, out of 3000000 for 9000
+ 8039 strings out of 493921
+ 113873 string characters out of 3144876
+ 203699 words of memory out of 3000000
+ 11180 multiletter control sequences out of 15000+200000
+ 23602 words of font info for 36 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 29i,6n,31p,319b,346s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 29i,8n,31p,408b,352s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Program Files (x86)/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C:/Progra
-m Files (x86)/MiKTeX 2.9/fonts/type1/public/txfonts/rtxmi.pfb><C:/Program Files
- (x86)/MiKTeX 2.9/fonts/type1/public/txfonts/rtxr.pfb><C:/Program Files (x86)/M
-iKTeX 2.9/fonts/type1/public/txfonts/txsy.pfb><C:/Program Files (x86)/MiKTeX 2.
-9/fonts/type1/urw/times/utmb8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/typ
-e1/urw/times/utmr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/time
-s/utmri8a.pfb>
-Output written on fatorial_ordena.pdf (2 pages, 75118 bytes).
+m Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program 
+Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Fil
+es (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Program Files (
+x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x8
+6)/MiKTeX 2.9/fonts/type1/urw/times/utmb8a.pfb><C:/Program Files (x86)/MiKTeX 2
+.9/fonts/type1/urw/times/utmr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/ty
+pe1/urw/times/utmri8a.pfb>
+Output written on lab06.pdf (6 pages, 142655 bytes).
 PDF statistics:
- 60 PDF objects out of 1000 (max. 8388607)
- 7 named destinations out of 1000 (max. 500000)
- 32 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 109 PDF objects out of 1000 (max. 8388607)
+ 22 named destinations out of 1000 (max. 500000)
+ 94 words of extra memory for PDF output out of 10000 (max. 10000000)
 
