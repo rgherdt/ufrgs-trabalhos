@@ -35,8 +35,8 @@ digraph G {
 	q10 -> q12 [label = "(&epsilon;, &epsilon;, D, b, &epsilon;)"];
 	q11 -> q11 [label = "(&epsilon;, &epsilon;, a, a, &epsilon;)\n(&epsilon;, &epsilon;, b, b, &epsilon;)"];
 	q12 -> q12 [label = "(&epsilon;, &epsilon;, a, a, &epsilon;)\n(&epsilon;, &epsilon;, b, b, &epsilon;)"];
-	q11 -> q13 [label = "(&epsilon;, &epsilon;, A, A, A)\n(&epsilon;, &epsilon;, A, B, B)\n(&epsilon;, &epsilon;, A, E, &epsilon;)"];
-	q12 -> q13 [label = "(&epsilon;, &epsilon;, B, A, A)\n(&epsilon;, &epsilon;, B, B, B)\n(&epsilon;, &epsilon;, B, E, &epsilon;)"];
+	q11 -> q13 [label = "(&epsilon;, &epsilon;, A, A, A)\n(&epsilon;, &epsilon;, A, B, B)\n(&epsilon;, &epsilon;, A, E, E)"];
+	q12 -> q13 [label = "(&epsilon;, &epsilon;, B, A, A)\n(&epsilon;, &epsilon;, B, B, B)\n(&epsilon;, &epsilon;, B, E, E)"];
 	q13 -> q13 [label = "(&epsilon;, &epsilon;, A, A, &epsilon;)\n(&epsilon;, &epsilon;, B, B, &epsilon;)"];
 	q13 -> q14 [label = "(&epsilon;, &epsilon;, &epsilon;, ?, &epsilon;)"];
 	q13 -> q9 [label = "(&epsilon;, &epsilon;, &epsilon;, E, &epsilon;)"];
