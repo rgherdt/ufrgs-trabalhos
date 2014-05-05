@@ -14,7 +14,7 @@ digraph G {
 	{rank = same; q10; q6;};
 	{rank = same; q9; q7;};
 	start -> q0;
-	q0 -> qf [arrowhead = none, label = "(?, ?, &epsilon;, ?, &epsilon;)"];
+	q0 -> qf [arrowhead = normal, label = "(?, ?, &epsilon;, ?, &epsilon;)"];
 	q0 -> q1 [label = "(a, &epsilon;, a, &epsilon;, &epsilon;)\n(b, &epsilon;, b, &epsilon;, &epsilon;)"];
 	q1 -> q2 [label = "(a, &epsilon;, a, &epsilon;, C)\n(b, &epsilon;, b, &epsilon;, C)"]
 	q2 -> q1 [label = "(a, &epsilon;, a, &epsilon;, &epsilon;)\n(b, &epsilon;, b, &epsilon;, &epsilon;)"];
