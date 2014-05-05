@@ -1,5 +1,5 @@
 digraph G {
-	rankdir=LR;
+//	rankdir=LR;
 	node [shape = point, color=white, fontcolor=white]; start;
 	node [shape = doublecircle, color=black, fontcolor=black]; qf;
 	node [shape = circle]; q0; q1;
@@ -9,10 +9,10 @@ digraph G {
 	{rank = same; q15; q1;};
 	{rank = same; q14; q2;};
 	{rank = same; q13; q3;};
-	{rank = same; q12; q4;};
-	{rank = same; q11; q5;};
+	{rank = same; q11; q12; q4;};
 	{rank = same; q10; q6;};
 	{rank = same; q9; q7;};
+	labeldistance=2.1;
 	start -> q0;
 	q0 -> qf [arrowhead = normal, label = "(?, ?, &epsilon;, ?, &epsilon;)"];
 	q0 -> q1 [label = "(a, &epsilon;, a, &epsilon;, &epsilon;)\n(b, &epsilon;, b, &epsilon;, &epsilon;)"];
