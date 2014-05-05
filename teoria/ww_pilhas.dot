@@ -1,0 +1,47 @@
+digraph G {
+	rankdir=LR;
+	node [shape = point, color=white, fontcolor=white]; start;
+	node [shape = doublecircle, color=black, fontcolor=black]; qf;
+	node [shape = circle]; q0; q1;
+//	orientation = landscape;
+
+	{rank = same; q0; qf;};
+	{rank = same; q15; q1;};
+	{rank = same; q14; q2;};
+	{rank = same; q13; q3;};
+	{rank = same; q12; q4;};
+	{rank = same; q11; q5;};
+	{rank = same; q10; q6;};
+	{rank = same; q9; q7;};
+	start -> q0;
+	q0 -> qf [arrowhead = none, label = "(?, ?, &epsilon;, ?, &epsilon;)"];
+	q0 -> q1 [label = "(a, &epsilon;, a, &epsilon;, &epsilon;)\n(b, &epsilon;, b, &epsilon;, &epsilon;)"];
+	q1 -> q2 [label = "(a, &epsilon;, a, &epsilon;, C)\n(b, &epsilon;, b, &epsilon;, C)"]
+	q2 -> q1 [label = "(a, &epsilon;, a, &epsilon;, &epsilon;)\n(b, &epsilon;, b, &epsilon;, &epsilon;)"];
+	q2 -> q3 [label = "(?, &epsilon;, D, &epsilon;, &epsilon;)"];
+	q3 -> q4 [label = "(&epsilon;, &epsilon;, &epsilon;, C, E)"];
+	q4 -> q5 [label = "(&epsilon;, D, &epsilon;, &epsilon;, &epsilon;)"];
+	q4 -> q4 [label = "(&epsilon;, a, &epsilon;, &epsilon;, a)\n(&epsilon;, b, &epsilon;, &epsilon;, b)\n(&epsilon;, E, &epsilon;, &epsilon;, E)"];
+	q5 -> q6 [label = "(&epsilon;, a, D, &epsilon;, a)\n(&epsilon;, b, D, &epsilon;, b)"];
+	q6 -> q6 [label = "(&epsilon;, &epsilon;, a, a, &epsilon;)\n(&epsilon;, &epsilon;, b, b, &epsilon;)\n(&epsilon;, &epsilon;, E, E, &epsilon;)"];
+	q6 -> q4 [label = "(&epsilon;, &epsilon;, &epsilon;, C, E)"];
+	q6 -> q7 [label = "(&epsilon;, &epsilon;, &epsilon;, ?, &epsilon;)"];
+	q7 -> q7 [label = "(&epsilon;, E, &epsilon;, &epsilon;, E)"];
+	q7 -> q8 [label = "(&epsilon;, a, a, &epsilon;, &epsilon;)\n(&epsilon;, b, b, &epsilon;, &epsilon;)"];
+	q8 -> q9 [label = "(&epsilon;, &epsilon;, &epsilon;, E, &epsilon;)"];
+	q9 -> q9 [label = "(&epsilon;, a, &epsilon;, &epsilon;, a)\n(&epsilon;, b, &epsilon;, &epsilon;, b)\n(&epsilon;, A, &epsilon;, &epsilon;, A)\n(&epsilon;, B, &epsilon;, &epsilon;, B)"];
+	q9 -> q10 [label = "(&epsilon;, D, &epsilon;, &epsilon;, &epsilon;)"];
+	q10 -> q11 [label = "(&epsilon;, &epsilon;, D, a, &epsilon;)"];
+	q10 -> q12 [label = "(&epsilon;, &epsilon;, D, b, &epsilon;)"];
+	q11 -> q11 [label = "(&epsilon;, &epsilon;, a, a, &epsilon;)\n(&epsilon;, &epsilon;, b, b, &epsilon;)"];
+	q12 -> q12 [label = "(&epsilon;, &epsilon;, a, a, &epsilon;)\n(&epsilon;, &epsilon;, b, b, &epsilon;)"];
+	q11 -> q13 [label = "(&epsilon;, &epsilon;, A, A, A)\n(&epsilon;, &epsilon;, A, B, B)\n(&epsilon;, &epsilon;, A, E, &epsilon;)"];
+	q12 -> q13 [label = "(&epsilon;, &epsilon;, B, A, A)\n(&epsilon;, &epsilon;, B, B, B)\n(&epsilon;, &epsilon;, B, E, &epsilon;)"];
+	q13 -> q13 [label = "(&epsilon;, &epsilon;, A, A, &epsilon;)\n(&epsilon;, &epsilon;, B, B, &epsilon;)"];
+	q13 -> q14 [label = "(&epsilon;, &epsilon;, &epsilon;, ?, &epsilon;)"];
+	q13 -> q9 [label = "(&epsilon;, &epsilon;, &epsilon;, E, &epsilon;)"];
+	q14 -> q14 [label = "(&epsilon;, A, &epsilon;, &epsilon;, A)\n(&epsilon;, B, &epsilon;, &epsilon;, B)"];
+	q14 -> q15 [label = "(&epsilon;, D, &epsilon;, &epsilon;, &epsilon;)"];
+	q15 -> q15 [label = "(&epsilon;, a, &epsilon;, A, &epsilon;)\n(&epsilon;, b, &epsilon;, B, &epsilon;)"];
+	q15 -> qf [label = "(&epsilon;, ?, &epsilon;, ?, &epsilon;)"];
+}
