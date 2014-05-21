@@ -128,17 +128,19 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 
 
 \FloatBarrier
-\textbf*{e)}
+\textbf{e)}
 
 \begin{align*}
 &\mathbf{(\lambda x.x x)\ (\lambda y.y)\ \rhd} \\
-&\mathbf{x\ x\ [x \leftarrow \lambda y.y] = (\lambda y.y)\ (\lambda y.y) \rhd} \\
+&\mathbf{x\ x\ [x \leftarrow \lambda y.y] = (\lambda y.y)\ (\lambda y.y)\ \rhd} \\
 &\mathbf{y [y \leftarrow \lambda y.y] = \lambda y.y}
 \end{align*}
 
 \textbf{f)}
 \begin{align*}
 &\mathbf{((\lambda x.\lambda y.x\ y)\ (\lambda y.z))\ x\ \rhd} \\
+&\mathbf{(\lambda y.x\ y\ [x \leftarrow \lambda y.z])\ x = (\lambda y.(\lambda y.z)\ y)\ x\ \rhd} \\
+&\mathbf{z [y \leftarrow] = z}
 \end{align*}
 
 \begin{figure}[h]
@@ -149,7 +151,12 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 
 \FloatBarrier
 
-\textbf*{g)}
+\textbf{g)}
+
+\begin{align*}
+&\mathbf{(\lambda x.x\ x)\ (\lambda x.x\ x)\ \rhd} \\
+&\mathbf{x\ x\ [x \leftarrow \lambda x.x\ x] = (\lambda x.x\ x)\ (\lambda x.x\ x)}
+\end{align*}
 
 \begin{figure}[h]
   \centering
@@ -160,16 +167,20 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 \FloatBarrier
 
 \textbf{h)}
+\begin{align*}
+&\mathbf{((\lambda x.\lambda y.\lambda z.(x\ y)\ z)\ (\lambda x.\lambda y.(x + y))\ 3\ 7\ \rhd} \\
+&\mathbf{(3 + y) [y \leftarrow 7] = 3 + 7 = 10}
+\end{align*}
 
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=0.5]{8-11h_1.png}
+  \includegraphics[scale=0.4]{8-11h_1.png}
   \caption{Exemplo 8.11h antes de ser reduzido}
 \end{figure}
 
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=0.5]{8-11h_2.png}
+  \includegraphics[scale=0.4]{8-11h_2.png}
   \caption{Exemplo 8.11h após  ser reduzido}
 \end{figure}
 
