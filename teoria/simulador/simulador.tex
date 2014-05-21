@@ -43,7 +43,6 @@ Graduandos: \\ Paulo Renato Lanzarin, Ricardo Gabriel Herdt e \\
 	Wladimir Leuschner \\[1.5cm]
 
 
-
 % Title
 \LARGE {\bfseries Simulação de exemplos de Cálculo Lambda \\[1.0cm]
 }}
@@ -68,7 +67,7 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=0.5]{8-10f.png}
+  \includegraphics[scale=0.4]{8-10f.png}
   \caption{Exemplo 8.10f antes e após a substituição}
 \end{figure}
 
@@ -118,12 +117,28 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=0.5]{8-11c_2.png}
+  \includegraphics[scale=0.35]{8-11c_2.png}
   \caption{Exemplo 8.11c após ser reduzido}
 \end{figure}
 
 
 \FloatBarrier
+
+\textbf{d)}
+
+\begin{align*}
+&\mathbf{(\lambda x.\lambda y.x - y) (\lambda z.z / 2) \ \rhd} \\
+&\mathbf{(\lambda y.x - y) [x \leftarrow \lambda z.z / 2] = \lambda y.(\lambda z.z /2) - y}
+\end{align*}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.3]{8-11d_1.png}
+  \caption{Exemplo 8.11d}
+\end{figure}
+
+\FloatBarrier
+
 \textbf{e)}
 
 \begin{align*}
@@ -131,6 +146,14 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 &\mathbf{x\ x\ [x \leftarrow \lambda y.y] = (\lambda y.y)\ (\lambda y.y)\ \rhd} \\
 &\mathbf{y [y \leftarrow \lambda y.y] = \lambda y.y}
 \end{align*}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.3]{8-11e.png}
+  \caption{Exemplo 8.11e antes e após a substituição}
+\end{figure}
+
+\FloatBarrier
 
 \textbf{f)}
 \begin{align*}
@@ -141,7 +164,7 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=0.5]{8-11f.png}
+  \includegraphics[scale=0.4]{8-11f.png}
   \caption{Exemplo 8.11f antes e após ser reduzido}
 \end{figure}
 
@@ -156,7 +179,7 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=0.5]{8-11g.png}
+  \includegraphics[scale=0.35]{8-11g.png}
   \caption{Exemplo 8.11g antes e após ser reduzido}
 \end{figure}
 
@@ -170,14 +193,8 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=0.45]{8-11h_1.png}
-  \caption{Exemplo 8.11h antes de ser reduzido}
-\end{figure}
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[scale=0.45]{8-11h_2.png}
-  \caption{Exemplo 8.11h após  ser reduzido}
+  \includegraphics[scale=0.5]{8-11h_1.png}
+  \caption{Exemplo 8.11h antes e após ser reduzido}
 \end{figure}
 
 \FloatBarrier
