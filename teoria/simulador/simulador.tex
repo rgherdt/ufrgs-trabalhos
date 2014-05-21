@@ -90,8 +90,8 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 \FloatBarrier
 \textbf{b)}
 \begin{align*}
-\mathbf{(\lambda x.\lambda y.x + y)\ 5\ \rhd }\\
-\mathbf{(\lambda y.x + y) [x \leftarrow 5]}
+&\mathbf{(\lambda x.\lambda y.x + y)\ 5\ \rhd }\\
+&\mathbf{(\lambda y.x + y) [x \leftarrow 5] = \lambda y.5 + y}
 \end{align*}
 
 \begin{figure}[h]
@@ -122,10 +122,6 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
   \caption{Exemplo 8.11c após ser reduzido}
 \end{figure}
 
-\FloatBarrier
-
-\textbf{d)}
-
 
 \FloatBarrier
 \textbf{e)}
@@ -140,7 +136,7 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 \begin{align*}
 &\mathbf{((\lambda x.\lambda y.x\ y)\ (\lambda y.z))\ x\ \rhd} \\
 &\mathbf{(\lambda y.x\ y\ [x \leftarrow \lambda y.z])\ x = (\lambda y.(\lambda y.z)\ y)\ x\ \rhd} \\
-&\mathbf{z [y \leftarrow] = z}
+&\mathbf{z [y \leftarrow x] = z}
 \end{align*}
 
 \begin{figure}[h]
@@ -160,7 +156,7 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=0.4]{8-11g.png}
+  \includegraphics[scale=0.5]{8-11g.png}
   \caption{Exemplo 8.11g antes e após ser reduzido}
 \end{figure}
 
@@ -168,19 +164,19 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 
 \textbf{h)}
 \begin{align*}
-&\mathbf{((\lambda x.\lambda y.\lambda z.(x\ y)\ z)\ (\lambda x.\lambda y.(x + y))\ 3\ 7\ \rhd} \\
+&\mathbf{((\lambda x.\lambda y.\lambda z.(x\ y)\ z)\ (\lambda x.\lambda y.(x + y))\ 3)\ 7\ \rhd} \\
 &\mathbf{(3 + y) [y \leftarrow 7] = 3 + 7 = 10}
 \end{align*}
 
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=0.4]{8-11h_1.png}
+  \includegraphics[scale=0.45]{8-11h_1.png}
   \caption{Exemplo 8.11h antes de ser reduzido}
 \end{figure}
 
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=0.4]{8-11h_2.png}
+  \includegraphics[scale=0.45]{8-11h_2.png}
   \caption{Exemplo 8.11h após  ser reduzido}
 \end{figure}
 
