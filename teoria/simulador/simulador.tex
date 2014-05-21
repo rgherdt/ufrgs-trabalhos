@@ -75,7 +75,7 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 \FloatBarrier
 
 \section*{Exemplo 8.11}
-\subsection*{a)}
+\textbf{a)}
 \begin{align*}
 &\mathbf{(\lambda x.2 * x + 1)\ 3\ \rhd} \\
 &\mathbf{(2 * x + 1) [x \leftarrow 3] = 2*3 + 1 = 7}
@@ -88,7 +88,7 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 \end{figure}
 
 \FloatBarrier
-\subsection*{b)}
+\textbf{b)}
 \begin{align*}
 \mathbf{(\lambda x.\lambda y.x + y)\ 5\ \rhd }\\
 \mathbf{(\lambda y.x + y) [x \leftarrow 5]}
@@ -102,7 +102,7 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 
 \FloatBarrier
 
-\subsection*{c)}
+\textbf{c)}
 
 \begin{align*}
 &\mathbf{((\lambda x.\lambda y.x + y)\ 5)\ 7\ \rhd} \\
@@ -124,12 +124,22 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 
 \FloatBarrier
 
-\subsection*{d)}
+\textbf{d)}
 
 
 \FloatBarrier
+\textbf*{e)}
 
-\subsection*{f)}
+\begin{align*}
+&\mathbf{(\lambda x.x x)\ (\lambda y.y)\ \rhd} \\
+&\mathbf{x\ x\ [x \leftarrow \lambda y.y] = (\lambda y.y)\ (\lambda y.y) \rhd} \\
+&\mathbf{y [y \leftarrow \lambda y.y] = \lambda y.y}
+\end{align*}
+
+\textbf{f)}
+\begin{align*}
+&\mathbf{((\lambda x.\lambda y.x\ y)\ (\lambda y.z))\ x\ \rhd} \\
+\end{align*}
 
 \begin{figure}[h]
   \centering
@@ -139,7 +149,7 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 
 \FloatBarrier
 
-\subsection*{g)}
+\textbf*{g)}
 
 \begin{figure}[h]
   \centering
@@ -149,7 +159,7 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 
 \FloatBarrier
 
-\subsection*{h)}
+\textbf{h)}
 
 \begin{figure}[h]
   \centering
