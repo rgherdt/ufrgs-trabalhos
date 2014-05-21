@@ -76,7 +76,10 @@ $\mathbf{((\lambda p.p\ (p\ q))\ (\lambda r.(p\ r)))}$
 
 \section*{Exemplo 8.11}
 \subsection*{a)}
-$\mathbf{(\lambda x.2 * x + 1)\ 3\ \rhd (2 * x + 1) [x \leftarrow 3] = 2*3 + 1 = 7}$
+\begin{align*}
+&\mathbf{(\lambda x.2 * x + 1)\ 3\ \rhd} \\
+&\mathbf{(2 * x + 1) [x \leftarrow 3] = 2*3 + 1 = 7}
+\end{align*}
 
 \begin{figure}[h]
   \centering
@@ -100,6 +103,12 @@ $\mathbf{(\lambda x.2 * x + 1)\ 3\ \rhd (2 * x + 1) [x \leftarrow 3] = 2*3 + 1 =
 \FloatBarrier
 
 \subsection*{c)}
+
+\begin{align*}
+&\mathbf{((\lambda x.\lambda y.x + y)\ 5)\ 7\ \rhd} \\
+&\mathbf{((\lambda y.x + y) [x \leftarrow 5])\ 7 = (\lambda y.5 + y)\ 7\ \rhd} \\
+&\mathbf{(5 + y)[y \leftarrow 7] = 5 + 7 = 12}
+\end{align*}
 
 \begin{figure}[h]
   \centering
