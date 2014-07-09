@@ -53,7 +53,8 @@ architecture ctrl_unit of ctrl_unit is
     signal alunop, alusta, alulda, aluadd, aluor, aluand, alunot, alusub, 
            alujmp, alujn, alujp, alujv, alujnv, alujz, alujnz, alujc, alujnc, 
            alujb, alujnb, alushr, alushl, aluror, alurol, aluhlt : std_logic;
-    signal opflag, brflag : std_logic;
+    signal opflag, brflag, counter_ld : std_logic;
+    signal NS, PS : std_logic_vector(2 downto 0);
 
 begin
     nflag  <= flags_in(0);
@@ -104,59 +105,60 @@ begin
                 when "001" => control_out <= t1_cod;
                 when "010" => control_out <= t2_cod;
                 when "011" =>
-                    if (decsta or declda or decand or decor or decand
-                        or decsub or decjmp) then
+                    if (decsta = '1' or declda = '1' or decand = '1' or
+                        decor = '1' or decand = '1' or decsub = '1' or
+                        decjmp = '1') then
                         control_out <= t3_op;
-                    elsif (decnot) then
+                    elsif (decnot = '1') then
                         control_out <= t3_not;
-                    elsif ((decjn and nflag ) or
-                           (decjp and not nflag) or
-                           (decjz and zflag) or
-                           (decjnz and not zflag) or
-                           (decjc and cflag) or
-                           (decjnc and not cflag) or
-                           (decjv and vflag) or
-                           (decjnv and not vflag) or
-                           (decjb and bflag) or
-                           (decjnb and not bflag)) then
+                    elsif ((decjn = '1' and nflag = '1' ) or
+                           (decjp = '1' and nflag = '0') or
+                           (decjz = '1' and zflag = '1') or
+                           (decjnz = '1' and zflag = '0') or
+                           (decjc = '1' and cflag = '1') or
+                           (decjnc = '1' and cflag = '0') or
+                           (decjv = '1' and vflag = '1') or
+                           (decjnv = '1' and vflag = '0') or
+                           (decjb = '1' and bflag = '1') or
+                           (decjnb = '1' and bflag = '0')) then
                         control_out <= t3_op;
-                    elsif  (decnop or dechlt) then
+                    elsif  (decnop = '1' or dechlt = '1') then
                         NS <= "000";
                     else
                         control_out <= t3_brp;
                         NS <= "000";
                     end if;
                 when "100" =>
-                    if (decsta or declda or decand or decor or decand
-                        or decsub) then
+                    if (decsta = '1' or declda = '1' or decand = '1' or
+                        decor = '1' or decand = '1' or decsub = '1') then
                         control_out <= t4_op;
                     else control_out <= t4_br;
                     end if;
                 when "101" =>
-                    if (decsta or declda or decand or decor or decand
-                        or decsub) then
+                    if (decsta = '1' or declda = '1' or decand = '1' or
+                        decor = '1' or decand = '1' or decsub = '1') then
                         control_out <= t5_op;
                     else
                         control_out <= t5_br;
                         NS <= "000";
                     end if;
                 when "110" =>
-                    if (decsta) then
+                    if (decsta = '1') then
                         control_out <= t6_sta;
                     else control_out <= t6_op;
                     end if;
                 when "111" =>
-                    if (decsta) then
+                    if (decsta = '1') then
                         control_out <= t7_sta;
-                    elsif (declda) then
+                    elsif (declda = '1') then
                         control_out <= t7_lda;
-                    elsif (decadd) then
+                    elsif (decadd = '1') then
                         control_out <= t7_add;
-                    elsif (decor) then
+                    elsif (decor = '1') then
                         control_out <= t7_or;
-                    elsif (decand) then
+                    elsif (decand = '1') then
                         control_out <= t7_and;
-                    elsif (decsub) then
+                    elsif (decsub = '1') then
                         control_out <= t7_sub;
                     else control_out <= (others => '0');
                     end if;
