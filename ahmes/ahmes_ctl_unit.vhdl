@@ -7,7 +7,7 @@ entity ctrl_unit is
 port (clk         : in std_logic;
       reset       : in std_logic;
       flags_in    : in std_logic_vector(4 downto 0);
-      opcode      : in bit8;
+      dec_in      : in instdec_type;
       control_out : out ctlcod_type;
 end ctrl_unit;
 
@@ -22,11 +22,39 @@ architecture ctrl_unit of ctrl_unit is
     signal couter_ld : std_logic;
     signal next_stage : std_logic_vector(2 downto 0);
     signal nflag, zflag, cflag, vflag, bflag : std_logic;
-    nflag <= flags_in(0);
-    zflag <= flags_in(1);
-    cflag <= flags_in(2);
-    vflag <= flags_in(3);
-    bflag <= flags_in(4);
+    signal decnop, decsta, declda, decadd, decor, decand, decnot, decsub,
+           decshr, decshl, decror, decrol, decjmp, decjn, decjp, decjz, decjnz,
+           decjc, decjnc, decjv, decjnv, decjb, decjnb, dechlt : std_logic;
+
+    nflag  <= flags_in(0);
+    zflag  <= flags_in(1);
+    cflag  <= flags_in(2);
+    vflag  <= flags_in(3);
+    bflag  <= flags_in(4);
+    decnop <= dec_in(0);
+    decsta <= dec_in(1);
+    declda <= dec_in(2);
+    decadd <= dec_in(3);
+    decor  <= dec_in(4);
+    decand <= dec_in(5);
+    decnod <= dec_in(6);
+    decsub <= dec_in(7);
+    decshr <= dec_in(8);
+    decshl <= dec_in(9);
+    decror <= dec_in(10);
+    decrol <= dec_in(11);
+    decjmp <= dec_in(12);
+    decjn  <= dec_in(13);
+    decjp  <= dec_in(14);
+    decjz  <= dec_in(15);
+    decjnz <= dec_in(16);
+    decjc  <= dec_in(17);
+    decjnc <= dec_in(18);
+    decjv  <= dec_in(19);
+    decjnv <= dec_in(20);
+    decjb  <= dec_in(21);
+    decjnb <= dec_in(22);
+    dechlt <= dec_in(23);
 
     constant t0_cod : ctlcod_type := "000010000000000";
     constant t1_cod : ctlcod_type := "010010000000000";
@@ -55,30 +83,12 @@ architecture ctrl_unit of ctrl_unit is
 
 begin
 
-    aluadd <= aluop(0);
-    aluor  <= aluop(1);
-    aluand <= aluop(2);
-    alunot <= aluop(3);
-    alusub <= aluop(4);
-
-    st_counter : counter3
+    st_count : count3
     port map (clk   => clk,
               ld    => counter_ld,
               din   => PS;
               count => NS);
 
-    decode : process (clk)
-    begin
-        case opcode is
-            when NOPCOD => aluop <= "00000";
-            when ADDCOD => aluop <= "10000";
-            when ORCOD  => aluop <= "01000";
-            when ANDCOD => aluop <= "00100";
-            when NOTCOD => aluop <= "00010";
-            when SUBCOD => aluop <= "00001";
-            when others => aluop <= "00000";
-        end case;
-    end process;
               
     uc : process (clk)
     begin
@@ -90,10 +100,32 @@ begin
                 when "001" => control_out <= t1_cod;
                 when "010" => control_out <= t2_cod;
                 when "011" =>
-                    if (alunot) then
-                        control_out <= t3_not;
-                    elsif (aluop /= "00000") then
+                    if (decsta or declda or decand or decor or decand
+                        or decsub or decjmp) then
                         control_out <= t3_op;
-                    els
-                when "001" => control_out <= t1_cod;
-                when "010" => control_out <= t2_cod;
+                    elsif (decnot) then
+                        control_out <= t3_not;
+                    elsif ((decjn and nflag ) or
+                           (decjp and not nflag) or
+                           (decjz and zflag) or
+                           (decjnz and not zflag) or
+                           (decjc and cflag) or
+                           (decjnc and not cflag) or
+                           (decjv and vflag) or
+                           (decjnv and not vflag) or
+                           (decjb and bflag) or
+                           (decjnb and not bflag)) then
+                        control_out <= t3_op;
+                    elsif  (decnop or dechlt) then
+                        PS <= "000";
+                    else
+                        control_out <= t3_brp;
+                        PS <= "000";
+                    end if;
+                when "100" =>
+                    if (decsta or declda or decand or decor or decand
+                        or decsub) then
+                        control_out <= t4_op;
+                    else control_out <= t4_br;
+                when "101" => control_out <= t2_cod;
+
