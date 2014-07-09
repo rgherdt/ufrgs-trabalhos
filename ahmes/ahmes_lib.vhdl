@@ -9,7 +9,7 @@ package ahmes_lib is
     type state_type is (nop, sta, lda, hlt);
     type memory_type is array (0 to 31) of std_logic_vector(7 downto 0);
     subtype ctlcod_type is std_logic_vector(20 downto 0);
-    subtype instdec_type is std_logic_vector(27 downto 0);
+    subtype instdec_type is std_logic_vector(23 downto 0);
     subtype aluop_type is std_logic_vector(5 downto 0);
     subtype bus8 is std_logic_vector(7 downto 0);
 
