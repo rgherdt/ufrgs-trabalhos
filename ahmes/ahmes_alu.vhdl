@@ -51,7 +51,7 @@ begin
                 vflag <= '0';
             end if;
         end if;
-        if (temp_res = "000000000") then flags <= "01000";
+        if (temp_res = 0) then flags <= "01000";
         elsif (temp_res < 0) then flags <= "10000";
         end if;
         alu_out <= res;

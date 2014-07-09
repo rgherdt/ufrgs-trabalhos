@@ -12,22 +12,35 @@ architecture ahmes of ahmes is
     type state_type is (init, fetch0, fetch1, fetch2, decod, 
 
     component alu is
-    port (x : in bus8;
-          y : in bus8;
-          alu_sel : in std_logic_vector(1 downto 0);
-          alu_out : out bus8;
-          n_alu, z_alu, c_alu, v_alu, b_alu : out std_logic;
+    port (x : in signed(7 downto 0);
+          y : in signed(7 downto 0);
+          alu_add : in std_logic;
+          alu_or  : in std_logic;
+          alu_and : in std_logic;
+          alu_not : in std_logic;
+          alu_py  : in std_logic;
+          alu_sub : in std_logic;
+          alu_out : out signed(7 downto 0);
+          nflag, zflag, cflag, vflag, bflag : out std_logic);
+    end component;
+
+    component ctrl_unit is
+    port (clk         : in std_logic;
+          reset       : in std_logic;
+          flags_in    : in std_logic_vector(4 downto 0);
+          dec_in      : in instdec_type;
+          control_out : out ctlcod_type);
     end component;
 
     component datapath is
     port (clock       : in std_logic;
           control_in  : in ctlcod_type;
-          control_out : out ctlcod_type;
+          dec_out     : out instdec_type;
           mem_in      : in bus8;
           mem_out     : out bus8;
-          alu_res     : in bus8;
-          alu_x       : out bus8;
-          alu_y       : out bus8;
+          alu_res     : in signed(7 downto 0);
+          alu_x       : out signed(7 downto 0);
+          alu_y       : out signed(7 downto 0));
     end component;
 
     signal mem : memory_type;

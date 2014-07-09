@@ -136,4 +136,48 @@ begin
     end process;
 end mux16_8;
 
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use work.ahmes_lib.all;
 
+entity shifter is
+port (clk, ld, shl, shr, rol_flag, ror_flag, cflag_in : std_logic;
+      din : in std_logic_vector(7 downto 0);
+      dout : out std_logic_vector(7 downto 0);
+      nflag, zflag, cflag: out std_logic);
+end shifter;
+
+architecture shifter of shifter is
+    signal temp : unsigned(8 downto 0);
+begin
+    shifter: process(clk)
+    begin
+        if (rising_edge(clk)) then
+            if (ld = '1') then
+                temp(7 downto 0) <= unsigned(din);
+            elsif (shl = '1') then
+                temp <= shift_left(unsigned(cflag_in & din), 1);
+            elsif (shr = '1') then
+                temp <= shift_right(unsigned(din & cflag_in), 1);
+            elsif (rol_flag = '1') then
+                temp <= rotate_left(unsigned(cflag_in & din), 1);
+            elsif (ror_flag = '1') then
+                temp <= rotate_right(unsigned(cflag_in & din), 1);
+            end if;
+            if (temp = 0) then
+                zflag <= '1';
+                nflag <= '0';
+            elsif (temp(0) = '1') then
+                zflag <= '0';
+                nflag <= '1';
+            else
+                zflag <= '0';
+                nflag <= '0';
+            end if;
+            cflag  <= temp(0);
+            dout   <= std_logic_vector(temp(8 downto 1));
+        end if;
+    end process;
+end shifter;
+                

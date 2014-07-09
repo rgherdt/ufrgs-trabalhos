@@ -22,6 +22,13 @@ architecture dpath of datapath is
           reg_out : out bus8);
     end component;
 
+    component shifter is
+    port (clk, ld, shl, shr, rol_flag, ror_flag, cflag_in : std_logic;
+          din : in std_logic_vector(7 downto 0);
+          dout : out std_logic_vector(7 downto 0);
+          nflag, zflag, cflag: out std_logic);
+    end component;
+
     component count8 is
     port (clk,ld : in std_logic;
           din : in bus8;
@@ -38,11 +45,19 @@ architecture dpath of datapath is
     signal alu_add, alu_or, alu_and, alu_not, alu_sub, alu_passy,
            ctl_shr, ctl_shl, ctl_ror, ctl_rol : std_logic;
     signal ac_ld, pc_inc, pc_ld, mpx_sel, rem_ld, mem_rd, mem_wr, rrdm_ld,
-           wrdm_ld, ri_ld, nflag, zflag, cflag, vflag, bflag, flags_ld: std_logic;
+           wrdm_ld, ri_ld, flags_ld: std_logic;
     signal mem_out_bus, mem_in_bus : bus8;
     signal ac_out, rrdm_out, pc_out, mpx_out, ri_out : bus8;
+    signal flags : std_logic_vector(4 downto 0);
+    signal nflag, zflag, cflag, vflag, bflag : std_logic;
 
 begin
+    nflag  <= flags_in(0);
+    zflag  <= flags_in(1);
+    cflag  <= flags_in(2);
+    vflag  <= flags_in(3);
+    bflag  <= flags_in(4);
+
     alu_add   <= control_in(0);
     alu_or    <= control_in(1);
     alu_and   <= control_in(2);
@@ -102,11 +117,19 @@ begin
         end case;
     end process;
 
-    accum : reg8
-    port map (reg_in  => std_logic_vector(alu_res),
-              clk     => clock,
-              ld      => ac_ld,
-              reg_out => ac_out);
+    accum : shifter
+    port map (din      => std_logic_vector(alu_res),
+              clk      => clock,
+              ld       => ac_ld,
+              shl      => ctl_shl,
+              shr      => ctl_shr,
+              rol_flag => ctl_rol,
+              ror_flag => ctl_ror,
+              dout     => ac_out,
+              cflag_in => cflag,
+              cflag    => cflag,
+              nflag    => nflag,
+              zflag    => zflag);
     
     rrdm : reg8
     port map (reg_in  => mem_out_bus,
