@@ -6,15 +6,15 @@ use work.ahmes_lib.all;
 entity datapath is
 port (clock       : in std_logic;
       control_in  : in ctlcod_type;
-      flags_in    : in std_logic_vector(4 downto 0);
-      flags_out   : out std_logic_vector(4 downto 0);
-      accum_out   : out std_logic_vector(7 downto 0);
+      flags_in    : in std_logic_vector(0 to 4);
+      flags_out   : out std_logic_vector(0 to 4);
+      accum_out   : out std_logic_vector(0 to 7);
       dec_out     : out instdec_type;
       mem_in      : in bus8;
       mem_out     : out bus8;
-      alu_res     : in signed(7 downto 0);
-      alu_x       : out signed(7 downto 0);
-      alu_y       : out signed(7 downto 0));
+      alu_res     : in signed(0 to 7);
+      alu_x       : out signed(0 to 7);
+      alu_y       : out signed(0 to 7));
 end datapath;
 
 architecture dpath of datapath is
@@ -27,8 +27,8 @@ architecture dpath of datapath is
 
     component shifter is
     port (clk, ld, shl, shr, rol_flag, ror_flag, cflag_in : std_logic;
-          din : in std_logic_vector(7 downto 0);
-          dout : out std_logic_vector(7 downto 0);
+          din : in std_logic_vector(0 to 7);
+          dout : out std_logic_vector(0 to 7);
           nflag, zflag, cflag: out std_logic);
     end component;
 
@@ -51,7 +51,7 @@ architecture dpath of datapath is
            wrdm_ld, ri_ld, flags_ld: std_logic;
     signal mem_out_bus, mem_in_bus : bus8;
     signal ac_out, rrdm_out, pc_out, mpx_out, ri_out : bus8;
-    signal flags : std_logic_vector(4 downto 0);
+    signal flags : std_logic_vector(0 to 4);
     signal nflag, zflag, cflag, vflag, bflag : std_logic;
 
 begin

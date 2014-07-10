@@ -6,23 +6,23 @@ use work.ahmes_lib.all;
 entity ahmes is
 port (clock: in std_logic;
       reset: in std_logic;
-      accum: out std_logic_vector(7 downto 0));
+      accum: out std_logic_vector(0 to 7));
 end ahmes;
 
 architecture ahmes of ahmes is
 
     component alu is
-    port (x : in signed(7 downto 0);
-          y : in signed(7 downto 0);
-          alu_opsel : in std_logic_vector(5 downto 0);
-          alu_out : out signed(7 downto 0);
-          flags_out : out std_logic_vector(4 downto 0));
+    port (x : in signed(0 to 7);
+          y : in signed(0 to 7);
+          alu_opsel : in std_logic_vector(0 to 5);
+          alu_out : out signed(0 to 7);
+          flags_out : out std_logic_vector(0 to 4));
     end component;
 
     component ctrl_unit is
     port (clk         : in std_logic;
           reset       : in std_logic;
-          flags_in    : in std_logic_vector(4 downto 0);
+          flags_in    : in std_logic_vector(0 to 4);
           dec_in      : in instdec_type;
           control_out : out ctlcod_type);
     end component;
@@ -30,15 +30,15 @@ architecture ahmes of ahmes is
     component datapath is
     port (clock       : in std_logic;
           control_in  : in ctlcod_type;
-          flags_in    : in std_logic_vector(4 downto 0);
-          flags_out   : out std_logic_vector(4 downto 0);
-          accum_out   : out std_logic_vector(7 downto 0);
+          flags_in    : in std_logic_vector(0 to 4);
+          flags_out   : out std_logic_vector(0 to 4);
+          accum_out   : out std_logic_vector(0 to 7);
           dec_out     : out instdec_type;
           mem_in      : in bus8;
           mem_out     : out bus8;
-          alu_res     : in signed(7 downto 0);
-          alu_x       : out signed(7 downto 0);
-          alu_y       : out signed(7 downto 0));
+          alu_res     : in signed(0 to 7);
+          alu_x       : out signed(0 to 7);
+          alu_y       : out signed(0 to 7));
     end component;
 
     component memory is
@@ -53,10 +53,10 @@ architecture ahmes of ahmes is
     signal mem : memory_type;
     signal alu_x, alu_y : bus8;
     signal alu_data : bus8;
-    signal alu_opsel : std_logic_vector(5 downto 0);
+    signal alu_opsel : std_logic_vector(0 to 5);
     signal control  : ctlcod_type;
     signal instdec  : instdec_type;
-    signal flags    : std_logic_vector(4 downto 0);
+    signal flags    : std_logic_vector(0 to 4);
     signal alu_add, alu_or, alu_and, alu_not, alu_sub, alu_passy,
            ctl_shr, ctl_shl, ctl_ror, ctl_rol : std_logic;
     signal ac_ld, pc_inc, pc_ld, mpx_sel, rem_ld, mem_rd, mem_wr, rrdm_ld,

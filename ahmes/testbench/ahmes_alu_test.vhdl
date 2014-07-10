@@ -9,20 +9,21 @@ end test_alu;
 architecture test_alu_behv of test_alu is
 
     component alu is
-    port (x : in signed(7 downto 0);
-          y : in signed(7 downto 0);
-          alu_opsel : in std_logic_vector(5 downto 0);
-          alu_out : out signed(7 downto 0);
-          flags_out : out std_logic_vector(4 downto 0));
+    port (x : in signed(0 to 7);
+          y : in signed(0 to 7);
+          alu_opsel : in std_logic_vector(0 to 5);
+          alu_out : out signed(0 to 7);
+          flags_out : out std_logic_vector(0 to 4));
     end component;
 
-    signal sel : std_logic_vector(5 downto 0);
-    signal flags : std_logic_vector(4 downto 0);
-    signal x, y, alu_out : signed(7 downto 0);
+    signal sel : std_logic_vector(0 to 5);
+    signal flags : std_logic_vector(0 to 4);
+    signal x, y, alu_out : signed(0 to 7);
 begin
     flags <= "00000";
-    x <= "00001000", "00000001" after 15 ns;
-    y <= "00000100", "00000010" after 25 ns;
+    alu_out <= "00000000";
+    x <= "00001000", "00000001" after 5 ns;
+    y <= "00000100", "00000010" after 10 ns;
     sel <= "100000";
     r: alu port map (
             x => x,

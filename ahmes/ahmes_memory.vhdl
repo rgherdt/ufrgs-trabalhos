@@ -19,8 +19,9 @@ begin
      process(clk, reset)
        variable i: integer;
      begin
-       address <= rem_in(4 downto 0);
+       address <= rem_in(0 to 4);
        -- reset 
+       rdm_out <= x"00";
        if (reset='1') then
            memdata(0) <= LDACOD;
            memdata(1) <= x"1F";
