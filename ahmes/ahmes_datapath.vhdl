@@ -6,6 +6,8 @@ use work.ahmes_lib.all;
 entity datapath is
 port (clock       : in std_logic;
       control_in  : in ctlcod_type;
+      flags_in    : in std_logic_vector(4 downto 0);
+      flags_out   : out std_logic_vector(4 downto 0);
       dec_out     : out instdec_type;
       mem_in      : in bus8;
       mem_out     : out bus8;
@@ -52,11 +54,12 @@ architecture dpath of datapath is
     signal nflag, zflag, cflag, vflag, bflag : std_logic;
 
 begin
-    nflag  <= flags_in(0);
-    zflag  <= flags_in(1);
-    cflag  <= flags_in(2);
-    vflag  <= flags_in(3);
-    bflag  <= flags_in(4);
+    flags  <= flags_in;
+    nflag  <= flags(0);
+    zflag  <= flags(1);
+    cflag  <= flags(2);
+    vflag  <= flags(3);
+    bflag  <= flags(4);
 
     alu_add   <= control_in(0);
     alu_or    <= control_in(1);
@@ -158,6 +161,7 @@ begin
 
     mem_out    <= mem_out_bus;
     mem_in_bus <= mem_in;
+    flags_out  <= flags;
 
 end dpath;
 

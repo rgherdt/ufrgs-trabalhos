@@ -6,25 +6,28 @@ use work.ahmes_lib.all;
 entity alu is
 port (x : in signed(7 downto 0);
       y : in signed(7 downto 0);
-      alu_add : in std_logic;
-      alu_or  : in std_logic;
-      alu_and : in std_logic;
-      alu_not : in std_logic;
-      alu_py  : in std_logic;
-      alu_sub : in std_logic;
+      alu_opsel : in std_logic_vector(5 downto 0);
       alu_out : out signed(7 downto 0);
-      nflag, zflag, cflag, vflag, bflag : out std_logic);
+      flags_out : out std_logic_vector(4 downto 0));
 end alu;
 
 architecture behv of alu is
     signal res : signed(7 downto 0);
     signal flags : std_logic_vector(4 downto 0);
+    signal alu_add, alu_or, alu_and, alu_not, alu_py, alu_sub : std_logic;
+    signal nflag, zflag, cflag, vflag, bflag : std_logic;
 begin
     nflag <= flags(0);
-    zflag <= flags(0);
-    cflag <= flags(0);
-    vflag <= flags(0);
-    bflag <= flags(0);
+    zflag <= flags(1);
+    cflag <= flags(2);
+    vflag <= flags(3);
+    bflag <= flags(4);
+    alu_add <= alu_opsel(0);
+    alu_or  <= alu_opsel(1);
+    alu_and <= alu_opsel(2);
+    alu_not <= alu_opsel(3);
+    alu_py  <= alu_opsel(4);
+    alu_sub <= alu_opsel(5);
     alu: process (x, y, alu_add, alu_or, alu_and, alu_not, alu_py, alu_sub)
     variable temp_res : signed (8 downto 0); --one more due to carry flag
     begin
@@ -59,4 +62,5 @@ begin
         cflag <= temp_res(0);
         bflag <= not temp_res(0);
     end process;
+    flags_out <= flags;
 end behv;

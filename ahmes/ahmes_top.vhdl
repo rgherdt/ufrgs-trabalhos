@@ -9,19 +9,13 @@ port (clock: in std_logic;
 end ahmes;
 
 architecture ahmes of ahmes is
-    type state_type is (init, fetch0, fetch1, fetch2, decod, 
 
     component alu is
     port (x : in signed(7 downto 0);
           y : in signed(7 downto 0);
-          alu_add : in std_logic;
-          alu_or  : in std_logic;
-          alu_and : in std_logic;
-          alu_not : in std_logic;
-          alu_py  : in std_logic;
-          alu_sub : in std_logic;
+          alu_opsel : in std_logic_vector(5 downto 0);
           alu_out : out signed(7 downto 0);
-          nflag, zflag, cflag, vflag, bflag : out std_logic);
+          flags_out : out std_logic_vector(4 downto 0));
     end component;
 
     component ctrl_unit is
@@ -35,6 +29,8 @@ architecture ahmes of ahmes is
     component datapath is
     port (clock       : in std_logic;
           control_in  : in ctlcod_type;
+          flags_in    : in std_logic_vector(4 downto 0);
+          flags_out   : out std_logic_vector(4 downto 0);
           dec_out     : out instdec_type;
           mem_in      : in bus8;
           mem_out     : out bus8;
@@ -43,34 +39,57 @@ architecture ahmes of ahmes is
           alu_y       : out signed(7 downto 0));
     end component;
 
-    signal mem : memory_type;
-    signal control_in  : in ctlcod_type;
-    signal flags_out   : out std_logic_vector(4 downto 0);
-    signal alu_op : alusel_type;
-    signal ac_ld, pc_inc, pc_ld, mpx_sel, rem_ld, mem_rd, mem_wr, rdm_ld,
-           ri_ld, nflag, zflag, cflag, vflag, bflag, flags_ld : std_logic;
+    component memory is
+    port (clk    : in std_logic;
+          rem_in : in bus8;
+          read, write : in std_logic;
+          rdm_in : in bus8;
+          rdm_out : out bus8);
+    end component;
 
-    alu_op   <= control_in(0) & control_in(1) & control_in(2);
-    ac_ld    <= control_in(3);
-    pc_inc   <= control_in(4);
-    pc_ld    <= control_in(5);
-    mpx_sel  <= control_in(6);
-    rem_ld   <= control_in(7);
-    mem_rd   <= control_in(8);
-    mem_wr   <= control_in(9);
-    rdm_ld   <= control_in(10);
-    ri_ld    <= control_in(11);
-    nflag    <= control_in(12);
-    zflag    <= control_in(13);
-    cflag    <= control_in(14);
-    vflag    <= control_in(15);
-    bflag    <= control_in(16);
-    flags_ld <= control_in(17);
+
+    signal mem : memory_type;
+    signal alu_x, alu_y : bus8;
+    signal alu_data : bus8;
+    signal alu_opsel : std_logic_vector(5 downto 0);
+    signal control  : ctlcod_type;
+    signal instdec  : instdec_type;
+    signal flags    : std_logic_vector(4 downto 0);
+    signal alu_add, alu_or, alu_and, alu_not, alu_sub, alu_passy,
+           ctl_shr, ctl_shl, ctl_ror, ctl_rol : std_logic;
+    signal ac_ld, pc_inc, pc_ld, mpx_sel, rem_ld, mem_rd, mem_wr, rrdm_ld,
+           wrdm_ld, ri_ld, flags_ld: std_logic;
+
+    signal mem_in  : bus8;
+    signal mem_out : bus8;
 
 begin    
-    ahmes_alu : alu
-    port map (x     => 
 
-   
-begin
+    ahmes_alu : alu
+    port map (x => signed(alu_x),
+              y => signed(alu_y),
+              alu_opsel => alu_opsel,
+              std_logic_vector(alu_out)   => alu_data,
+              flags_out => flags);
+
+    ahmes_ct : ctrl_unit
+    port map (clk      => clock,
+              reset    => reset,
+              flags_in => flags,
+              dec_in   => instdec,
+              control_out => control);
+
+    ahmes_dp : datapath
+    port map (clock      => clock,
+              control_in => control,
+              flags_in   => flags,
+              flags_out  => flags,
+              dec_out    => instdec,
+              mem_in     => mem_out,
+              mem_out    => mem_in,
+              alu_res    => signed(alu_data),
+              std_logic_vector(alu_x) => alu_x,
+              std_logic_vector(alu_y) => alu_y);
+              
+end ahmes;
 
