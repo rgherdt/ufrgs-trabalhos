@@ -49,6 +49,11 @@ architecture ctrl_unit of ctrl_unit is
     constant t7_or  : ctlcod_type := "010000000011000000000"; 
     constant t7_and : ctlcod_type := "001000000011000000000"; 
     constant t7_sub : ctlcod_type := "000010000011000000000"; 
+                                --    012345678901234567890
+    constant t7_shr : ctlcod_type := "000000100011000000000"; 
+    constant t7_shl : ctlcod_type := "000000010011000000000"; 
+    constant t7_ror : ctlcod_type := "001000001011000000000"; 
+    constant t7_rol : ctlcod_type := "010000000111000000000"; 
 
     signal alunop, alusta, alulda, aluadd, aluor, aluand, alunot, alusub, 
            alujmp, alujn, alujp, alujv, alujnv, alujz, alujnz, alujc, alujnc, 
@@ -107,7 +112,7 @@ begin
                 when "011" =>
                     if (decsta = '1' or declda = '1' or decand = '1' or
                         decor = '1' or decand = '1' or decsub = '1' or
-                        decjmp = '1') then
+                        decjmp = '1' or decshr = '1' or decshl = '1' or decrol = '1' or decror = '1') then
                         control_out <= t3_op;
                     elsif (decnot = '1') then
                         control_out <= t3_not;
@@ -130,13 +135,15 @@ begin
                     end if;
                 when "100" =>
                     if (decsta = '1' or declda = '1' or decand = '1' or
-                        decor = '1' or decand = '1' or decsub = '1') then
+                        decor = '1' or decand = '1' or decsub = '1' or
+                        decshr = '1' or decshl = '1' or decrol = '1' or decror = '1') then
                         control_out <= t4_op;
                     else control_out <= t4_br;
                     end if;
                 when "101" =>
                     if (decsta = '1' or declda = '1' or decand = '1' or
-                        decor = '1' or decand = '1' or decsub = '1') then
+                        decor = '1' or decand = '1' or decsub = '1' or
+                        decshr = '1' or decshl = '1' or decrol = '1' or decror = '1') then
                         control_out <= t5_op;
                     else
                         control_out <= t5_br;
@@ -159,6 +166,8 @@ begin
                     elsif (decand = '1') then
                         control_out <= t7_and;
                     elsif (decsub = '1') then
+                        control_out <= t7_sub;
+                    elsif (decshl = '1') then
                         control_out <= t7_sub;
                     else control_out <= (others => '0');
                     end if;

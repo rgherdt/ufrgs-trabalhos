@@ -7,19 +7,27 @@ entity test_alu is
 end test_alu;
 
 architecture test_alu_behv of test_alu is
+
     component alu is
-    port (x : in bus8;
-          y : in bus8;
-          sel : in std_logic_vector(1 downto 0);
-          alu_out : out bus8;
-          st_reg : out std_logic_vector(4 downto 0));
+    port (x : in signed(7 downto 0);
+          y : in signed(7 downto 0);
+          alu_opsel : in std_logic_vector(5 downto 0);
+          alu_out : out signed(7 downto 0);
+          flags_out : out std_logic_vector(4 downto 0));
     end component;
 
-    signal sel : std_logic_vector(1 downto 0);
-    signal x, y, alu_out : bus8;
+    signal sel : std_logic_vector(5 downto 0);
+    signal flags : std_logic_vector(4 downto 0);
+    signal x, y, alu_out : signed(7 downto 0);
 begin
+    flags <= "00000";
     x <= "00001000", "00000001" after 15 ns;
     y <= "00000100", "00000010" after 25 ns;
-    sel <= "00";
-    r: alu port map (x, y, sel, alu_out);
+    sel <= "100000";
+    r: alu port map (
+            x => x,
+            y => y,
+            alu_opsel => sel,
+            alu_out   => alu_out,
+            flags_out => flags);
 end test_alu_behv;

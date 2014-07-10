@@ -5,7 +5,8 @@ use work.ahmes_lib.all;
 
 entity ahmes is
 port (clock: in std_logic;
-      reset: in std_logic);
+      reset: in std_logic;
+      accum: out std_logic_vector(7 downto 0));
 end ahmes;
 
 architecture ahmes of ahmes is
@@ -31,6 +32,7 @@ architecture ahmes of ahmes is
           control_in  : in ctlcod_type;
           flags_in    : in std_logic_vector(4 downto 0);
           flags_out   : out std_logic_vector(4 downto 0);
+          accum_out   : out std_logic_vector(7 downto 0);
           dec_out     : out instdec_type;
           mem_in      : in bus8;
           mem_out     : out bus8;
@@ -84,12 +86,14 @@ begin
               control_in => control,
               flags_in   => flags,
               flags_out  => flags,
+              accum_out  => accum,
               dec_out    => instdec,
               mem_in     => mem_out,
               mem_out    => mem_in,
               alu_res    => signed(alu_data),
               std_logic_vector(alu_x) => alu_x,
               std_logic_vector(alu_y) => alu_y);
+    
               
 end ahmes;
 

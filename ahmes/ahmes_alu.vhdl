@@ -33,7 +33,7 @@ begin
     begin
         if (alu_py = '1') then res <= y;
         elsif (alu_add = '1') then
-            temp_res := ('0' & x) + y;
+            temp_res := ('0' & x) + ('0' & y);
             if (x(0) = '1' and y(0) = '1' and temp_res(1) = '0') then
                 vflag <= '1';
             elsif (x(0) = '0' and y(0) = '0' and temp_res(1) = '1') then
@@ -54,11 +54,11 @@ begin
                 vflag <= '0';
             end if;
         end if;
-        if (temp_res = 0) then flags <= "01000";
-        elsif (temp_res < 0) then flags <= "10000";
+        if (std_logic_vector(temp_res) = "000000000") then flags <= "01000";
+        elsif (temp_res(1) = '1') then flags <= "10000";
         end if;
-        alu_out <= res;
         res <= temp_res(7 downto 0);
+        alu_out <= res;
         cflag <= temp_res(0);
         bflag <= not temp_res(0);
     end process;

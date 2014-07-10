@@ -8,6 +8,7 @@ port (clock       : in std_logic;
       control_in  : in ctlcod_type;
       flags_in    : in std_logic_vector(4 downto 0);
       flags_out   : out std_logic_vector(4 downto 0);
+      accum_out   : out std_logic_vector(7 downto 0);
       dec_out     : out instdec_type;
       mem_in      : in bus8;
       mem_out     : out bus8;
@@ -162,6 +163,7 @@ begin
     mem_out    <= mem_out_bus;
     mem_in_bus <= mem_in;
     flags_out  <= flags;
+    accum_out  <= ac_out;
 
 end dpath;
 
