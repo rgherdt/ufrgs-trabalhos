@@ -6,23 +6,23 @@ use work.ahmes_lib.all;
 entity datapath is
 port (clock       : in std_logic;
       control_in  : in ctlcod_type;
-      flags_in    : in std_logic_vector(0 to 4);
-      flags_out   : out std_logic_vector(0 to 4);
-      accum_out   : out std_logic_vector(0 to 7);
+      flags_in    : in std_logic_vector(4 downto 0);
+      flags_out   : out std_logic_vector(4 downto 0);
+      accum_out   : out unsign8;
       dec_out     : out instdec_type;
       mem_in      : in bus8;
       mem_out     : out bus8;
-      alu_res     : in signed(0 to 7);
-      alu_x       : out signed(0 to 7);
-      alu_y       : out signed(0 to 7));
+      alu_res     : in unsign8;
+      alu_x       : out unsign8;
+      alu_y       : out unsign8);
 end datapath;
 
 architecture dpath of datapath is
 
     component reg8 is
-    port (reg_in : in bus8;
+    port (reg_in : in unsign8;
           ld, clk : in std_logic;
-          reg_out : out bus8);
+          reg_out : out unsign8);
     end component;
 
     component reg5 is
@@ -34,22 +34,22 @@ architecture dpath of datapath is
 
     component shifter is
     port (clk, ld, shl, shr, rol_flag, ror_flag, cflag_in : std_logic;
-          din : in std_logic_vector(0 to 7);
-          dout : out std_logic_vector(0 to 7);
+          din : in unsign8;
+          dout : out unsign8;
           nflag, zflag, cflag: out std_logic);
     end component;
 
     component count8 is
     port (clk,ld : in std_logic;
-          din : in bus8;
-          count : out bus8);
+          din : in unsign8;
+          count : out unsign8);
     end component;
 
     component mux16_8 is
     port (clk, sel : in std_logic;
-          mux_in0 : in bus8;
-          mux_in1 : in bus8;
-          mux_out : out bus8);
+          mux_in0 : in unsign8;
+          mux_in1 : in unsign8;
+          mux_out : out unsign8);
     end component;
 
     signal alu_add, alu_or, alu_and, alu_not, alu_sub, alu_passy,
@@ -57,7 +57,8 @@ architecture dpath of datapath is
     signal ac_ld, pc_inc, pc_ld, mpx_sel, rem_ld, mem_rd, mem_wr, rrdm_ld,
            wrdm_ld, ri_ld, flags_ld: std_logic;
     signal mem_out_bus, mem_in_bus : bus8;
-    signal ac_out, rrdm_out, pc_out, mpx_out, ri_out : bus8;
+    signal ac_out, rrdm_out, pc_out, mpx_out : unsign8;
+    signal ri_out : bus8;
     signal nflag, zflag, cflag, vflag, bflag : std_logic;
 
 begin
@@ -93,7 +94,7 @@ begin
     port map (reg_in  => rrdm_out,
               clk     => clock,
               ld      => ri_ld,
-              reg_out => ri_out);
+              std_logic_vector(reg_out) => ri_out);
 
     flags : reg5
     port map (reg_in  => flags_in,
@@ -133,7 +134,7 @@ begin
     end process;
 
     accum : shifter
-    port map (din      => std_logic_vector(alu_res),
+    port map (din      => alu_res,
               clk      => clock,
               ld       => ac_ld,
               shl      => ctl_shl,
@@ -147,7 +148,7 @@ begin
               zflag    => zflag);
     
     rrdm : reg8
-    port map (reg_in  => mem_out_bus,
+    port map (reg_in  => unsigned(mem_out_bus),
               clk     => clock,
               ld      => rrdm_ld,
               reg_out => rrdm_out);
@@ -156,7 +157,7 @@ begin
     port map (reg_in  => ac_out,
               clk     => clock,
               ld      => wrdm_ld,
-              reg_out => mem_in_bus);
+              std_logic_vector(reg_out) => mem_in_bus);
 
     pc : count8
     port map (din     => rrdm_out,

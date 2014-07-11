@@ -6,7 +6,7 @@ use work.ahmes_lib.all;
 entity ctrl_unit is
 port (clk         : in std_logic;
       reset       : in std_logic;
-      flags_in    : in std_logic_vector(0 to 4);
+      flags_in    : in std_logic_vector(4 downto 0);
       dec_in      : in instdec_type;
       control_out : out ctlcod_type);
 end ctrl_unit;
@@ -15,12 +15,12 @@ architecture ctrl_unit of ctrl_unit is
 
     component count3 is
     port (clk,ld : in std_logic;
-          din : in std_logic_vector (0 to 2);
-          count : out std_logic_vector (0 to 2));
+          din : in std_logic_vector (2 downto 0);
+          count : out std_logic_vector (2 downto 0));
     end component;
 
     signal couter_ld : std_logic;
-    signal next_stage : std_logic_vector(0 to 2);
+    signal next_stage : std_logic_vector(2 downto 0);
     signal nflag, zflag, cflag, vflag, bflag : std_logic;
     signal decnop, decsta, declda, decadd, decor, decand, decnot, decsub,
            decshr, decshl, decror, decrol, decjmp, decjn, decjp, decjz, decjnz,
@@ -59,7 +59,7 @@ architecture ctrl_unit of ctrl_unit is
            alujmp, alujn, alujp, alujv, alujnv, alujz, alujnz, alujc, alujnc, 
            alujb, alujnb, alushr, alushl, aluror, alurol, aluhlt : std_logic;
     signal opflag, brflag, counter_ld : std_logic;
-    signal NS, PS : std_logic_vector(0 to 2);
+    signal NS, PS : std_logic_vector(2 downto 0);
 
 begin
     nflag  <= flags_in(4);
