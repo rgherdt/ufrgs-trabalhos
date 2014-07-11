@@ -25,6 +25,13 @@ architecture dpath of datapath is
           reg_out : out bus8);
     end component;
 
+    component reg5 is
+    port (reg_in : in std_logic_vector(4 downto 0);
+          ld, clk : in std_logic;
+          reg_out : out std_logic_vector(4 downto 0));
+    end component;
+
+
     component shifter is
     port (clk, ld, shl, shr, rol_flag, ror_flag, cflag_in : std_logic;
           din : in std_logic_vector(7 downto 0);
@@ -51,44 +58,48 @@ architecture dpath of datapath is
            wrdm_ld, ri_ld, flags_ld: std_logic;
     signal mem_out_bus, mem_in_bus : bus8;
     signal ac_out, rrdm_out, pc_out, mpx_out, ri_out : bus8;
-    signal flags : std_logic_vector(4 downto 0);
     signal nflag, zflag, cflag, vflag, bflag : std_logic;
 
 begin
-    flags  <= flags_in;
-    nflag  <= flags(0);
-    zflag  <= flags(1);
-    cflag  <= flags(2);
-    vflag  <= flags(3);
-    bflag  <= flags(4);
+    nflag  <= flags_in(4);
+    zflag  <= flags_in(3);
+    cflag  <= flags_in(2);
+    vflag  <= flags_in(1);
+    bflag  <= flags_in(0);
 
-    alu_add   <= control_in(0);
-    alu_or    <= control_in(1);
-    alu_and   <= control_in(2);
-    alu_not   <= control_in(3);
-    alu_sub   <= control_in(4);
-    alu_passy <= control_in(5);
-    ctl_shr   <= control_in(6);
-    ctl_shl   <= control_in(7);
-    ctl_ror   <= control_in(8);
-    ctl_rol   <= control_in(9);
+    alu_add   <= control_in(20);
+    alu_or    <= control_in(19);
+    alu_and   <= control_in(18);
+    alu_not   <= control_in(17);
+    alu_sub   <= control_in(16);
+    alu_passy <= control_in(15);
+    ctl_shr   <= control_in(14);
+    ctl_shl   <= control_in(13);
+    ctl_ror   <= control_in(12);
+    ctl_rol   <= control_in(11);
     ac_ld     <= control_in(10);
-    flags_ld  <= control_in(11);
-    pc_inc    <= control_in(12);
-    pc_ld     <= control_in(13);
-    mpx_sel   <= control_in(14);
-    rem_ld    <= control_in(15);
-    mem_rd    <= control_in(16);
-    mem_wr    <= control_in(17);
-    rrdm_ld   <= control_in(18);
-    wrdm_ld   <= control_in(19);
-    ri_ld     <= control_in(20);
+    flags_ld  <= control_in(9);
+    pc_inc    <= control_in(8);
+    pc_ld     <= control_in(7);
+    mpx_sel   <= control_in(6);
+    rem_ld    <= control_in(5);
+    mem_rd    <= control_in(4);
+    mem_wr    <= control_in(3);
+    rrdm_ld   <= control_in(2);
+    wrdm_ld   <= control_in(1);
+    ri_ld     <= control_in(0);
 
     ri : reg8
     port map (reg_in  => rrdm_out,
               clk     => clock,
               ld      => ri_ld,
               reg_out => ri_out);
+
+    flags : reg5
+    port map (reg_in  => flags_in,
+              clk     => clock,
+              ld      => flags_ld,
+              reg_out => flags_out);
 
     decode : process (clock)
     begin
@@ -162,7 +173,6 @@ begin
 
     mem_out    <= mem_out_bus;
     mem_in_bus <= mem_in;
-    flags_out  <= flags;
     accum_out  <= ac_out;
 
 end dpath;
