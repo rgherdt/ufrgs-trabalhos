@@ -62,35 +62,35 @@ architecture ctrl_unit of ctrl_unit is
     signal NS, PS : std_logic_vector(0 to 2);
 
 begin
-    nflag  <= flags_in(0);
-    zflag  <= flags_in(1);
+    nflag  <= flags_in(4);
+    zflag  <= flags_in(3);
     cflag  <= flags_in(2);
-    vflag  <= flags_in(3);
-    bflag  <= flags_in(4);
-    decnop <= dec_in(0);
-    decsta <= dec_in(1);
-    declda <= dec_in(2);
-    decadd <= dec_in(3);
-    decor  <= dec_in(4);
-    decand <= dec_in(5);
-    decnot <= dec_in(6);
-    decsub <= dec_in(7);
-    decshr <= dec_in(8);
-    decshl <= dec_in(9);
-    decror <= dec_in(10);
-    decrol <= dec_in(11);
-    decjmp <= dec_in(12);
-    decjn  <= dec_in(13);
-    decjp  <= dec_in(14);
-    decjz  <= dec_in(15);
-    decjnz <= dec_in(16);
-    decjc  <= dec_in(17);
-    decjnc <= dec_in(18);
-    decjv  <= dec_in(19);
-    decjnv <= dec_in(20);
-    decjb  <= dec_in(21);
-    decjnb <= dec_in(22);
-    dechlt <= dec_in(23);
+    vflag  <= flags_in(1);
+    bflag  <= flags_in(0);
+    decnop <= dec_in(23);
+    decsta <= dec_in(22);
+    declda <= dec_in(21);
+    decadd <= dec_in(20);
+    decor  <= dec_in(19);
+    decand <= dec_in(18);
+    decnot <= dec_in(17);
+    decsub <= dec_in(16);
+    decshr <= dec_in(15);
+    decshl <= dec_in(14);
+    decror <= dec_in(13);
+    decrol <= dec_in(12);
+    decjmp <= dec_in(11);
+    decjn  <= dec_in(10);
+    decjp  <= dec_in(9);
+    decjz  <= dec_in(8);
+    decjnz <= dec_in(7);
+    decjc  <= dec_in(6);
+    decjnc <= dec_in(5);
+    decjv  <= dec_in(4);
+    decjnv <= dec_in(3);
+    decjb  <= dec_in(2);
+    decjnb <= dec_in(1);
+    dechlt <= dec_in(0);
                                 --    012345678901234567890
 
     st_count : count3
