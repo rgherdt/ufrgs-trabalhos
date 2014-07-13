@@ -28,9 +28,6 @@ begin
     alu: process (x, y, alu_add, alu_or, alu_and, alu_not, alu_py, alu_sub)
     variable temp_res : std_logic_vector (8 downto 0); --one more due to carry flag
     begin
-        cflag <= '0';
-        vflag <= '0';
-        bflag <= '0';
         if (alu_py = '1') then temp_res := '0' & y;
         elsif (alu_add = '1') then
             temp_res := ('0' & x) + ('0' & y);

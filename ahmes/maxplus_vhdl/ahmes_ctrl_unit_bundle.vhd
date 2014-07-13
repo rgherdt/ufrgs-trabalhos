@@ -2,15 +2,15 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 
-entity ahmes_ctrl_unit is
+entity ahmes_ctrl_unit_bundle is
 port (clk         : in std_logic;
       reset       : in std_logic;
       flags_in    : in std_logic_vector(4 downto 0);
       dec_in      : in std_logic_vector(23 downto 0);
       control_out : out std_logic_vector(20 downto 0));
-end ahmes_ctrl_unit;
+end ahmes_ctrl_unit_bundle;
 
-architecture ahmes_ctrl_unit of ahmes_ctrl_unit is
+architecture ahmes_ctrl_unit of ahmes_ctrl_unit_bundle is
     subtype ctlcod_type is std_logic_vector(20 downto 0);
     subtype instdec_type is std_logic_vector(23 downto 0);
 
