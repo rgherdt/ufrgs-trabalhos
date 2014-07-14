@@ -1,30 +1,13 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity ahmes_datapath is
-port (clk       : in std_logic;
-      control_in  : in std_logic_vector(20 downto 0);
-      flags_in    : in std_logic_vector(4 downto 0);
-      alu_add_out : out std_logic;
-      alu_or_out : out std_logic;
-      alu_and_out : out std_logic;
-      alu_not_out : out std_logic;
-      alu_sub_out : out std_logic;
-      alu_passy_out : out std_logic;
-      ctl_shr_out : out std_logic;
-      ctl_shl_out : out std_logic;
-      ctl_ror_out : out std_logic;
-      ctl_rol_out : out std_logic;
-      flags_out   : out std_logic_vector(4 downto 0);
-      dec_out     : out std_logic_vector(23 downto 0);
+entity ahmes_cpu is
+port (clk, reset  : in std_logic;
       mem_in      : in std_logic_vector(7 downto 0);
-      mem_out     : out std_logic_vector(7 downto 0);
-      alu_res     : in std_logic_vector(7 downto 0);
-      mem_data    : out std_logic_vector(7 downto 0);
-      dout        : out std_logic_vector(7 downto 0));
-end ahmes_datapath;
+      mem_out     : out std_logic_vector(7 downto 0));
+end ahmes_cpu;
 
-architecture dpath of ahmes_datapath is
+architecture cpu of ahmes_cpu is
     constant NOPCOD : std_logic_vector(7 downto 0) := x"00";
     constant STACOD : std_logic_vector(7 downto 0) := x"10";
     constant LDACOD : std_logic_vector(7 downto 0) := x"20";
@@ -49,6 +32,29 @@ architecture dpath of ahmes_datapath is
     constant RORCOD : std_logic_vector(7 downto 0) := x"e2";
     constant ROLCOD : std_logic_vector(7 downto 0) := x"e3";
     constant HLTCOD : std_logic_vector(7 downto 0) := x"f0";
+
+    component ahmes_alu is
+    port (x : in std_logic_vector(7 downto 0);
+          y : in std_logic_vector(7 downto 0);
+          alu_add : in std_logic;
+          alu_or  : in std_logic;
+          alu_and : in std_logic;
+          alu_not : in std_logic;
+          alu_py  : in std_logic;
+          alu_sub : in std_logic;
+          alu_out : out std_logic_vector(7 downto 0);
+          cflag   : out std_logic;
+          vflag   : out std_logic;
+          bflag   : out std_logic);
+    end component;
+
+    component ahmes_ctrl_unit_bundle is
+    port (clk         : in std_logic;
+          reset       : in std_logic;
+          flags_in    : in std_logic_vector(4 downto 0);
+          dec_in      : in std_logic_vector(23 downto 0);
+          control_out : out std_logic_vector(20 downto 0));
+    end component;
 
     component pc is
     port (din : in std_logic_vector(7 downto 0);
@@ -96,30 +102,27 @@ architecture dpath of ahmes_datapath is
           mux_out : out std_logic_vector(7 downto 0));
     end component;
 
-    signal alu_add, alu_or, alu_and, alu_not, alu_sub, alu_passy,
+    signal alu_add, alu_or, alu_and, alu_not, alu_sub, alu_py,
            ctl_shr, ctl_shl, ctl_ror, ctl_rol : std_logic;
     signal ac_ld, pc_inc, pc_ld, mpx_sel, rem_ld, mem_rd, mem_wr, rrdm_ld,
            wrdm_ld, ri_ld, flags_ld: std_logic;
+    signal control_in : std_logic_vector(20 downto 0);
     signal mem_out_bus, mem_in_bus : std_logic_vector(7 downto 0);
-    signal ac_out, rrdm_out, pc_out, mpx_out : std_logic_vector(7 downto 0);
+    signal ac_out, ac_in, rrdm_out, pc_out, mpx_out : std_logic_vector(7 downto 0);
     signal ri_out : std_logic_vector(7 downto 0);
-    signal nflag_in, zflag_in, cflag_in, vflag_in, bflag_in,
-           nflag, zflag, cflag, vflag, b_flag,   
+    signal flags_in : std_logic_vector(4 downto 0);
+    signal nflag, zflag, cflag0, cflag, vflag, bflag,   
            nflag_out, zflag_out, cflag_out, vflag_out, bflag_out : std_logic;
+    signal dec_out : std_logic_vector(23 downto 0);
 
 begin
-    nflag_in <= flags_in(4);
-    zflag_in <= flags_in(3);
-    cflag_in <= flags_in(2);
-    vflag_in <= flags_in(1);
-    bflag_in <= flags_in(0);
 
     alu_add   <= control_in(20);
     alu_or    <= control_in(19);
     alu_and   <= control_in(18);
     alu_not   <= control_in(17);
     alu_sub   <= control_in(16);
-    alu_passy <= control_in(15);
+    alu_py    <= control_in(15);
     ctl_shr   <= control_in(14);
     ctl_shl   <= control_in(13);
     ctl_ror   <= control_in(12);
@@ -136,6 +139,29 @@ begin
     wrdm_ld   <= control_in(1);
     ri_ld     <= control_in(0);
 
+    flags_in <= nflag & zflag & cflag & vflag & bflag;
+
+    alu : ahmes_alu
+    port map (x => ac_out,
+              y => rrdm_out,
+              alu_add => alu_add,
+              alu_or => alu_or,
+              alu_and => alu_and,
+              alu_not => alu_not,
+              alu_py => alu_py,
+              alu_sub => alu_sub,
+              alu_out => ac_in,
+              cflag   => cflag0,
+              vflag   => vflag,
+              bflag   => bflag);
+
+    ctrl_init : ahmes_ctrl_unit_bundle
+    port map (clk     => clk,
+              reset   => reset,
+              flags_in => flags_in,
+              dec_in  => dec_out,
+              control_out => control_in);
+
     ri : reg8
     port map (reg_in  => rrdm_out,
               clk     => clk,
@@ -143,7 +169,7 @@ begin
               reg_out => ri_out);
 
     accum : ahmes_shifter
-    port map (din      => alu_res,
+    port map (din      => ac_in,
               clk      => clk,
               ld       => ac_ld,
               shl_flag => ctl_shl,
@@ -151,7 +177,7 @@ begin
               rol_flag => ctl_rol,
               ror_flag => ctl_ror,
               dout     => ac_out,
-              cflag_in => cflag_in,
+              cflag_in => cflag0,
               cflag    => cflag,
               nflag    => nflag,
               zflag    => zflag);
@@ -163,8 +189,8 @@ begin
               nflag_in  => nflag,
               zflag_in  => zflag,
               cflag_in  => cflag,
-              vflag_in  => vflag_in,
-              bflag_in  => bflag_in, 
+              vflag_in  => vflag,
+              bflag_in  => bflag, 
               nflag_out => nflag_out, 
               zflag_out => zflag_out,
               cflag_out => cflag_out,
@@ -231,18 +257,5 @@ begin
 
     mem_out    <= mem_out_bus;
     mem_in_bus <= mem_in;
-    dout  <= ac_out;
-    flags_out <= nflag_out & zflag_out & cflag_out & vflag_out & bflag_out;
-    mem_data <= rrdm_out;
-    alu_add_out   <= alu_add;
-    alu_or_out    <= alu_or;  
-    alu_and_out   <= alu_and;
-    alu_not_out   <= alu_not;  
-    alu_sub_out   <= alu_sub;  
-    alu_passy_out <= alu_passy;
-    ctl_shr_out   <= ctl_shr;
-    ctl_shl_out   <= ctl_shl;  
-    ctl_ror_out   <= ctl_ror;  
-    ctl_rol_out   <= ctl_rol;  
-end dpath;
+end cpu;
     

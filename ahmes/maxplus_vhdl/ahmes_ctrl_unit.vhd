@@ -41,7 +41,7 @@ port (clk    : in std_logic;
       alu_and  : out std_logic;  
       alu_not  : out std_logic;  
       alu_sub  : out std_logic;  
-      alu_passy : out std_logic; 
+      alu_py   : out std_logic; 
       ctl_shr  : out std_logic;  
       ctl_shl  : out std_logic;  
       ctl_ror  : out std_logic;  
@@ -57,7 +57,6 @@ port (clk    : in std_logic;
       rrdm_ld  : out std_logic;  
       wrdm_ld  : out std_logic;  
       ri_ld    : out std_logic);
-
 end ahmes_ctrl_unit;
 
 architecture ahmes_ctrl_unit of ahmes_ctrl_unit is
@@ -112,7 +111,7 @@ begin
     alu_and   <= control_out(18);
     alu_not   <= control_out(17);
     alu_sub   <= control_out(16);
-    alu_passy <= control_out(15);
+    alu_py    <= control_out(15);
     ctl_shr   <= control_out(14);
     ctl_shl   <= control_out(13);
     ctl_ror   <= control_out(12);
