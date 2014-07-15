@@ -157,7 +157,8 @@ begin
                         control_out <= t3_op;
                     elsif (decnot = '1') then
                         control_out <= t3_not;
-                    elsif ((decjn = '1' and nflag = '1' ) or
+                    elsif ((decjmp = '1') or
+                           (decjn = '1' and nflag = '1' ) or
                            (decjp = '1' and nflag = '0') or
                            (decjz = '1' and zflag = '1') or
                            (decjnz = '1' and zflag = '0') or
@@ -168,24 +169,43 @@ begin
                            (decjb = '1' and bflag = '1') or
                            (decjnb = '1' and bflag = '0')) then
                         control_out <= t3_op;
+                    elsif ((decjn = '1' and nflag = '0' ) or
+                           (decjp = '1' and nflag = '1') or
+                           (decjz = '1' and zflag = '0') or
+                           (decjnz = '1' and zflag = '1') or
+                           (decjc = '1' and cflag = '0') or
+                           (decjnc = '1' and cflag = '1') or
+                           (decjv = '1' and vflag = '0') or
+                           (decjnv = '1' and vflag = '1') or
+                           (decjb = '1' and bflag = '0') or
+                           (decjnb = '1' and bflag = '1')) then
+                        control_out <= t3_brp;
+                        reset_counter <= '1';
 					elsif  (decshr = '1') then
 						control_out <= t3_shr;
+                        reset_counter <= '1';
 					elsif  (decshl = '1') then
 						control_out <= t3_shl;
+                        reset_counter <= '1';
 					elsif  (decror = '1') then
 						control_out <= t3_ror;
+                        reset_counter <= '1';
 					elsif  (decrol = '1') then
 						control_out <= t3_rol;
+                        reset_counter <= '1';
                     elsif  (dechlt = '1') then
                         control_out <= empty;
+                        reset_counter <= '1';
 					else
 						control_out <= empty;
+                        reset_counter <= '1';
                     end if;
                 when "100" =>
                     if (decsta = '1' or declda = '1' or decadd = '1' or
                         decor = '1' or decand = '1' or decsub = '1') then
                         control_out <= t4_op;
-                    elsif ((decjn = '1' and nflag = '1' ) or
+                    elsif ((decjmp = '1') or
+                           (decjn = '1' and nflag = '1' ) or
                            (decjp = '1' and nflag = '0') or
                            (decjz = '1' and zflag = '1') or
                            (decjnz = '1' and zflag = '0') or
@@ -203,7 +223,8 @@ begin
                     if (decsta = '1' or declda = '1' or decadd = '1' or
                         decor = '1' or decand = '1' or decsub = '1') then
                         control_out <= t5_op;
-					elsif ((decjn = '1' and nflag = '1' ) or
+					elsif ((decjmp = '1') or
+                           (decjn = '1' and nflag = '1' ) or
                            (decjp = '1' and nflag = '0') or
                            (decjz = '1' and zflag = '1') or
                            (decjnz = '1' and zflag = '0') or
@@ -214,6 +235,7 @@ begin
                            (decjb = '1' and bflag = '1') or
                            (decjnb = '1' and bflag = '0')) then
                         control_out <= t5_br; 
+                        reset_counter <= '1';
 					else control_out <= empty;
                     end if;
                 when "110" =>
