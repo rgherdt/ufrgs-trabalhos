@@ -86,7 +86,7 @@ memory: process(clk, reset)
 	memdata(28) <= x"04";
 	memdata(29) <= x"01";
 	memdata(30) <= x"00";
-	memdata(31) <= x"10";
+	memdata(31) <= x"0A";
     -- synchronized operations
     elsif (rising_edge(clk)) then
       -- accumulator
