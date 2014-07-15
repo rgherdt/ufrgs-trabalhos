@@ -56,11 +56,12 @@ port (clk    : in std_logic;
       mem_wr   : out std_logic;  
       rrdm_ld  : out std_logic;  
       wrdm_ld  : out std_logic;  
-      ri_ld    : out std_logic);
+      ri_ld    : out std_logic;
+      halt     : out std_logic);
 end ahmes_ctrl_unit;
 
 architecture ahmes_ctrl_unit of ahmes_ctrl_unit is
-    subtype ctlcod_type is std_logic_vector(20 downto 0);
+    subtype ctlcod_type is std_logic_vector(21 downto 0);
     subtype instdec_type is std_logic_vector(23 downto 0);
 
     component counter3 is
@@ -69,42 +70,43 @@ architecture ahmes_ctrl_unit of ahmes_ctrl_unit is
     end component;
 
     signal reset_counter : std_logic;
-    signal control_out : std_logic_vector(20 downto 0);
+    signal control_out : std_logic_vector(21 downto 0);
 
-	constant empty  : ctlcod_type := "000000000000000000000";
-    constant t0_cod : ctlcod_type := "000000000000000100000";
-    constant t1_cod : ctlcod_type := "000000000000100010100";
-    constant t2_cod : ctlcod_type := "000000000000000000001"; 
-                                --    098765432109876543210
-    constant t3_op  : ctlcod_type := "000000000000000100000"; 
-    constant t3_not : ctlcod_type := "000100000011000000000";
-    constant t3_shr : ctlcod_type := "000000100001000000000"; 
-    constant t3_shl : ctlcod_type := "000000010001000000000";
-    constant t3_ror : ctlcod_type := "000000001001000000000";
-    constant t3_rol : ctlcod_type := "000000000101000000000";
-    constant t3_brp : ctlcod_type := "000000000000100000000"; 
-                                --    098765432109876543210
-    constant t4_op  : ctlcod_type := "000000000000100010100"; 
-    constant t4_br  : ctlcod_type := "000000000000000010100"; 
-                                --    098765432109876543210
-    constant t5_op  : ctlcod_type := "000000000000001100000"; 
-    constant t5_br  : ctlcod_type := "000000000000010000000"; 
-                                --    098765432109876543210
-    constant t6_op  : ctlcod_type := "000000000000000010100"; 
-    constant t6_sta : ctlcod_type := "000000000000000000110"; 
-                                --    098765432109876543210
-    constant t7_sta : ctlcod_type := "000000000000000001000"; 
-    constant t7_lda : ctlcod_type := "000001000011000000000"; 
-    constant t7_add : ctlcod_type := "100000000011000000000"; 
-                                --    098765432109876543210
-    constant t7_or  : ctlcod_type := "010000000011000000000"; 
-    constant t7_and : ctlcod_type := "001000000011000000000"; 
-    constant t7_sub : ctlcod_type := "000010000011000000000"; 
-                                --    098765432109876543210
-    constant t7_shr : ctlcod_type := "000000100011000000000"; 
-    constant t7_shl : ctlcod_type := "000000010011000000000"; 
-    constant t7_ror : ctlcod_type := "001000001011000000000"; 
-    constant t7_rol : ctlcod_type := "010000000111000000000"; 
+	constant empty  : ctlcod_type := "0000000000000000000000";
+    constant t0_cod : ctlcod_type := "0000000000000000100000";
+    constant t1_cod : ctlcod_type := "0000000000000100010100";
+    constant t2_cod : ctlcod_type := "0000000000000000000001"; 
+                                --     098765432109876543210
+    constant t3_op  : ctlcod_type := "0000000000000000100000"; 
+    constant t3_not : ctlcod_type := "0000100000011000000000";
+    constant t3_shr : ctlcod_type := "0000000100001000000000"; 
+    constant t3_shl : ctlcod_type := "0000000010001000000000";
+    constant t3_ror : ctlcod_type := "0000000001001000000000";
+    constant t3_rol : ctlcod_type := "0000000000101000000000";
+    constant t3_brp : ctlcod_type := "0000000000000100000000"; 
+    constant t3_hlt : ctlcod_type := "1000000000000000000000";
+                                --     098765432109876543210
+    constant t4_op  : ctlcod_type := "0000000000000100010100"; 
+    constant t4_br  : ctlcod_type := "0000000000000000010100"; 
+                                --     098765432109876543210
+    constant t5_op  : ctlcod_type := "0000000000000001100000"; 
+    constant t5_br  : ctlcod_type := "0000000000000010000000"; 
+                                --     098765432109876543210
+    constant t6_op  : ctlcod_type := "0000000000000000010100"; 
+    constant t6_sta : ctlcod_type := "0000000000000000000110"; 
+                                --     098765432109876543210
+    constant t7_sta : ctlcod_type := "0000000000000000001000"; 
+    constant t7_lda : ctlcod_type := "0000001000011000000000"; 
+    constant t7_add : ctlcod_type := "0100000000011000000000"; 
+                                --     098765432109876543210
+    constant t7_or  : ctlcod_type := "0010000000011000000000"; 
+    constant t7_and : ctlcod_type := "0001000000011000000000"; 
+    constant t7_sub : ctlcod_type := "0000010000011000000000"; 
+                                --     098765432109876543210
+    constant t7_shr : ctlcod_type := "0000000100011000000000"; 
+    constant t7_shl : ctlcod_type := "0000000010011000000000"; 
+    constant t7_ror : ctlcod_type := "0001000001011000000000"; 
+    constant t7_rol : ctlcod_type := "0010000000111000000000"; 
 
 
     signal NS, PS : std_logic_vector(2 downto 0);
@@ -112,6 +114,7 @@ architecture ahmes_ctrl_unit of ahmes_ctrl_unit is
 begin
 --    control_out <= "000000000000000000000"; 
 
+    halt      <= control_out(21);
     alu_add   <= control_out(20);
     alu_or    <= control_out(19);
     alu_and   <= control_out(18);
@@ -157,6 +160,7 @@ begin
                         control_out <= t3_op;
                     elsif (decnot = '1') then
                         control_out <= t3_not;
+                        reset_counter <= '1';
                     elsif ((decjmp = '1') or
                            (decjn = '1' and nflag = '1' ) or
                            (decjp = '1' and nflag = '0') or
@@ -194,7 +198,7 @@ begin
 						control_out <= t3_rol;
                         reset_counter <= '1';
                     elsif  (dechlt = '1') then
-                        control_out <= empty;
+                        control_out <= t3_hlt;
                         reset_counter <= '1';
 					else
 						control_out <= empty;
