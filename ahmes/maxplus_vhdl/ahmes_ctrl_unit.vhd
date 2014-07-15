@@ -264,8 +264,6 @@ begin
                         control_out <= t7_and;
                     elsif (decsub = '1') then
                         control_out <= t7_sub;
-                    elsif (decshl = '1') then
-                        control_out <= t7_sub;
                     else control_out <= (others => '0');
                     end if;
                 when others =>
