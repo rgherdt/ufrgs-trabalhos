@@ -71,22 +71,27 @@ architecture ahmes_ctrl_unit of ahmes_ctrl_unit is
     signal reset_counter : std_logic;
     signal control_out : std_logic_vector(20 downto 0);
 
+	constant empty  : ctlcod_type := "000000000000000000000";
     constant t0_cod : ctlcod_type := "000000000000000100000";
-    constant t1_cod : ctlcod_type := "000000000000100010000";
+    constant t1_cod : ctlcod_type := "000000000000100010100";
     constant t2_cod : ctlcod_type := "000000000000000000001"; 
                                 --    098765432109876543210
     constant t3_op  : ctlcod_type := "000000000000000100000"; 
-    constant t3_not : ctlcod_type := "000100000011000000000"; 
+    constant t3_not : ctlcod_type := "000100000011000000000";
+    constant t3_shr : ctlcod_type := "000000100001000000000"; 
+    constant t3_shl : ctlcod_type := "000000010001000000000";
+    constant t3_ror : ctlcod_type := "000000001001000000000";
+    constant t3_rol : ctlcod_type := "000000000101000000000";
     constant t3_brp : ctlcod_type := "000000000000100000000"; 
                                 --    098765432109876543210
-    constant t4_op  : ctlcod_type := "000000000000100010000"; 
-    constant t4_br  : ctlcod_type := "000000000000000010000"; 
+    constant t4_op  : ctlcod_type := "000000000000100010100"; 
+    constant t4_br  : ctlcod_type := "000000000000000010100"; 
                                 --    098765432109876543210
     constant t5_op  : ctlcod_type := "000000000000001100000"; 
     constant t5_br  : ctlcod_type := "000000000000010000000"; 
                                 --    098765432109876543210
-    constant t6_op  : ctlcod_type := "000000000000000010000"; 
-    constant t6_sta : ctlcod_type := "000000000000000000010"; 
+    constant t6_op  : ctlcod_type := "000000000000000010100"; 
+    constant t6_sta : ctlcod_type := "000000000000000000110"; 
                                 --    098765432109876543210
     constant t7_sta : ctlcod_type := "000000000000000001000"; 
     constant t7_lda : ctlcod_type := "000001000011000000000"; 
@@ -100,6 +105,7 @@ architecture ahmes_ctrl_unit of ahmes_ctrl_unit is
     constant t7_shl : ctlcod_type := "000000010011000000000"; 
     constant t7_ror : ctlcod_type := "001000001011000000000"; 
     constant t7_rol : ctlcod_type := "010000000111000000000"; 
+
 
     signal NS, PS : std_logic_vector(2 downto 0);
 
@@ -138,16 +144,16 @@ begin
     begin
         if (reset = '1') then
             reset_counter <= '1';
-        elsif (rising_edge(clk)) then
-            reset_counter <= '0';
-            case NS is
+        elsif (falling_edge(clk)) then
+			reset_counter <= '0';
+			case NS is
                 when "000" => control_out <= t0_cod;
                 when "001" => control_out <= t1_cod;
                 when "010" => control_out <= t2_cod;
                 when "011" =>
                     if (decsta = '1' or declda = '1' or decadd = '1' or
                         decor = '1' or decand = '1' or decsub = '1' or
-                        decjmp = '1' or decshr = '1' or decshl = '1' or decrol = '1' or decror = '1') then
+                        decjmp = '1') then
                         control_out <= t3_op;
                     elsif (decnot = '1') then
                         control_out <= t3_not;
@@ -162,32 +168,62 @@ begin
                            (decjb = '1' and bflag = '1') or
                            (decjnb = '1' and bflag = '0')) then
                         control_out <= t3_op;
-                    elsif  (decnop = '1' or dechlt = '1') then
-                        reset_counter <= '1';
-                    else
-                        control_out <= t3_brp;
-                        reset_counter <= '1';
+					elsif  (decshr = '1') then
+						control_out <= t3_shr;
+					elsif  (decshl = '1') then
+						control_out <= t3_shl;
+					elsif  (decror = '1') then
+						control_out <= t3_ror;
+					elsif  (decrol = '1') then
+						control_out <= t3_rol;
+                    elsif  (dechlt = '1') then
+                        control_out <= empty;
+					else
+						control_out <= empty;
                     end if;
                 when "100" =>
                     if (decsta = '1' or declda = '1' or decadd = '1' or
-                        decor = '1' or decand = '1' or decsub = '1' or
-                        decshr = '1' or decshl = '1' or decrol = '1' or decror = '1') then
+                        decor = '1' or decand = '1' or decsub = '1') then
                         control_out <= t4_op;
-                    else control_out <= t4_br;
+                    elsif ((decjn = '1' and nflag = '1' ) or
+                           (decjp = '1' and nflag = '0') or
+                           (decjz = '1' and zflag = '1') or
+                           (decjnz = '1' and zflag = '0') or
+                           (decjc = '1' and cflag = '1') or
+                           (decjnc = '1' and cflag = '0') or
+                           (decjv = '1' and vflag = '1') or
+                           (decjnv = '1' and vflag = '0') or
+                           (decjb = '1' and bflag = '1') or
+                           (decjnb = '1' and bflag = '0')) then
+						control_out <= t4_br;
+					else
+						control_out <= empty;
                     end if;
                 when "101" =>
                     if (decsta = '1' or declda = '1' or decadd = '1' or
-                        decor = '1' or decand = '1' or decsub = '1' or
-                        decshr = '1' or decshl = '1' or decrol = '1' or decror = '1') then
+                        decor = '1' or decand = '1' or decsub = '1') then
                         control_out <= t5_op;
-                    else
-                        control_out <= t5_br;
-                        reset_counter <= '1';
+					elsif ((decjn = '1' and nflag = '1' ) or
+                           (decjp = '1' and nflag = '0') or
+                           (decjz = '1' and zflag = '1') or
+                           (decjnz = '1' and zflag = '0') or
+                           (decjc = '1' and cflag = '1') or
+                           (decjnc = '1' and cflag = '0') or
+                           (decjv = '1' and vflag = '1') or
+                           (decjnv = '1' and vflag = '0') or
+                           (decjb = '1' and bflag = '1') or
+                           (decjnb = '1' and bflag = '0')) then
+                        control_out <= t5_br; 
+					else control_out <= empty;
                     end if;
                 when "110" =>
                     if (decsta = '1') then
                         control_out <= t6_sta;
-                    else control_out <= t6_op;
+                    elsif (decsta = '1' or declda = '1' or decadd = '1' or
+                        decor = '1' or decand = '1' or decsub = '1') then
+						control_out <= t6_op;
+					else
+						control_out <= empty;
                     end if;
                 when "111" =>
                     if (decsta = '1') then
@@ -206,7 +242,6 @@ begin
                         control_out <= t7_sub;
                     else control_out <= (others => '0');
                     end if;
-                    reset_counter <= '1';
                 when others =>
                     control_out <= (others => '0');
             end case;
