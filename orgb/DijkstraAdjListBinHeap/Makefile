@@ -4,10 +4,9 @@ ODIR   = obj
 SRC    = src
 BUILD  = build
 
-_DEPS = Graph.h AdjList.h
-DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
+DEPS = $(IDIR)/*.h
 
-_OBJ = Graph.o AdjList.o
+_OBJ = Graph.o AdjList.o MinHeap.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o : $(SRC)/%.c
