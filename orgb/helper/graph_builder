@@ -26,6 +26,9 @@ foreach my $s (0..$V - 1) {
     #randomly (50%) skip a node
     if (rrand(2) != 0) {
         for (my $t = 0; $t < rrand($MAX_GRAD); $t++) {
+            if ($s == $t) { # no loops
+                next;
+            }
             print "$s ", rrand($V), " ", rrand($MAX_DIST), "\n";
         }
     }
