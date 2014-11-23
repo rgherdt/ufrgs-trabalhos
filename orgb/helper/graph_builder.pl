@@ -5,16 +5,15 @@ use strict;
 
 my $V = 1000;
 
-sub my_rand {
+sub rrand {
     my ($val) = @_;
     return int (rand $val);
 }
 
-foreach my $s (1..$V) {
-    foreach my $t (1..(rand int ($V / 4))) {
-        print "addEdge(graph, $s, ", &my_rand($V), ", ", &my_rand(100), ");\n";
+foreach my $s (1..$V - 1) {
+    for (my $t = 0; $t < rrand($V / 4); $t++) {
+        print "addEdge(graph, $s, ", rrand($V), ", ", rrand(100), ");\n";
     }
-
 }
 
 
