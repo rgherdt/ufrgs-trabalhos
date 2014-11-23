@@ -1,0 +1,28 @@
+#!/usr/bin/perl
+
+use warnings;
+use strict;
+
+my @conf_files = `ls *.conf`;
+my $prog_dir = "../../build";
+my $sample_dir = "../samples";
+my $out_dir = "benchs";
+my $m2s_cmd = "m2s --x86-config ../base_proc.conf --net-config ../base_net.conf --x86-sim detailed --mem-config ";
+`mkdir -p $out_dir`;
+
+foreach my $conf_file (@conf_files) {
+    chomp $conf_file;
+    my $fullname = $conf_file;
+    print "processando $fullname\n";
+    $conf_file =~ s{\.[^.]+$}{}; # removes extension
+
+    foreach my $sample_file (`ls $sample_dir`) {
+        chomp $sample_file;
+        my $out_filename = $out_dir . "/" . $conf_file . "_" . $sample_file . ".sim";
+        my $full_cmd = $m2s_cmd . $fullname . " ${prog_dir}/dk_adjlist_arrlist ${sample_dir}/$sample_file 1>/dev/null 2>" . $out_filename;
+        print $full_cmd . "\n";
+    }
+#    `$full_cmd`;
+}
+
+
