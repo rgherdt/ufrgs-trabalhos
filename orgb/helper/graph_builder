@@ -1,0 +1,34 @@
+#!/usr/bin/perl
+
+use warnings;
+use strict;
+
+my $V = 1000;
+my $MAX_GRAD;
+my $MAX_DIST = 100;
+
+if (@ARGV == 1) {
+    $MAX_GRAD = shift @ARGV;
+} else {
+    $MAX_GRAD = int($V / 4);
+}
+
+if ($MAX_GRAD > $V) {
+    die "MAX_GRAD should be less then V";
+}
+
+sub rrand {
+    my ($val) = @_;
+    return int (rand $val);
+}
+
+foreach my $s (0..$V - 1) {
+    #randomly (50%) skip a node
+    if (rrand(2) != 0) {
+        for (my $t = 0; $t < rrand($MAX_GRAD); $t++) {
+            print "$s ", rrand($V), " ", rrand($MAX_DIST), "\n";
+        }
+    }
+}
+
+
