@@ -1,5 +1,6 @@
 IDIR   = .
 CC     = gcc
+CFLAGS = -m32
 ODIR   = obj
 SRC    = src
 BUILD  = build
@@ -12,11 +13,11 @@ OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o : $(SRC)/%.c
 	@mkdir -p $(@D)
-	$(CC) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(BUILD)/dk_adjlist_arrlist: $(OBJ)
 	@mkdir -p $(@D)
-	$(CC) $(SRC)/main.c -o $@ $^
+	$(CC) $(CFLAGS) $(SRC)/main.c -o $@ $^
 
 .PHONY: clean
 
