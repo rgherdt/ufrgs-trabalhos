@@ -15,25 +15,25 @@
 
 int main(int argc, char** argv) {
 	// create the graph given in above fugure
+	FILE *fp;
 	int V = 1000;
-	struct Graph* graph = createGraph(V);
-	addEdge(graph, 0, 1, 4);
-	addEdge(graph, 0, 7, 8);
-	addEdge(graph, 1, 2, 8);
-	addEdge(graph, 1, 7, 11);
-	addEdge(graph, 2, 3, 7);
-	addEdge(graph, 2, 8, 2);
-	addEdge(graph, 2, 5, 4);
-	addEdge(graph, 3, 4, 9);
-	addEdge(graph, 3, 5, 14);
-	addEdge(graph, 4, 5, 10);
-	addEdge(graph, 5, 6, 2);
-	addEdge(graph, 6, 7, 1);
-	addEdge(graph, 6, 8, 6);
-	addEdge(graph, 7, 8, 7);
 
+	int source, target, distance;
 	clock_t begin, end;
 	double time_spent;
+	struct Graph* graph = createGraph(V);
+
+	if (argc != 2) {
+		printf("Usage: %s <input_graph>\n", argv[0]);
+		exit(1);
+	}
+	if ((fp = fopen(argv[1], "r")) == NULL) {
+		perror("Couldn't open input graph file\n");
+	}
+
+	while (fscanf(fp, "%d%d%d", &source, &target, &distance) != EOF) {
+		addEdge(graph, source, target, distance);
+	}
 
 	begin = clock();
 	dijkstra(graph, 0);
