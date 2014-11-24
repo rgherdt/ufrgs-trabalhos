@@ -97,7 +97,7 @@ print FILE 'set autoscale' . "\n" .
     '"out.dat" using 1:5 with line ls 4 title "heap_esparso",\\' . "\n\t" .
     '"out.dat" using 1:6 with line ls 5 title "matriz_denso",\\' . "\n\t" .
     '"out.dat" using 1:7 with line ls 6 title "matriz_esparso"' . "\n".
-    "set term png\n" .
+    "set terminal pngcairo size 800,600\n" .
     "set output 'bench.png'\n" .
     "replot\n" .
     "set term x11";
