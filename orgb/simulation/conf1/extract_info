@@ -1,0 +1,58 @@
+#!/usr/bin/perl
+
+use Sort::Naturally;
+use warnings;
+use strict;
+
+my $bench_dir = "benchs";
+my %confs;
+
+foreach my $filename (`ls $bench_dir`) {
+    chomp $filename;
+    if ($filename =~ /^(?<prog>\w*)-(?<bench>\w*)-(?<sample>\w*)\./) {
+       $confs{$+{bench}} = {
+                $+{prog} . "_" . $+{sample}  => undef,
+        };
+    }
+}
+
+my $xtics = "set xtics (";
+my $count = 1;
+
+foreach (nsort keys %confs) {
+    $xtics .= $_ . " " . $count++ . ", ";
+#    print $_ . ": " . $confs{$_} . "\n";
+}
+
+$xtics =~ s/, $//g;
+$xtics .= ");\n";
+
+print $xtics;
+
+
+foreach my $filename (`ls $bench_dir`) {
+    chomp $filename;
+    if (! open FILE, "<", $bench_dir . "/" . $filename) {
+        die "Cannot open FILE: $!";
+    }
+    my $instr;
+    my $cycles;
+    while (<FILE>) {
+        chomp;
+        if (/Instructions = /) {
+            $instr = $';
+        }
+        if (/Cycles = /) {
+            $cycles = $';
+        }
+    }
+    $filename =~ /^(?<prog>\w*)-(?<bench>\w*)-(?<sample>\w*)\./;
+    $confs{$+{bench}}{$+{prog} . "_" . $+{sample}} = $instr/$cycles;
+    #printf "%s: %f\n", $filename, $instr/$cycles;
+}
+
+foreach my $conf (keys %confs) {
+    foreach my $bench (keys $confs{$conf}) {
+        print $conf . " => " . $bench . " => " . $confs{$conf}{$bench} . "\n";
+    }
+}
