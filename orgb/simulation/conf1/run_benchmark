@@ -20,8 +20,8 @@ foreach my $conf_file (@conf_files) {
         chomp $sample_file;
         foreach my $prog (`ls $prog_dir`) {
             chomp $prog;
-            my $out_filename = $out_dir . "/" . $prog . "_" . $conf_file .
-                               "_" . $sample_file . ".sim";
+            my $out_filename = $out_dir . "/" . $prog . "-" . $conf_file .
+                               "-" . $sample_file . ".sim";
             print "processando $out_filename\n";
             my $full_cmd = $m2s_cmd . $fullname .
                            " ${prog_dir}/$prog ${sample_dir}/$sample_file " .
@@ -31,5 +31,4 @@ foreach my $conf_file (@conf_files) {
         }
     }
 }
-
 
