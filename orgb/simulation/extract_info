@@ -58,7 +58,7 @@ print "\n";
 $count = 1;
 foreach my $bench (nsort keys %benchs) {
     print $count++ . "\t";
-    foreach my $prog (keys $benchs{$bench}) {
+    foreach my $prog (nsort keys $benchs{$bench}) {
         #print $bench . " => " . $prog . " => " . $benchs{$bench}{$prog} . "\n";
         print $benchs{$bench}{$prog} . "\t";
     }
