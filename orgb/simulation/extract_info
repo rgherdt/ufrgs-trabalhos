@@ -29,19 +29,15 @@ foreach my $filename (`ls $bench_dir`) {
     if (! open FILE, "<", $bench_dir . "/" . $filename) {
         die "Cannot open FILE: $!";
     }
-    my $instr = 1;
-    my $cycles = 1;
+    my $ipc = -1;
     while (<FILE>) {
         chomp;
-        if (/Instructions = /) {
-            $instr = $';
-        }
-        if (/Cycles = /) {
-            $cycles = $';
+        if (/CommittedInstructionsPerCycle = /) {
+            $ipc = $';
         }
     }
     my ($prog, $bench, $sample) = split /-/, $filename;
-    $benchs{$bench}{$prog . "_" . $sample} = $instr/$cycles;
+    $benchs{$bench}{$prog . "_" . $sample} = $ipc;
     close FILE;
 }
 
