@@ -84,17 +84,17 @@ shortestPath gr@(MGraph m) = do
     let indices = [1..n]
     forM_ indices $ \i -> do
         forM_ indices $ \j -> do
-            c <- readArray m (i, j)
+            c <- readArray m (j, i)
             if c < inf
             then forM_ indices $ \k -> do
-                c' <- readArray m (j, k)
+                c' <- readArray m (i, k)
                 if c' < inf
                 then do
                      let s   = c + c'
-                     old <- readArray m (k, i)
+                     old <- readArray m (k, j)
                      if s < old
-                     then do writeArray m (k, i) s
-                             writeArray m (i, k) s
+                     then do writeArray m (j, k) s
+                             writeArray m (k, j) s
                      else return ()
                 else return ()
             else return ()
