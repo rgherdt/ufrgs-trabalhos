@@ -16,3 +16,5 @@ subject to c2 {i in N}:
 	
 subject to c3:
 	sum {i in N} k[i] = p;
+
+end;
