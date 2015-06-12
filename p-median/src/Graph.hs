@@ -1,6 +1,9 @@
 {-# LANGUAGE BangPatterns, OverloadedStrings #-}
 
-module Graph where
+module Graph (
+      generateGraph
+    , showInput
+    ) where
 
 import Control.Monad (when)
 import Control.Monad (mzero, guard, forM, forM_)
@@ -13,12 +16,12 @@ import Data.Array.MArray as MArray
 import qualified Data.ByteString.Lazy as B
 import qualified Data.ByteString.Lazy.Char8 as B8
 import Data.Monoid 
-data MGraph = MGraph (IOUArray (Int, Int) Cost) -- ^ a mutable graph
-data Graph = Graph (Array (Int, Int) Cost)      -- ^ an immutable graph
+
+newtype MGraph = MGraph (IOUArray (Int, Int) Cost) -- ^ a mutable graph
+newtype Graph = Graph (Array (Int, Int) Cost)      -- ^ an immutable graph
 type Cost = Int
 type Edge = ((Int, Int), Cost)
 inf = (maxBound :: Int)
-
 
 ------------ Immutable functions -------------
 
@@ -57,8 +60,8 @@ showInput n p gr@(Graph g) =
     nodes = [1 .. n]
 
 -- | Return an immutable graph from a mutable one.
-freeze :: MGraph -> IO Graph
-freeze (MGraph m) =
+freezeGraph :: MGraph -> IO Graph
+freezeGraph (MGraph m) =
     return . Graph =<< (MArray.freeze m :: IO (Array (Int, Int) Cost))
 
 
@@ -100,4 +103,12 @@ shortestPath gr@(MGraph m) = do
             else return ()
     return ()
 
-
+-- | Based on the input data, generate an immutable graph. Return Nothing
+-- in case there was a parse error.
+generateGraph :: Int -> [[Int]] -> MaybeT IO Graph
+generateGraph n input = do
+    mg0 <- fromList n input
+    lift $ shortestPath mg0
+    g <- lift $ freezeGraph mg0
+    return g
+    

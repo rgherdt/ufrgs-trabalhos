@@ -17,12 +17,10 @@ main = do
     matrix <- case params of
         [n, numEdges, p] -> do
             contents <- return . B8.lines =<< B8.getContents
-            mg <- runMaybeT . G.fromList n $
+            g <- runMaybeT . G.generateGraph n $
                      map (map read . map B8.unpack . B8.words) contents
-            case mg of
-                Just mg -> do
-                    G.shortestPath mg
-                    g <- G.freeze mg
+            case g of
+                Just g -> do
                     B8.putStrLn $ G.showInput n p g
                     return ()
                 _ -> B8.putStrLn "p-median: Inconsistent input graph"
