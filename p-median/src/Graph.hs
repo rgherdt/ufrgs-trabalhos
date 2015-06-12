@@ -1,5 +1,4 @@
 {-# LANGUAGE BangPatterns, OverloadedStrings #-}
-
 module Graph (
       generateGraph
     , showInput
@@ -7,18 +6,20 @@ module Graph (
 
 import Control.Monad (when)
 import Control.Monad (mzero, guard, forM, forM_)
-import Control.Monad.Trans.Maybe (MaybeT)
+import Control.Monad.Trans.Maybe (runMaybeT, MaybeT)
 import Control.Monad.IO.Class (liftIO)
+import Control.Monad.ST
 import Control.Monad.Trans.Class (lift)
 import Data.Array.IArray
-import Data.Array.IO
-import Data.Array.MArray as MArray
+import Data.Array.ST hiding (unsafeFreeze)
+import Data.Array.Unboxed
+import Data.Array.MArray as MArray hiding (unsafeFreeze)
+import Data.Array.Unsafe (unsafeFreeze)
 import qualified Data.ByteString.Lazy as B
 import qualified Data.ByteString.Lazy.Char8 as B8
 import Data.Monoid 
 
-newtype MGraph = MGraph (IOUArray (Int, Int) Cost) -- ^ a mutable graph
-newtype Graph = Graph (Array (Int, Int) Cost)      -- ^ an immutable graph
+newtype Graph = Graph (UArray (Int, Int) Cost)      -- ^ an immutable graph
 type Cost = Int
 type Edge = ((Int, Int), Cost)
 inf = (maxBound :: Int)
@@ -44,7 +45,6 @@ edgeFromList _ = Nothing
 
 showInput :: Int -> Int -> Graph -> B.ByteString
 showInput n p gr@(Graph g) =
---    g <- freeze m :: IO (Array (Int, Int) Cost)
     "data;\n"
     <> "param p := " <> B8.pack (show p) <> ";\n"
     <> "param n := " <> B8.pack (show n) <> ";\n"
@@ -60,16 +60,18 @@ showInput n p gr@(Graph g) =
     nodes = [1 .. n]
 
 -- | Return an immutable graph from a mutable one.
-freezeGraph :: MGraph -> IO Graph
+{-
+freezeGraph :: MGraph -> ST Graph
 freezeGraph (MGraph m) =
     return . Graph =<< (MArray.freeze m :: IO (Array (Int, Int) Cost))
+-}
 
 
 ----------- Mutable functions --------------
 
 -- | Process all input lines. If any input line is malformed, return Nothing.
 -- Otherwise return the corresponding graph.
-fromList :: Int -> [[Int]] -> MaybeT IO MGraph
+fromList :: Int -> [[Int]] -> MaybeT (ST s) (STUArray s (Int, Int) Cost)
 fromList n input = do
     edges <- maybe mzero return $ sequence . map edgeFromList $ input
     m <- lift $ newListArray ((1, 1), (n, n)) $ repeat inf -- fill with inf values
@@ -77,12 +79,12 @@ fromList n input = do
         mapM_ (\i -> writeArray m (i, i) 0) [1..n]      -- zeroes main diagonal
         mapM_ (\((i, j), c) -> writeArray m (i, j) c >> writeArray m (j, i) c)
               edges
-    return . MGraph $ m
+    return m
 
 -- | Computes a graph containing the shortest path from every node. Assumes
 -- all edges have a cost associated.
-shortestPath :: MGraph -> IO ()
-shortestPath gr@(MGraph m) = do
+shortestPath :: STUArray s (Int, Int) Cost -> ST s ()
+shortestPath m = do
     (_, (n, _)) <- getBounds m 
     let indices = [1..n]
     forM_ indices $ \i -> do
@@ -105,10 +107,17 @@ shortestPath gr@(MGraph m) = do
 
 -- | Based on the input data, generate an immutable graph. Return Nothing
 -- in case there was a parse error.
-generateGraph :: Int -> [[Int]] -> MaybeT IO Graph
-generateGraph n input = do
-    mg0 <- fromList n input
-    lift $ shortestPath mg0
-    g <- lift $ freezeGraph mg0
-    return g
+generateGraph :: Int -> [[Int]] -> Maybe Graph
+generateGraph n input = case runST m of
+    Just arr -> Just (Graph arr)
+    _ -> Nothing
+  where
+    m :: ST s (Maybe (UArray (Int, Int) Cost))
+    m = do mg <- runMaybeT $ fromList n input
+           case mg of
+               Nothing -> return Nothing
+               Just mg' -> do
+                   shortestPath mg'
+                   arr <- unsafeFreeze mg'
+                   return . Just $ arr
     

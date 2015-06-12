@@ -17,7 +17,7 @@ main = do
     matrix <- case params of
         [n, numEdges, p] -> do
             contents <- return . B8.lines =<< B8.getContents
-            g <- runMaybeT . G.generateGraph n $
+            let g = G.generateGraph n $
                      map (map read . map B8.unpack . B8.words) contents
             case g of
                 Just g -> do
