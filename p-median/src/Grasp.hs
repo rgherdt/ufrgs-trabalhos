@@ -5,7 +5,6 @@ import Data.Function (on)
 import Data.List
 import qualified Graph as G
 import System.Random
-import System.Random.Shuffle (shuffle')
 
 type Solution = Array Int Int
 
@@ -43,14 +42,22 @@ localSearch g s0 =
       where
         v' = solutionValue g n s'
 
-randomizedGreedy :: StdGen -> G.Graph -> Int -> Int -> Float -> Maybe Solution
-randomizedGreedy gen g n p a
-    | num < p = Nothing
-    | otherwise = Just $ listArray (1, p) . take p $ shuffle' rcl p gen
+randomizedGreedy :: StdGen -> G.Graph -> Int -> Int -> Float -> Solution
+randomizedGreedy gen g n p alpha =
+    listArray (1, p) . (\(s, _, _) -> s) $
+        foldr (\_ (sol, remaining, gen) ->
+                  let size = alphaSize remaining
+                      (j, gen') = randomIx gen size
+                      v' = rcl size !! j
+                  in (v' : sol, remaining - 1, gen'))
+              ([], n, gen)
+              [1 .. p]
   where
     vs = [1 .. n]
     totalCost i = sum $ map (G.cost g i) vs
     candidates = sortBy (compare `on` snd) $ map (\v -> (v, totalCost v)) vs
-    num = round (a * fromIntegral n) :: Int
-    rcl = map fst . take num $ candidates
-
+    alphaSize n' = round (alpha * fromIntegral n') :: Int
+    rcl size = map fst . take size $ candidates
+    randomIx gen n' = randomR (0, n' - 1) gen
+    
+    
