@@ -46,7 +46,7 @@ localSearch g s0 =
 randomizedGreedy :: StdGen -> G.Graph -> Int -> Int -> Float -> Maybe Solution
 randomizedGreedy gen g n p a
     | num < p = Nothing
-    | otherwise = Just $ listArray (1, p) $ shuffle' rcl p gen
+    | otherwise = Just $ listArray (1, p) . take p $ shuffle' rcl p gen
   where
     vs = [1 .. n]
     totalCost i = sum $ map (G.cost g i) vs
