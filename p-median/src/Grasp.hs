@@ -1,9 +1,11 @@
 module Grasp where
 
 import Data.Array
+import Data.Function (on)
 import Data.List
 import qualified Graph as G
 import System.Random
+import System.Random.Shuffle (shuffle')
 
 type Solution = Array Int Int
 
@@ -40,4 +42,15 @@ localSearch g s0 =
                         | otherwise = best
       where
         v' = solutionValue g n s'
+
+randomizedGreedy :: StdGen -> G.Graph -> Int -> Int -> Float -> Maybe Solution
+randomizedGreedy gen g n p a
+    | num < p = Nothing
+    | otherwise = Just $ listArray (1, p) . take p $ shuffle' rcl p gen
+  where
+    vs = [1 .. n]
+    totalCost i = sum $ map (G.cost g i) vs
+    candidates = sortBy (compare `on` snd) $ map (\v -> (v, totalCost v)) vs
+    num = round (a * fromIntegral n) :: Int
+    rcl = map fst . take num $ candidates
 
