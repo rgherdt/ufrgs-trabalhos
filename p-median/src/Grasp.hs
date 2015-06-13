@@ -2,6 +2,7 @@ module Grasp where
 
 import Data.Array
 import Data.List
+import qualified Graph as G
 import System.Random
 
 type Solution = Array Int Int
@@ -21,16 +22,22 @@ neighbours n sol = do
   where
     emptyVertices = [1 .. n] \\ elems sol
 
-solutionValue :: Graph -> Solution -> Int
-solutionValue g sol =
+solutionValue :: G.Graph -> Int -> Solution -> Int
+solutionValue g n sol =
     sum [minimum [G.cost g i j | j <- s] | i <- [1..n]]
   where 
-    n = G.numNodes g
     s = elems sol
 
 -- | First improvement local search.
-localSearch :: Graph -> Int -> Solution -> Solution
-localSearch g sol =
-    fold (\s acc -> min (solutionValue g s) acc) v0 $ neighbours n sol
+localSearch :: G.Graph -> Solution -> Solution
+localSearch g s0 =
+    snd . foldr comp (v0, s0) $ neighbours n s0
   where
-    v0 = solutionValue g n sol
+    n = G.numNodes g
+    dim = bounds s0
+    v0 = solutionValue g n s0
+    comp s' best@(v, s) | v' < v = (v', s')
+                        | otherwise = best
+      where
+        v' = solutionValue g n s'
+

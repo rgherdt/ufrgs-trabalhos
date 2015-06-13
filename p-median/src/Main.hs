@@ -5,6 +5,7 @@ import Control.Monad (liftM)
 import Control.Monad.Trans.Class (lift)
 import Control.Monad.Trans.Maybe (MaybeT, runMaybeT)
 import qualified Graph as G
+import qualified Grasp as Grasp
 import System.IO
 import Text.Read (readMaybe)
 import qualified Data.ByteString.Lazy as B
