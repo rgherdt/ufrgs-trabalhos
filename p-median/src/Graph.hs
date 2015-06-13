@@ -1,6 +1,9 @@
 {-# LANGUAGE BangPatterns, OverloadedStrings #-}
 module Graph (
-      generateGraph
+      Graph
+    , cost
+    , generateGraph
+    , numNodes
     , showInput
     ) where
 
