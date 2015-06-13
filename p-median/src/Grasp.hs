@@ -18,4 +18,4 @@ neighbours n sol = do
     nbs <- map (\v -> sol // [(pos, v)]) emptyVertices
     return nbs
   where
-    emptyVertices = [1 .. n] \\ elems sol
+    emptyVertices = [1 .. n] \\ elems solz
