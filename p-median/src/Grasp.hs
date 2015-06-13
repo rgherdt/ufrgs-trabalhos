@@ -19,3 +19,10 @@ neighbours n sol = do
     return nbs
   where
     emptyVertices = [1 .. n] \\ elems sol
+
+solutionValue :: Graph -> Solution -> Int
+solutionValue g sol =
+    sum [minimum [G.cost g i j | j <- s] | i <- [1..n]]
+  where 
+    n = G.numNodes g
+    s = elems sol
