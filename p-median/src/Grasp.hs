@@ -12,6 +12,7 @@ randomSolution :: StdGen -> Int -> Int -> Solution
 randomSolution gen n p =
     listArray (1, p) . sort . take p . nub . randomRs (1, n) $ gen
 
+-- | Return all 1-change neighbours from @sol@.
 neighbours :: Int -> Solution -> [Solution]
 neighbours n sol = do
     pos <- indices sol
@@ -26,3 +27,10 @@ solutionValue g sol =
   where 
     n = G.numNodes g
     s = elems sol
+
+-- | First improvement local search.
+localSearch :: Graph -> Int -> Solution -> Solution
+localSearch g sol =
+    fold (\s acc -> min (solutionValue g s) acc) v0 $ neighbours n sol
+  where
+    v0 = solutionValue g n sol
