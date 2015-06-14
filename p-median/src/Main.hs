@@ -24,8 +24,8 @@ main = do
                      map (map read . map B8.unpack . B8.words) contents
             case g of
                 Just g -> do
-                    let s = Grasp.randomizedGreedy gen g n p 0.5
-                    putStrLn . show $ s
+                    let (val, s) = Grasp.grasp gen g n p 0.5 200
+                    putStrLn . show $ val
                     return ()
                 _ -> B8.putStrLn "p-median: Inconsistent input graph"
             return ()
