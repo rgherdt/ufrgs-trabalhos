@@ -13,17 +13,24 @@ import qualified Data.ByteString.Lazy.Char8 as B8
 data Options = Options
     { optAbsStop :: Bool
     , optNum :: Int
+    , optAlpha :: Float
     }
 
 parseOptions :: Parser Options
 parseOptions = Options
     <$> switch ( long "absolute-iterations"
-              <> short 'a'
+              <> short 'i'
               <> help "Set stop criterium to absolute iterations.")
     <*> option auto ( short 'n'
                    <> value 100
                    <> metavar "NUM"
                    <> help "Number of iterations to stop (default: 100)."
+                    )
+    <*> option auto ( long "alpha"
+                   <> short 'a'
+                   <> value 0.2
+                   <> metavar "ALPHA"
+                   <> help "Alpha parameter in (0.0, 1.0] (default: 0.2)"
                     )
 
 opts = info (helper <*> parseOptions)
@@ -36,6 +43,7 @@ main = do
     let stop | optAbsStop op = AbsIter
              | otherwise  = RelIter
         iterNum = optNum op
+        alpha = optAlpha op
     params <- liftM (map read . words) getLine :: IO [Int]
     matrix <- case params of
         [n, numEdges, p] -> do
@@ -45,7 +53,7 @@ main = do
                      map (map read . map B8.unpack . B8.words) contents
             case g of
                 Just g -> do
-                    let (val, s) = grasp gen g stop n p 0.5 iterNum
+                    let (val, s) = grasp gen g stop n p alpha iterNum
                     putStrLn . show $ val
                     return ()
                 _ -> B8.putStrLn "p-median: Inconsistent input graph"
