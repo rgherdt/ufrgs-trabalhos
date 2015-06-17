@@ -1,4 +1,7 @@
-module Grasp where
+module Grasp (
+      StopCriterium (..)
+    , grasp
+    ) where
 
 import Data.Array
 import Data.Function (on)
@@ -9,6 +12,8 @@ import System.Random
 
 type Solution = Array Int Int
 type Cost = Int
+
+data StopCriterium = RelIter | AbsIter
 
 -- | Return a random solution to the problem: a p-size list of locations.
 -- The solution is already sorted for efficiency reasons.
@@ -76,14 +81,23 @@ randomizedGreedy gen g n p alpha =
     randomIx gen n' = randomR (0, n' - 1) gen
 
 
-grasp :: StdGen -> G.Graph -> Int -> Int -> Float -> Int -> (Int, Solution)
-grasp gen g n p alpha counter0 = go gen counter0 val0 s0
+grasp :: StdGen
+      -> G.Graph
+      -> StopCriterium
+      -> Int
+      -> Int
+      -> Float
+      -> Int
+      -> (Int, Solution)
+grasp gen g stop n p alpha counter0 = go gen counter0 val0 s0
   where
     s0 = randomSolution gen n p
     val0 = solutionValue g n s0
     go gen counter val s
         | counter <= 0 = (val, s)
-        | val' < val = trace ("val' " ++ show val') $ go gen' counter0 val' s'
+        | val' < val = case stop of
+            RelIter -> go gen' counter0 val' s'
+            _       -> go gen' (counter - 1) val' s'
         | otherwise  = go gen' (counter - 1) val s
       where
         (sr, gen') = randomizedGreedy gen g n p alpha
