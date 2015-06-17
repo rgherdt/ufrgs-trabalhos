@@ -3,17 +3,12 @@ module Main where
 
 import Options.Applicative
 import Control.Monad (liftM)
-import Control.Monad.Trans.Class (lift)
-import Control.Monad.Trans.Maybe (MaybeT, runMaybeT)
 import qualified Graph as G
 import Grasp (grasp, StopCriterium (..))
 import System.IO
 import System.Random
-import Text.Read (readMaybe)
 import qualified Data.ByteString.Lazy as B
 import qualified Data.ByteString.Lazy.Char8 as B8
-
-inf = maxBound :: Int
 
 data Options = Options
     { optAbsStop :: Bool
@@ -28,7 +23,7 @@ parseOptions = Options
     <*> option auto ( short 'n'
                    <> value 100
                    <> metavar "NUM"
-                   <> help "Number of iterations to stop (default: 100)"
+                   <> help "Number of iterations to stop (default: 100)."
                     )
 
 opts = info (helper <*> parseOptions)
