@@ -28,10 +28,8 @@ parseOptions = Options
     <*> option auto ( short 'n'
                    <> value 100
                    <> metavar "NUM"
-                   <> help "Number of iterations to stop"
+                   <> help "Number of iterations to stop (default: 100)"
                     )
-                   
-    
 
 opts = info (helper <*> parseOptions)
             ( fullDesc
