@@ -58,29 +58,52 @@ firstNeighbor n sol = sol // [(1, head emptyVertices)]
   where
     emptyVertices = [1 .. n] \\ elems sol
 
-nextNeighbor :: Int -> Int -> Solution -> Solution -> Solution
-nextNeighbor n p sol nb = case diff of
-    lev -> case pos of 
-        p -> array (1,p) []
-        _ -> sol // [((pos+1), head emptyVertices)]
-    _ -> sol // [(pos, nextVert)]
+nextNeighbor :: Int -> Solution -> Solution -> Solution
+nextNeighbor n sol nb
+    | (diff == lev) && (pos == p) = array (1,p) []
+    | (diff == lev) = sol // [((pos+1), head emptyVertices)]
+    | otherwise = sol // [(pos, nextVert)]
   where
+    (_, p) = bounds sol
     emptyVertices = [1 .. n] \\ elems sol
-    lev = trace("ev: "++ show emptyVertices)$last emptyVertices
+    lev = last emptyVertices
     diff = head ((elems nb) \\ (elems sol))
     diffPos = fromJust $ elemIndex diff emptyVertices
     nextVert = emptyVertices !! (diffPos+1)
     (pos,_) = fromJust $ find (\(_,val) -> val == diff) $ assocs nb
     
 tst :: [Int]
-tst = trace(show t0) $ elems sol1
+tst = trace(show t2) $ elems sol1
   where
-    p1 = 5
-    n1 = 8
-    sol1 = array (1, 5) [(1,1),(2,3),(3,4),(4,7),(5,8)]
+    p1 = 50
+    n1 = 900
+    sol1 = array (1, p1) [(i, i*2) | i <- [1 .. n1]]
     fn = firstNeighbor n1 sol1
-    t0 = trace(show fn ++ "\n") $ nextNeighbor n1 p1 sol1 fn
-    t1 = trace(show t0 ++ "\n") $ nextNeighbor n1 p1 sol1 t0
+    t0 = trace(show fn ++ "\n") $ nextNeighbor n1 sol1 fn
+    t1 = trace(show t0 ++ "\n") $ nextNeighbor n1 sol1 t0
+    t2 = trace(show t1 ++ "\n") $ nextNeighbor n1 sol1 t1
+
+localSearch2 :: G.Graph -> (Cost, Solution) -> (Cost, Solution)
+localSearch2 g (v0, s0) 
+    | firstVal < v0 = localSearch2 g (firstVal, fnb)
+    | nextVal < 0   = (v0, s0)
+    | otherwise     = searchNeighbors g (v0, s0) (firstVal, fnb)
+  where
+    n = G.numNodes g
+    fnb = firstNeighbor n s0
+    firstVal = solutionValue g n fnb
+    (nextVal, nnb) = searchNeighbors g (v0, s0) (firstVal, fnb)
+
+searchNeighbors :: G.Graph -> (Cost, Solution) -> (Cost, Solution) -> (Cost, Solution)
+searchNeighbors g (v0, s0) (vnb, nb)
+    | nextVal < v0 = (solutionValue g n next, next)
+    | otherwise = case next of
+                        [] -> (-1, s0)
+                        _  -> searchNeighbors g (v0, s0) (solutionValue g n next, next)
+  where 
+    n = G.numNodes g
+    next = nextNeighbor n nb
+    
 
 -- | First improvement local search.
 localSearch :: G.Graph -> (Cost, Solution) -> (Cost, Solution)
