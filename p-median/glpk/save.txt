@@ -1,0 +1,37 @@
+pmed4
+Time used:   0.6 secs
+
+pmed8
+Time used:   11.1 secs
+
+pmed20
+Time used:   18.2 secs
+
+pmed24:
+Time used:   967.2 secs
+
+pmed28:
+Time used:   216.6 secs
+
+(Usando --clique --pcost --mir)
+                 Solução atual   >=   Lim. inferior   % árvore
+pmed12
+Time used:   6125.3 secs
++374620: mip =   9.986000000e+03 >=   1.540000000e+02  98.5% (12925; 1306)
+
+pmed16
++575712: mip =   9.861000000e+03 >=   1.276000000e+03  87.1% (4166; 2523)
+Time used: 5410.0 secs.  Memory used: 251.0 Mb.
+
+pmed32
++310989: mip =   1.552600000e+04 >=   9.300000000e+01  99.4% (1752; 343)
+Time used: 6643.5 secs.  Memory used: 675.4 Mb.
+
+pmed36
++114135: mip =   1.479000000e+04 >=   5.900000000e+01  99.6% (1294; 213)
+Time used: 3438.7 secs.  Memory used: 866.9 Mb.
+
+pmed40 (Sem parâmetros de corte)
++ 24634: mip =   1.150200000e+04 >=   7.000000000e+00  99.9% (197; 4)
+Time used: 2995.6 secs.  Memory used: 909.0 Mb.
+
