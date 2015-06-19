@@ -50,16 +50,14 @@ solutionValue g n sol =
     s = elems sol
 
 -- | First improvement local search.
-localSearch :: G.Graph -> Solution -> (Cost, Solution)
-localSearch g s0 =
-    foldr comp (v0, s0) $ neighbours n s0
+localSearch :: G.Graph -> (Cost, Solution) -> (Cost, Solution)
+localSearch g (v0, s0) = case betters of
+    [] -> (v0, s0)
+    _  -> localSearch g (head betters)
   where
+    betters = filter (\(v', _) -> v' < v0) $ map compute $ neighbours n s0
     n = G.numNodes g
-    v0 = solutionValue g n s0
-    comp s' best@(v, s) | v' < v = (v', s')
-                        | otherwise = best
-      where
-        v' = solutionValue g n s'
+    compute s = (solutionValue g n s, s)
 
 randomizedGreedy :: StdGen -> G.Graph -> Int -> Int -> Float -> (Solution, StdGen)
 randomizedGreedy gen g n p alpha =
@@ -95,12 +93,12 @@ grasp gen g stop n p alpha counter0 = go gen counter0 val0 s0
     val0 = solutionValue g n s0
     go gen counter val s
         | counter <= 0 = (val, s)
-        | val' < val = case stop of
+        | val' < val = trace ("val': " ++ show val') $ case stop of
             RelIter -> go gen' counter0 val' s'
             _       -> go gen' (counter - 1) val' s'
         | otherwise  = go gen' (counter - 1) val s
       where
         (sr, gen') = randomizedGreedy gen g n p alpha
-        (val', s') = localSearch g sr
+        (val', s') = localSearch g (solutionValue g n sr, sr)
 --                         randomizedGreedy gen g n p alpha
     
