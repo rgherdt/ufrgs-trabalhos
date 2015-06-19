@@ -4,7 +4,7 @@ module Main where
 import Options.Applicative
 import Control.Monad (liftM)
 import qualified Graph as G
-import Grasp (grasp, StopCriterium (..))
+import Grasp (grasp)
 import System.IO
 import System.Random
 import Data.Time
@@ -12,17 +12,13 @@ import qualified Data.ByteString.Lazy as B
 import qualified Data.ByteString.Lazy.Char8 as B8
 
 data Options = Options
-    { optAbsStop :: Bool
-    , optNum :: Int
+    { optNum :: Int
     , optAlpha :: Float
     }
 
 parseOptions :: Parser Options
 parseOptions = Options
-    <$> switch ( long "absolute-iterations"
-              <> short 'i'
-              <> help "Set stop criterium to absolute iterations.")
-    <*> option auto ( short 'n'
+    <$> option auto ( short 'n'
                    <> value 100
                    <> metavar "NUM"
                    <> help "Number of iterations to stop (default: 100)."
@@ -41,9 +37,7 @@ opts = info (helper <*> parseOptions)
             
 main = do
     op <- execParser opts
-    let stop | optAbsStop op = AbsIter
-             | otherwise  = RelIter
-        iterNum = optNum op
+    let iterNum = optNum op
         alpha = optAlpha op
     params <- liftM (map read . words) getLine :: IO [Int]
     matrix <- case params of
@@ -56,7 +50,7 @@ main = do
                 Just g -> do
                     startTime <- getCurrentTime
                     putStrLn $ "solution\trunning time"
-                    (val, s) <- grasp gen g stop n p alpha iterNum startTime
+                    (val, s) <- grasp gen g n p alpha iterNum startTime
                     return ()
                 _ -> B8.putStrLn "p-median: Inconsistent input graph"
             return ()

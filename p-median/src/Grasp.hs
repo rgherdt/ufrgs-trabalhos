@@ -1,6 +1,5 @@
 module Grasp (
-      StopCriterium (..)
-    , grasp
+      grasp
     ) where
 
 import Data.Function (on)
@@ -15,7 +14,6 @@ import Data.Time
 type Solution = S.Seq Int
 type Cost = Int
 
-data StopCriterium = RelIter | AbsIter
 
 -- | Return a random solution to the problem: a p-size list of locations.
 -- The solution is already sorted for efficiency reasons.
@@ -86,14 +84,13 @@ randomizedGreedy gen g n p alpha =
 
 grasp :: StdGen
       -> G.Graph
-      -> StopCriterium
       -> Int
       -> Int
       -> Float
       -> Int
       -> UTCTime
       -> IO (Int, Solution)
-grasp gen g stop n p alpha counter0 startTime = go gen' counter0 val0 s0
+grasp gen g n p alpha counter0 startTime = go gen' counter0 val0 s0
   where
     (s0, gen') = randomizedGreedy gen g n p alpha
     val0 = solutionValue g n s0
@@ -103,9 +100,7 @@ grasp gen g stop n p alpha counter0 startTime = go gen' counter0 val0 s0
             curTime <- getCurrentTime
             let diffTime = diffUTCTime curTime startTime
             putStrLn $ show val'' ++ "\t\t(" ++ show diffTime ++ ")"
-            case stop of
-                RelIter -> go gen' counter0 val'' s''
-                _       -> go gen' (counter - 1) val'' s''
+            go gen' (counter - 1) val'' s''
         | otherwise  = go gen' (counter - 1) val s
       where
         (s', gen') = randomizedGreedy gen g n p alpha
