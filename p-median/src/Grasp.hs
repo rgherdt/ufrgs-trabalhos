@@ -95,10 +95,11 @@ grasp gen g stop n p alpha counter0 = go gen counter0 val0 s0
         | counter <= 0 = (val, s)
         | val' < val = trace ("val': " ++ show val') $ case stop of
             RelIter -> go gen' counter0 val' s'
-            _       -> go gen' (counter - 1) val' s'
-        | otherwise  = go gen' (counter - 1) val s
+            _       -> trace ("rg, ls, a: " ++ show valrs ++ " " ++ show val' ++ " " ++ show val) $ go gen' (counter - 1) val' s'
+        | otherwise  = trace ("rg, ls, a: " ++ show valrs ++ " " ++ show val' ++ " " ++ show val) $ go gen' (counter - 1) val s
       where
         (sr, gen') = randomizedGreedy gen g n p alpha
-        (val', s') = localSearch g (solutionValue g n sr, sr)
+        valrs = solutionValue g n sr
+        (val', s') = localSearch g (valrs, sr)
 --                         randomizedGreedy gen g n p alpha
     
