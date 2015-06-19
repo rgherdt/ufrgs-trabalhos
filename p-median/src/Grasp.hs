@@ -20,7 +20,7 @@ data StopCriterium = RelIter | AbsIter
 -- The solution is already sorted for efficiency reasons.
 randomSolution :: StdGen -> Int -> Int -> Solution
 randomSolution gen n p =
-    listArray (0, p - 1) . sort . take p . nub . randomRs (1, n) $ gen
+    listArray (0, p - 1) . sort . take p . nub . randomRs (0, n - 1) $ gen
 
 -- | Return all 1-change neighbours from @sol@.
 neighbours :: Int -> Solution -> [Solution]
