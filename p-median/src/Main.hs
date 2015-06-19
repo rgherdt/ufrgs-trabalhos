@@ -7,6 +7,7 @@ import qualified Graph as G
 import Grasp (grasp, StopCriterium (..))
 import System.IO
 import System.Random
+import Data.Time
 import qualified Data.ByteString.Lazy as B
 import qualified Data.ByteString.Lazy.Char8 as B8
 
@@ -53,8 +54,9 @@ main = do
                      map (map read . map B8.unpack . B8.words) contents
             case g of
                 Just g -> do
-                    let (val, s) = grasp gen g stop n p alpha iterNum
-                    putStrLn . show $ val
+                    startTime <- getCurrentTime
+                    putStrLn $ "solution\trunning time"
+                    (val, s) <- grasp gen g stop n p alpha iterNum startTime
                     return ()
                 _ -> B8.putStrLn "p-median: Inconsistent input graph"
             return ()

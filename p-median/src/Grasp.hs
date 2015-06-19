@@ -9,6 +9,7 @@ import Data.List
 import Debug.Trace
 import qualified Graph as G
 import System.Random
+import Data.Time
 
 type Solution = Array Int Int
 type Cost = Int
@@ -86,17 +87,22 @@ grasp :: StdGen
       -> Int
       -> Float
       -> Int
-      -> (Int, Solution)
-grasp gen g stop n p alpha counter0 = go gen counter0 val0 s0
+      -> UTCTime
+      -> IO (Int, Solution)
+grasp gen g stop n p alpha counter0 startTime = go gen counter0 val0 s0
   where
     s0 = randomSolution gen n p
     val0 = solutionValue g n s0
     go gen counter val s
-        | counter <= 0 = (val, s)
-        | val' < val = trace ("val': " ++ show val') $ case stop of
-            RelIter -> go gen' counter0 val' s'
-            _       -> trace ("rg, ls, a: " ++ show valrs ++ " " ++ show val' ++ " " ++ show val) $ go gen' (counter - 1) val' s'
-        | otherwise  = trace ("rg, ls, a: " ++ show valrs ++ " " ++ show val' ++ " " ++ show val) $ go gen' (counter - 1) val s
+        | counter <= 0 = return (val, s)
+        | val' < val = do
+            curTime <- getCurrentTime
+            let diffTime = diffUTCTime curTime startTime
+            putStrLn $ show val' ++ "\t\t(" ++ show diffTime ++ ")"
+            case stop of
+                RelIter -> go gen' counter0 val' s'
+                _       -> go gen' (counter - 1) val' s'
+        | otherwise  = go gen' (counter - 1) val s
       where
         (sr, gen') = randomizedGreedy gen g n p alpha
         valrs = solutionValue g n sr
