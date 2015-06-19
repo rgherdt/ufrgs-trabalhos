@@ -54,7 +54,7 @@ main = do
                      map (map read . map B8.unpack . B8.words) contents
             case g of
                 Just g -> do
-                    putStrLn $ show Grasp.tst            
+                    putStrLn $ show (Grasp.tst g)
                     startTime <- getCurrentTime
                     putStrLn $ "solution\trunning time"
                     (val, s) <- grasp gen g stop n p alpha iterNum startTime
