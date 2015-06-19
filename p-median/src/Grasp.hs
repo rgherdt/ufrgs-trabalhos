@@ -3,15 +3,16 @@ module Grasp (
     , grasp
     ) where
 
-import Data.Array
 import Data.Function (on)
+import Data.Foldable (toList)
 import Data.List
+import qualified Data.Sequence as S
 import Debug.Trace
 import qualified Graph as G
 import System.Random
 import Data.Time
 
-type Solution = Array Int Int
+type Solution = S.Seq Int
 type Cost = Int
 
 data StopCriterium = RelIter | AbsIter
@@ -20,35 +21,38 @@ data StopCriterium = RelIter | AbsIter
 -- The solution is already sorted for efficiency reasons.
 randomSolution :: StdGen -> Int -> Int -> Solution
 randomSolution gen n p =
-    listArray (0, p - 1) . sort . take p . nub . randomRs (0, n - 1) $ gen
+    S.fromList . sort . take p . nub . randomRs (0, n - 1) $ gen
 
 -- | Return all 1-change neighbours from @sol@.
 neighbours :: Int -> Solution -> [Solution]
 neighbours n sol = do
-    pos <- indices sol
-    nbs <- map (\v -> sol // [(pos, v)]) emptyVertices
+    pos <- allVertices
+    nbs <- map (\v -> S.update pos v sol) emptyVertices
     return nbs
   where
-    emptyVertices = [0 .. n - 1] \\ elems sol
+    emptyVertices = allVertices \\ toList sol
+    allVertices = [0 .. n - 1]
 
 -- | Return all 2-change neighbours from @sol@.
+{-
 twoChangeNeighbours :: Int -> Solution -> [Solution]
 twoChangeNeighbours n sol = do
     pos <- vs
     pos' <- delete pos vs
-    nbs <- map (\v -> sol // [(pos, v)]) emptyVertices
-    nbs' <- map (\v -> nbs // [(pos', v)]) $ emptyVertices \\ elems nbs
+    nbs <- map (\v -> sol S.// [(pos, v)]) emptyVertices
+    nbs' <- map (\v -> nbs S.// [(pos', v)]) $ emptyVertices \\ toList nbs
     return nbs'
   where
-    vs = indices sol
-    emptyVertices = [0 .. n - 1] \\ elems sol
+    vs = [0 .. S.length sol]
+    emptyVertices = [0 .. n - 1] \\ toList sol
+-}
 
 
 solutionValue :: G.Graph -> Int -> Solution -> Int
 solutionValue g n sol =
     sum [minimum [G.cost g i j | j <- s] | i <- [0 .. n - 1]]
   where 
-    s = elems sol
+    s = toList sol
 
 -- | First improvement local search.
 localSearch :: G.Graph -> (Cost, Solution) -> (Cost, Solution)
@@ -62,7 +66,7 @@ localSearch g (v0, s0) = case betters of
 
 randomizedGreedy :: StdGen -> G.Graph -> Int -> Int -> Float -> (Solution, StdGen)
 randomizedGreedy gen g n p alpha =
-    (listArray (0, p - 1) s, gen')
+    (S.fromList s, gen')
   where
     (s, _, gen') =
         foldr (\_ (sol, remaining, gen) ->
