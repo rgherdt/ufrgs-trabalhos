@@ -4,7 +4,7 @@ module Main where
 import Options.Applicative
 import Control.Monad (liftM)
 import qualified Graph as G
-import Grasp (grasp, StopCriterium (..))
+import Grasp (tst,  grasp, StopCriterium (..))
 import System.IO
 import System.Random
 import Data.Time
@@ -54,6 +54,7 @@ main = do
                      map (map read . map B8.unpack . B8.words) contents
             case g of
                 Just g -> do
+                    putStrLn $ show Grasp.tst            
                     startTime <- getCurrentTime
                     putStrLn $ "solution\trunning time"
                     (val, s) <- grasp gen g stop n p alpha iterNum startTime

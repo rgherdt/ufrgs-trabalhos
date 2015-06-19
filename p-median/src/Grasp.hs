@@ -1,6 +1,7 @@
 module Grasp (
       StopCriterium (..)
     , grasp
+    , tst
     ) where
 
 import Data.Array
@@ -10,6 +11,8 @@ import Debug.Trace
 import qualified Graph as G
 import System.Random
 import Data.Time
+import GHC.Exts
+import Data.Maybe
 
 type Solution = Array Int Int
 type Cost = Int
@@ -50,13 +53,42 @@ solutionValue g n sol =
   where 
     s = elems sol
 
+firstNeighbor :: Int -> Solution -> Solution
+firstNeighbor n sol = sol // [(1, head emptyVertices)]
+  where
+    emptyVertices = [1 .. n] \\ elems sol
+
+nextNeighbor :: Int -> Int -> Solution -> Solution -> Solution
+nextNeighbor n p sol nb = case diff of
+    lev -> case pos of 
+        p -> array (1,p) []
+        _ -> sol // [((pos+1), head emptyVertices)]
+    _ -> sol // [(pos, nextVert)]
+  where
+    emptyVertices = [1 .. n] \\ elems sol
+    lev = trace("ev: "++ show emptyVertices)$last emptyVertices
+    diff = head ((elems nb) \\ (elems sol))
+    diffPos = fromJust $ elemIndex diff emptyVertices
+    nextVert = emptyVertices !! (diffPos+1)
+    (pos,_) = fromJust $ find (\(_,val) -> val == diff) $ assocs nb
+    
+tst :: [Int]
+tst = trace(show t0) $ elems sol1
+  where
+    p1 = 5
+    n1 = 8
+    sol1 = array (1, 5) [(1,1),(2,3),(3,4),(4,7),(5,8)]
+    fn = firstNeighbor n1 sol1
+    t0 = trace(show fn ++ "\n") $ nextNeighbor n1 p1 sol1 fn
+    t1 = trace(show t0 ++ "\n") $ nextNeighbor n1 p1 sol1 t0
+
 -- | First improvement local search.
 localSearch :: G.Graph -> (Cost, Solution) -> (Cost, Solution)
 localSearch g (v0, s0) = case betters of
     [] -> (v0, s0)
-    _  -> localSearch g (head betters)
+    _  -> trace ("ls-res: " ++ show (fst (head betters))) $ localSearch g (head betters)
   where
-    betters = filter (\(v', _) -> v' < v0) $ map compute $ neighbours n s0
+    betters = sortWith (\(v',_) -> v') $ filter (\(v', _) -> v' < v0) $ map compute $ neighbours n s0
     n = G.numNodes g
     compute s = (solutionValue g n s, s)
 
