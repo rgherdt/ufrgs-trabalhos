@@ -93,23 +93,23 @@ grasp :: StdGen
       -> Int
       -> UTCTime
       -> IO (Int, Solution)
-grasp gen g stop n p alpha counter0 startTime = go gen counter0 val0 s0
+grasp gen g stop n p alpha counter0 startTime = go gen' counter0 val0 s0
   where
-    s0 = randomSolution gen n p
+    (s0, gen') = randomizedGreedy gen g n p alpha
     val0 = solutionValue g n s0
     go gen counter val s
         | counter <= 0 = return (val, s)
-        | val' < val = do
+        | val'' < val = do
             curTime <- getCurrentTime
             let diffTime = diffUTCTime curTime startTime
-            putStrLn $ show val' ++ "\t\t(" ++ show diffTime ++ ")"
+            putStrLn $ show val'' ++ "\t\t(" ++ show diffTime ++ ")"
             case stop of
-                RelIter -> go gen' counter0 val' s'
-                _       -> go gen' (counter - 1) val' s'
+                RelIter -> go gen' counter0 val'' s''
+                _       -> go gen' (counter - 1) val'' s''
         | otherwise  = go gen' (counter - 1) val s
       where
-        (sr, gen') = randomizedGreedy gen g n p alpha
-        valrs = solutionValue g n sr
-        (val', s') = localSearch g (valrs, sr)
+        (s', gen') = randomizedGreedy gen g n p alpha
+        val' = solutionValue g n s'
+        (val'', s'') = localSearch g (val', s')
 --                         randomizedGreedy gen g n p alpha
     
