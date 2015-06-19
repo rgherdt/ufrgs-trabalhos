@@ -84,9 +84,10 @@ grasp gen g n p alpha counter0 = go gen counter0 val0 s0
     go gen counter val s
         | counter <= 0 = (val, s)
         | val' < val = trace ("val' " ++ show val') $ go gen' counter0 val' s'
-        | otherwise  = go gen' (counter - 1) val s
+        | otherwise  = trace (show counter ++ "\nvalLS " ++ show val') $ go gen' (counter - 1) val s
       where
         (sr, gen') = randomizedGreedy gen g n p alpha
-        (val', s') = localSearch g sr
+        t1 = solutionValue g n sr
+        (val', s') = trace ("valRG " ++ show t1) $ localSearch g sr
 --                         randomizedGreedy gen g n p alpha
     
