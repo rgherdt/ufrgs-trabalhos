@@ -53,8 +53,7 @@ main = do
                      map (map read . map B8.unpack . B8.words) contents
             case g of
                 Just g -> do
-                    let (val, s) = grasp gen g stop n p alpha iterNum
-                    putStrLn . show $ val
+                    (val, s) <- grasp gen g stop n p alpha iterNum
                     return ()
                 _ -> B8.putStrLn "p-median: Inconsistent input graph"
             return ()

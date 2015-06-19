@@ -86,16 +86,18 @@ grasp :: StdGen
       -> Int
       -> Float
       -> Int
-      -> (Int, Solution)
+      -> IO (Int, Solution)
 grasp gen g stop n p alpha counter0 = go gen counter0 val0 s0
   where
     s0 = randomSolution gen n p
     val0 = solutionValue g n s0
     go gen counter val s
-        | counter <= 0 = (val, s)
-        | val' < val = trace ("val': " ++ show val') $ case stop of
-            RelIter -> go gen' counter0 val' s'
-            _       -> go gen' (counter - 1) val' s'
+        | counter <= 0 = return (val, s)
+        | val' < val = do
+            putStrLn $ "val' " ++ show val'
+            case stop of
+                RelIter -> go gen' counter0 val' s'
+                _       -> go gen' (counter - 1) val' s'
         | otherwise  = go gen' (counter - 1) val s
       where
         (sr, gen') = randomizedGreedy gen g n p alpha
