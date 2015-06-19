@@ -72,17 +72,18 @@ nextNeighbor n sol nb
     nextVert = emptyVertices !! (diffPos+1)
     (pos,_) = fromJust $ find (\(_,val) -> val == diff) $ assocs nb
     
-tst :: [Int]
-tst = trace(show t2) $ elems sol1
+tst :: G.Graph -> [Int]
+tst g = trace(show t0) $ elems sol1
   where
     p1 = 50
     n1 = 900
-    sol1 = array (1, p1) [(i, i*2) | i <- [1 .. n1]]
+    sol1 = array (1, p1) [(i, i*2) | i <- [1 .. p1]]
+    --v1 = solutionValue g n1 sol1
     fn = firstNeighbor n1 sol1
     t0 = trace(show fn ++ "\n") $ nextNeighbor n1 sol1 fn
-    t1 = trace(show t0 ++ "\n") $ nextNeighbor n1 sol1 t0
-    t2 = trace(show t1 ++ "\n") $ nextNeighbor n1 sol1 t1
+    
 
+{-
 localSearch2 :: G.Graph -> (Cost, Solution) -> (Cost, Solution)
 localSearch2 g (v0, s0) 
     | firstVal < v0 = localSearch2 g (firstVal, fnb)
@@ -103,7 +104,7 @@ searchNeighbors g (v0, s0) (vnb, nb)
   where 
     n = G.numNodes g
     next = nextNeighbor n nb
-    
+-}    
 
 -- | First improvement local search.
 localSearch :: G.Graph -> (Cost, Solution) -> (Cost, Solution)
