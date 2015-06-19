@@ -1,20 +1,49 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
+import Options.Applicative
 import Control.Monad (liftM)
-import Control.Monad.Trans.Class (lift)
-import Control.Monad.Trans.Maybe (MaybeT, runMaybeT)
 import qualified Graph as G
-import qualified Grasp as Grasp
+import Grasp (grasp, StopCriterium (..))
 import System.IO
 import System.Random
-import Text.Read (readMaybe)
 import qualified Data.ByteString.Lazy as B
 import qualified Data.ByteString.Lazy.Char8 as B8
 
-inf = maxBound :: Int
+data Options = Options
+    { optAbsStop :: Bool
+    , optNum :: Int
+    , optAlpha :: Float
+    }
 
+parseOptions :: Parser Options
+parseOptions = Options
+    <$> switch ( long "absolute-iterations"
+              <> short 'i'
+              <> help "Set stop criterium to absolute iterations.")
+    <*> option auto ( short 'n'
+                   <> value 100
+                   <> metavar "NUM"
+                   <> help "Number of iterations to stop (default: 100)."
+                    )
+    <*> option auto ( long "alpha"
+                   <> short 'a'
+                   <> value 0.2
+                   <> metavar "ALPHA"
+                   <> help "Alpha parameter in (0.0, 1.0] (default: 0.2)"
+                    )
+
+opts = info (helper <*> parseOptions)
+            ( fullDesc
+           <> progDesc "Solve the p-median uncapacitaded problem with GRASP"
+           <> header "A GRASP-based solver for the p-median uncapacitaded problem" )
+            
 main = do
+    op <- execParser opts
+    let stop | optAbsStop op = AbsIter
+             | otherwise  = RelIter
+        iterNum = optNum op
+        alpha = optAlpha op
     params <- liftM (map read . words) getLine :: IO [Int]
     matrix <- case params of
         [n, numEdges, p] -> do
@@ -24,7 +53,7 @@ main = do
                      map (map read . map B8.unpack . B8.words) contents
             case g of
                 Just g -> do
-                    let (val, s) = Grasp.grasp gen g n p 0.4 200
+                    let (val, s) = grasp gen g stop n p alpha iterNum
                     putStrLn . show $ val
                     return ()
                 _ -> B8.putStrLn "p-median: Inconsistent input graph"

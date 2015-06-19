@@ -1,4 +1,7 @@
-module Grasp where
+module Grasp (
+      StopCriterium (..)
+    , grasp
+    ) where
 
 import Data.Array
 import Data.Function (on)
@@ -9,6 +12,8 @@ import System.Random
 
 type Solution = Array Int Int
 type Cost = Int
+
+data StopCriterium = RelIter | AbsIter
 
 -- | Return a random solution to the problem: a p-size list of locations.
 -- The solution is already sorted for efficiency reasons.
@@ -45,16 +50,14 @@ solutionValue g n sol =
     s = elems sol
 
 -- | First improvement local search.
-localSearch :: G.Graph -> Solution -> (Cost, Solution)
-localSearch g s0 =
-    foldr comp (v0, s0) $ neighbours n s0
+localSearch :: G.Graph -> (Cost, Solution) -> (Cost, Solution)
+localSearch g (v0, s0) = case betters of
+    [] -> (v0, s0)
+    _  -> localSearch g (head betters)
   where
+    betters = filter (\(v', _) -> v' < v0) $ map compute $ neighbours n s0
     n = G.numNodes g
-    v0 = solutionValue g n s0
-    comp s' best@(v, s) | v' < v = (v', s')
-                        | otherwise = best
-      where
-        v' = solutionValue g n s'
+    compute s = (solutionValue g n s, s)
 
 randomizedGreedy :: StdGen -> G.Graph -> Int -> Int -> Float -> (Solution, StdGen)
 randomizedGreedy gen g n p alpha =
@@ -76,18 +79,26 @@ randomizedGreedy gen g n p alpha =
     randomIx gen n' = randomR (0, n' - 1) gen
 
 
-grasp :: StdGen -> G.Graph -> Int -> Int -> Float -> Int -> (Int, Solution)
-grasp gen g n p alpha counter0 = go gen counter0 val0 s0
+grasp :: StdGen
+      -> G.Graph
+      -> StopCriterium
+      -> Int
+      -> Int
+      -> Float
+      -> Int
+      -> (Int, Solution)
+grasp gen g stop n p alpha counter0 = go gen counter0 val0 s0
   where
     s0 = randomSolution gen n p
     val0 = solutionValue g n s0
     go gen counter val s
         | counter <= 0 = (val, s)
-        | val' < val = trace ("val' " ++ show val') $ go gen' counter0 val' s'
-        | otherwise  = trace (show counter ++ "\nvalLS " ++ show val') $ go gen' (counter - 1) val s
+        | val' < val = trace ("val': " ++ show val') $ case stop of
+            RelIter -> go gen' counter0 val' s'
+            _       -> go gen' (counter - 1) val' s'
+        | otherwise  = go gen' (counter - 1) val s
       where
         (sr, gen') = randomizedGreedy gen g n p alpha
-        t1 = solutionValue g n sr
-        (val', s') = trace ("valRG " ++ show t1) $ localSearch g sr
+        (val', s') = localSearch g (solutionValue g n sr, sr)
 --                         randomizedGreedy gen g n p alpha
     
