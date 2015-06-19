@@ -20,7 +20,7 @@ data StopCriterium = RelIter | AbsIter
 -- The solution is already sorted for efficiency reasons.
 randomSolution :: StdGen -> Int -> Int -> Solution
 randomSolution gen n p =
-    listArray (1, p) . sort . take p . nub . randomRs (1, n) $ gen
+    listArray (0, p - 1) . sort . take p . nub . randomRs (1, n) $ gen
 
 -- | Return all 1-change neighbours from @sol@.
 neighbours :: Int -> Solution -> [Solution]
@@ -29,7 +29,7 @@ neighbours n sol = do
     nbs <- map (\v -> sol // [(pos, v)]) emptyVertices
     return nbs
   where
-    emptyVertices = [1 .. n] \\ elems sol
+    emptyVertices = [0 .. n - 1] \\ elems sol
 
 -- | Return all 2-change neighbours from @sol@.
 twoChangeNeighbours :: Int -> Solution -> [Solution]
@@ -41,12 +41,12 @@ twoChangeNeighbours n sol = do
     return nbs'
   where
     vs = indices sol
-    emptyVertices = [1 .. n] \\ elems sol
+    emptyVertices = [0 .. n - 1] \\ elems sol
 
 
 solutionValue :: G.Graph -> Int -> Solution -> Int
 solutionValue g n sol =
-    sum [minimum [G.cost g i j | j <- s] | i <- [1..n]]
+    sum [minimum [G.cost g i j | j <- s] | i <- [0 .. n - 1]]
   where 
     s = elems sol
 
@@ -62,7 +62,7 @@ localSearch g (v0, s0) = case betters of
 
 randomizedGreedy :: StdGen -> G.Graph -> Int -> Int -> Float -> (Solution, StdGen)
 randomizedGreedy gen g n p alpha =
-    (listArray (1, p) s, gen')
+    (listArray (0, p - 1) s, gen')
   where
     (s, _, gen') =
         foldr (\_ (sol, remaining, gen) ->
@@ -71,8 +71,8 @@ randomizedGreedy gen g n p alpha =
                       v' = rcl size !! j
                   in (v' : sol, remaining - 1, gen'))
               ([], n, gen)
-              [1 .. p]
-    vs = [1 .. n]
+              [0 .. p - 1]
+    vs = [0 .. n - 1]
     totalCost i = sum $ map (G.cost g i) vs
     candidates = sortBy (compare `on` snd) $ map (\v -> (v, totalCost v)) vs
     alphaSize n' = round (alpha * fromIntegral n') :: Int

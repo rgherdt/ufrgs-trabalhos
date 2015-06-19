@@ -31,7 +31,7 @@ inf = (maxBound :: Int)
 
 -- | Return the number of nodes in graph @g@.
 numNodes :: Graph -> Int
-numNodes (Graph g) = n
+numNodes (Graph g) = n + 1
   where
     (_, (n, _)) = bounds g
 
@@ -60,7 +60,7 @@ showInput n p gr@(Graph g) =
                nodes)
     <> "\t;\nend;"
   where
-    nodes = [1 .. n]
+    nodes = [0 .. n - 1]
 
 -- | Return an immutable graph from a mutable one.
 {-
@@ -77,10 +77,10 @@ freezeGraph (MGraph m) =
 fromList :: Int -> [[Int]] -> MaybeT (ST s) (STUArray s (Int, Int) Cost)
 fromList n input = do
     edges <- maybe mzero return $ sequence . map edgeFromList $ input
-    m <- lift $ newListArray ((1, 1), (n, n)) $ repeat inf -- fill with inf values
+    m <- lift $ newListArray ((0, 0), (n - 1, n - 1)) $ repeat inf -- fill with inf values
     lift $ do
-        mapM_ (\i -> writeArray m (i, i) 0) [1..n]      -- zeroes main diagonal
-        mapM_ (\((i, j), c) -> writeArray m (i, j) c >> writeArray m (j, i) c)
+        mapM_ (\i -> writeArray m (i, i) 0) [0 .. n - 1]      -- zeroes main diagonal
+        mapM_ (\((i, j), c) -> writeArray m (i - 1, j - 1) c >> writeArray m (j - 1, i - 1) c)
               edges
     return m
 
@@ -89,7 +89,7 @@ fromList n input = do
 shortestPath :: STUArray s (Int, Int) Cost -> ST s ()
 shortestPath m = do
     (_, (n, _)) <- getBounds m 
-    let indices = [1..n]
+    let indices = [0 .. n] -- n is already adjusted by minus 1
     forM_ indices $ \i -> do
         forM_ indices $ \j -> do
             c <- readArray m (j, i)
