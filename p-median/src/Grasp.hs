@@ -1,97 +1,79 @@
 module Grasp (
-      StopCriterium (..)
-    , grasp
-    , tst
+      grasp,
+      tst
     ) where
 
-import Data.Array
 import Data.Function (on)
+import Data.Foldable (toList)
 import Data.List
+import qualified Data.Sequence as S
 import Debug.Trace
 import qualified Graph as G
 import System.Random
 import Data.Time
-import GHC.Exts
 import Data.Maybe
 
-type Solution = Array Int Int
+type Solution = S.Seq Int
 type Cost = Int
 
-data StopCriterium = RelIter | AbsIter
 
 -- | Return a random solution to the problem: a p-size list of locations.
 -- The solution is already sorted for efficiency reasons.
 randomSolution :: StdGen -> Int -> Int -> Solution
 randomSolution gen n p =
-    listArray (1, p) . sort . take p . nub . randomRs (1, n) $ gen
+    S.fromList . sort . take p . nub . randomRs (0, n - 1) $ gen
 
 -- | Return all 1-change neighbours from @sol@.
 neighbours :: Int -> Solution -> [Solution]
 neighbours n sol = do
-    pos <- indices sol
-    nbs <- map (\v -> sol // [(pos, v)]) emptyVertices
+    pos <- allVertices
+    nbs <- map (\v -> S.update pos v sol) emptyVertices
     return nbs
   where
-    emptyVertices = [1 .. n] \\ elems sol
+    emptyVertices = allVertices \\ toList sol
+    allVertices = [0 .. n - 1]
 
--- | Return all 2-change neighbours from @sol@.
-twoChangeNeighbours :: Int -> Solution -> [Solution]
-twoChangeNeighbours n sol = do
-    pos <- vs
-    pos' <- delete pos vs
-    nbs <- map (\v -> sol // [(pos, v)]) emptyVertices
-    nbs' <- map (\v -> nbs // [(pos', v)]) $ emptyVertices \\ elems nbs
-    return nbs'
-  where
-    vs = indices sol
-    emptyVertices = [1 .. n] \\ elems sol
-
-solutionValue :: G.Graph -> Int -> Solution -> Int
-solutionValue g n sol =
-    sum [minimum [G.cost g i j | j <- s] | i <- [1..n]]
-  where 
-    s = elems sol
 
 firstNeighbor :: Int -> Solution -> Solution
-firstNeighbor n sol = sol // [(1, head emptyVertices)]
+firstNeighbor n sol = S.update 1 (head emptyVertices) sol
   where
-    emptyVertices = [1 .. n] \\ elems sol
+    emptyVertices = [0 .. n - 1] \\ toList sol
 
 nextNeighbor :: Int -> Solution -> Solution -> Solution
 nextNeighbor n sol nb
-    | (diff == lev) && (pos == p) = array (1,p) []
-    | (diff == lev) = sol // [((pos+1), head emptyVertices)]
-    | otherwise = sol // [(pos, nextVert)]
+    | (diff == lev) && (pos == p) = S.empty
+    | (diff == lev) = S.update (pos + 1) (head emptyVertices) sol
+    | otherwise = S.update pos nextVert sol
   where
-    (_, p) = bounds sol
-    emptyVertices = [1 .. n] \\ elems sol
+    p = (S.length sol) - 1
+    emptyVertices = [0 .. n - 1] \\ toList sol
     lev = last emptyVertices
-    diff = head ((elems nb) \\ (elems sol))
+    diff = head ((toList nb) \\ (toList sol))
     diffPos = fromJust $ elemIndex diff emptyVertices
     nextVert = emptyVertices !! (diffPos+1)
-    (pos,_) = fromJust $ find (\(_,val) -> val == diff) $ assocs nb
+    pos = fromJust $ S.elemIndexL diff nb
     
-tst :: G.Graph -> IO ()
-tst g = do    
-    let p1 = 50
-    let n1 = 900
-    let sol1 = array (1, p1) [(i, i*2) | i <- [1 .. p1]]
-    --v1 = solutionValue g n1 sol1
+tst     :: G.Graph -> Int -> Int -> IO ()
+tst g n p = do    
+    let sol1 = S.fromList [(i*2) | i <- [0 .. p - 1]]
+    --v1 = solutionValue g n sol1
     curTime <- getCurrentTime
-    --let fn = firstNeighbor n1 sol1
-    let v0 = solutionValue g n1 sol1
-    let (val, sol) = localSearch g (v0, sol1)
+    --let fn = firstNeighbor n sol1
+    putStrLn "Calculate first Solution"
+    let v0 = solutionValue g n sol1
+    putStrLn "Local Search Start"
+    let (val, sol) = localSearch2 g (v0, sol1)
     endTime <- getCurrentTime
     let diffTime = diffUTCTime curTime endTime
     putStrLn $ "(" ++ show diffTime ++ ") " ++ show val
-    --t0 = trace(show fn ++ "\n") $ nextNeighbor n1 sol1 fn
+    --t0 = trace(show fn ++ "\n") $ nextNeighbor n sol1 fn
     
 
 localSearch2 :: G.Graph -> (Cost, Solution) -> (Cost, Solution)
 localSearch2 g (v0, s0) 
-    | firstVal < v0 = localSearch2 g (firstVal, fnb)
-    | nextVal < 0   = (v0, s0)  -- TROCAR POR TESTE DE SEQUENCIA VAZIA
-    | otherwise     = localSearch2 g (nextVal, nnb)
+    | firstVal < v0 = trace("nb: " ++ show fnb ++ "\n") $ localSearch2 g (firstVal, fnb)
+    | S.null nnb    = (v0, s0)  
+    | otherwise     = trace("nb: " ++ show nnb ++ "\n") $ localSearch2 g (nextVal, nnb)
   where
     n = G.numNodes g
     fnb = firstNeighbor n s0
@@ -101,28 +83,48 @@ localSearch2 g (v0, s0)
 
 searchNeighbors :: G.Graph -> (Cost, Solution) -> (Cost, Solution) -> (Cost, Solution)
 searchNeighbors g (v0, s0) (vnb, nb)
-    | nextVal < v0 = (solutionValue g n next, next)
-    | otherwise = case next of
-                        [] -> (-1, s0)
-                        _  -> searchNeighbors g (v0, s0) (solutionValue g n next, next)
+    | S.null next   = (-1, next)
+    | nextVal < v0  = (nextVal, next)
+    | otherwise     = searchNeighbors g (v0, s0) (nextVal, next)
   where 
     n = G.numNodes g
-    next = nextNeighbor n nb
-  
+    next = nextNeighbor n s0 nb
+    nextVal = solutionValue g n next
+
+-- | Return all 2-change neighbours from @sol@.
+{-
+twoChangeNeighbours :: Int -> Solution -> [Solution]
+twoChangeNeighbours n sol = do
+    pos <- vs
+    pos' <- delete pos vs
+    nbs <- map (\v -> sol S.// [(pos, v)]) emptyVertices
+    nbs' <- map (\v -> nbs S.// [(pos', v)]) $ emptyVertices \\ toList nbs
+    return nbs'
+  where
+    vs = [0 .. S.length sol]
+    emptyVertices = [0 .. n - 1] \\ toList sol
+-}
+
+
+solutionValue :: G.Graph -> Int -> Solution -> Int
+solutionValue g n sol =
+    sum [minimum [G.cost g i j | j <- s] | i <- [0 .. n - 1]]
+  where 
+    s = toList sol
 
 -- | First improvement local search.
 localSearch :: G.Graph -> (Cost, Solution) -> (Cost, Solution)
 localSearch g (v0, s0) = case betters of
     [] -> (v0, s0)
-    _  -> trace ("ls-res: " ++ show (fst (head betters))) $ localSearch g (head betters)
+    _  -> localSearch g (head betters)
   where
-    betters = sortWith (\(v',_) -> v') $ filter (\(v', _) -> v' < v0) $ map compute $ neighbours n s0
+    betters = filter (\(v', _) -> v' < v0) $ map compute $ neighbours n s0
     n = G.numNodes g
     compute s = (solutionValue g n s, s)
 
 randomizedGreedy :: StdGen -> G.Graph -> Int -> Int -> Float -> (Solution, StdGen)
 randomizedGreedy gen g n p alpha =
-    (listArray (1, p) s, gen')
+    (S.fromList s, gen')
   where
     (s, _, gen') =
         foldr (\_ (sol, remaining, gen) ->
@@ -131,8 +133,8 @@ randomizedGreedy gen g n p alpha =
                       v' = rcl size !! j
                   in (v' : sol, remaining - 1, gen'))
               ([], n, gen)
-              [1 .. p]
-    vs = [1 .. n]
+              [0 .. p - 1]
+    vs = [0 .. n - 1]
     totalCost i = sum $ map (G.cost g i) vs
     candidates = sortBy (compare `on` snd) $ map (\v -> (v, totalCost v)) vs
     alphaSize n' = round (alpha * fromIntegral n') :: Int
@@ -142,30 +144,27 @@ randomizedGreedy gen g n p alpha =
 
 grasp :: StdGen
       -> G.Graph
-      -> StopCriterium
       -> Int
       -> Int
       -> Float
       -> Int
       -> UTCTime
       -> IO (Int, Solution)
-grasp gen g stop n p alpha counter0 startTime = go gen counter0 val0 s0
+grasp gen g n p alpha counter0 startTime = go gen' counter0 val0 s0
   where
-    s0 = randomSolution gen n p
+    (s0, gen') = randomizedGreedy gen g n p alpha
     val0 = solutionValue g n s0
     go gen counter val s
         | counter <= 0 = return (val, s)
-        | val' < val = do
+        | val'' < val = do
             curTime <- getCurrentTime
             let diffTime = diffUTCTime curTime startTime
-            putStrLn $ show val' ++ "\t\t(" ++ show diffTime ++ ")"
-            case stop of
-                RelIter -> go gen' counter0 val' s'
-                _       -> go gen' (counter - 1) val' s'
+            putStrLn $ show val'' ++ "\t\t(" ++ show diffTime ++ ")"
+            go gen' (counter - 1) val'' s''
         | otherwise  = go gen' (counter - 1) val s
       where
-        (sr, gen') = randomizedGreedy gen g n p alpha
-        valrs = solutionValue g n sr
-        (val', s') = localSearch g (valrs, sr)
+        (s', gen') = randomizedGreedy gen g n p alpha
+        val' = solutionValue g n s'
+        (val'', s'') = localSearch g (val', s')
 --                         randomizedGreedy gen g n p alpha
     
