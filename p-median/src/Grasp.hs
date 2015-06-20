@@ -13,7 +13,7 @@ import Data.Time
 
 type Solution = S.Seq Int
 type Cost = Int
-
+inf = (maxBound :: Int)
 
 -- | Return a random solution to the problem: a p-size list of locations.
 -- The solution is already sorted for efficiency reasons.
@@ -51,6 +51,52 @@ solutionValue g n sol =
     sum [minimum [G.cost g i j | j <- s] | i <- [0 .. n - 1]]
   where 
     s = toList sol
+
+{-
+nearestFacility :: G.Graph -> Solution -> Int -> Int
+nearestFacility g sol i =
+    foldr findMin inf (toList sol)
+  where
+    findMin j curMin
+        | c < curMin = c
+        | otherwise = curMin
+      where
+        c = G.cost g i j
+-}
+    
+nearestFacilities :: G.Graph -> Int -> Solution -> S.Seq Int
+nearestFacilities g n sol =
+    S.fromList $ map nearestFacility [0 .. n - 1]
+  where    
+    nearestFacility i =
+        foldr findMin inf (toList sol)
+    findMin j curMin
+        | c < curMin = c
+        | otherwise = curMin
+      where
+        c = G.cost g i j
+
+optLocalSea
+
+{-
+optLocalSearch :: G.Graph -> Int -> Int -> Solution -> Solution
+optLocalSearch g n p sol = 
+  where
+    go (i, j, k) sol nearest
+        | diff < 0 = go (0, 0, 0) (update i j sol) nearest'
+        | otherwise = go (
+      where
+        relevant = filter (\k -> i == nearest ! k) indices
+        diff = foldr ((G.cost j k - G.cost i k) +) 0 relevant
+        nearest' = map (\k -> if j == k then j else k) nearest 
+    indices = [0 .. n - 1]
+    incoming = S.fromList $ toList sol \\ indices
+    nearest = nearestFacilities g n sol
+    next cur@(i, j, k) | k < n - 1     = (i, j, k + 1)
+                       | j < n - p - 1 = (i, j + 1, k)
+                       | i < p - 1 = (i + 1, j, k)
+                       | otherwise = cur
+-}
 
 -- | First improvement local search.
 localSearch :: G.Graph -> (Cost, Solution) -> (Cost, Solution)
