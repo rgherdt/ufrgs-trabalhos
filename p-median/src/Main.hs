@@ -53,9 +53,9 @@ main = do
             let g = G.generateGraph n $
                      map (map read . map B8.unpack . B8.words) contents
             case g of
-                Just g -> do
-                    putStrLn $ show (Grasp.tst g)
+                Just g -> do                  
                     startTime <- getCurrentTime
+                    Grasp.tst g
                     putStrLn $ "solution\trunning time"
                     (val, s) <- grasp gen g stop n p alpha iterNum startTime
                     return ()

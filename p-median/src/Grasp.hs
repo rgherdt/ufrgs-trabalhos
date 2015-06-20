@@ -46,7 +46,6 @@ twoChangeNeighbours n sol = do
     vs = indices sol
     emptyVertices = [1 .. n] \\ elems sol
 
-
 solutionValue :: G.Graph -> Int -> Solution -> Int
 solutionValue g n sol =
     sum [minimum [G.cost g i j | j <- s] | i <- [1..n]]
@@ -72,28 +71,33 @@ nextNeighbor n sol nb
     nextVert = emptyVertices !! (diffPos+1)
     (pos,_) = fromJust $ find (\(_,val) -> val == diff) $ assocs nb
     
-tst :: G.Graph -> [Int]
-tst g = trace(show t0) $ elems sol1
-  where
-    p1 = 50
-    n1 = 900
-    sol1 = array (1, p1) [(i, i*2) | i <- [1 .. p1]]
+tst :: G.Graph -> IO ()
+tst g = do    
+    let p1 = 50
+    let n1 = 900
+    let sol1 = array (1, p1) [(i, i*2) | i <- [1 .. p1]]
     --v1 = solutionValue g n1 sol1
-    fn = firstNeighbor n1 sol1
-    t0 = trace(show fn ++ "\n") $ nextNeighbor n1 sol1 fn
+    curTime <- getCurrentTime
+    --let fn = firstNeighbor n1 sol1
+    let v0 = solutionValue g n1 sol1
+    let (val, sol) = localSearch g (v0, sol1)
+    endTime <- getCurrentTime
+    let diffTime = diffUTCTime curTime endTime
+    putStrLn $ "(" ++ show diffTime ++ ") " ++ show val
+    --t0 = trace(show fn ++ "\n") $ nextNeighbor n1 sol1 fn
     
 
-{-
 localSearch2 :: G.Graph -> (Cost, Solution) -> (Cost, Solution)
 localSearch2 g (v0, s0) 
     | firstVal < v0 = localSearch2 g (firstVal, fnb)
-    | nextVal < 0   = (v0, s0)
-    | otherwise     = searchNeighbors g (v0, s0) (firstVal, fnb)
+    | nextVal < 0   = (v0, s0)  -- TROCAR POR TESTE DE SEQUENCIA VAZIA
+    | otherwise     = localSearch2 g (nextVal, nnb)
   where
     n = G.numNodes g
     fnb = firstNeighbor n s0
     firstVal = solutionValue g n fnb
     (nextVal, nnb) = searchNeighbors g (v0, s0) (firstVal, fnb)
+
 
 searchNeighbors :: G.Graph -> (Cost, Solution) -> (Cost, Solution) -> (Cost, Solution)
 searchNeighbors g (v0, s0) (vnb, nb)
@@ -104,7 +108,7 @@ searchNeighbors g (v0, s0) (vnb, nb)
   where 
     n = G.numNodes g
     next = nextNeighbor n nb
--}    
+  
 
 -- | First improvement local search.
 localSearch :: G.Graph -> (Cost, Solution) -> (Cost, Solution)
