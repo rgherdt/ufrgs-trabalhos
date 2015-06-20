@@ -2,14 +2,17 @@ module Grasp (
       grasp
     ) where
 
+import Control.Monad.ST
 import Data.Function (on)
 import Data.Foldable (toList)
 import Data.List
 import qualified Data.Vector as V
+import qualified Data.Vector.Mutable as VM
 import Debug.Trace
 import qualified Graph as G
 import System.Random
 import Data.Time
+import Data.STRef
 
 type Solution = V.Vector Int
 type Cost = Int
@@ -24,12 +27,12 @@ randomSolution gen n p =
 -- | Return all 1-change neighbours from @sol@.
 neighbours :: Int -> Solution -> [Solution]
 neighbours n sol = do
-    pos <- allVertices
-    nbs <- map (\v -> sol V.// [(pos, v)]) emptyVertices
+    pos <- solIndices
+    nbs <- map (\v -> sol V.// [(pos, v)]) newNodes
     return nbs
   where
-    emptyVertices = allVertices \\ toList sol
-    allVertices = [0 .. n - 1]
+    newNodes = [0 .. n - 1] \\ toList sol
+    solIndices = [0 .. (V.length sol - 1)]
 
 -- | Return all 2-change neighbours from @sol@.
 {-
@@ -64,7 +67,7 @@ nearestFacility g sol i =
         c = G.cost g i j
 -}
     
-nearestFacilities :: G.Graph -> Int -> Solution -> V.Vector Int
+nearestFacilities :: G.Graph -> Int -> Solution -> V.Vector Int -- ST s (VM.MVector s Int)
 nearestFacilities g n sol =
     V.fromList $ map nearestFacility [0 .. n - 1]
   where    
@@ -76,26 +79,27 @@ nearestFacilities g n sol =
       where
         c = G.cost g i j
 
-
-{-
 optLocalSearch :: G.Graph -> Int -> Int -> Solution -> Solution
-optLocalSearch g n p sol = 
+optLocalSearch g n p sol = go (0, 0) sol nearest
   where
-    go (i, j, k) sol nearest
-        | diff < 0 = go (0, 0, 0) (update i j sol) nearest'
-        | otherwise = go (
+    go :: (Int, Int) -> Solution -> V.Vector Int -> Solution
+    go cur@(i, j) sol nearest
+        | diff < 0 = go (0, 0) (sol V.// [(i, incoming V.! j)]) nearest'
+        | next cur == cur = sol
+        | otherwise = go (next cur) sol nearest
       where
-        relevant = filter (\k -> i == nearest ! k) indices
-        diff = foldr ((G.cost j k - G.cost i k) +) 0 relevant
-        nearest' = map (\k -> if j == k then j else k) nearest 
+        oldNode = sol V.! i
+        newNode = incoming V.! j
+        relevant = filter (\k -> oldNode == (nearest V.! k)) indices
+        diff = foldr (\k acc -> (G.cost g newNode k - G.cost g oldNode k) + acc) 0 relevant
+        nearest' = fmap (\k -> if j == k then j else k) nearest 
+        incoming = V.fromList $ indices \\ toList sol
     indices = [0 .. n - 1]
-    incoming = V.fromList $ toList sol \\ indices
     nearest = nearestFacilities g n sol
-    next cur@(i, j, k) | k < n - 1     = (i, j, k + 1)
-                       | j < n - p - 1 = (i, j + 1, k)
-                       | i < p - 1 = (i + 1, j, k)
-                       | otherwise = cur
--}
+    next cur@(i, j) | i < p - 1 && j < n - p - 1 = (i, j + 1)
+                    | i < p - 1 && j == n - p - 1 = (i + 1, 0)
+                    | j < n - p - 1 = (i, j + 1)
+                    | otherwise = cur
 
 -- | First improvement local search.
 localSearch :: G.Graph -> (Cost, Solution) -> (Cost, Solution)
@@ -113,17 +117,17 @@ randomizedGreedy gen g n p alpha =
   where
     (s, _, gen') =
         foldr (\_ (sol, remaining, gen) ->
-                  let size = alphaSize remaining
+                  let size = alphaSize (length remaining)
                       (j, gen') = randomIx gen size
-                      v' = rcl size !! j
-                  in (v' : sol, remaining - 1, gen'))
-              ([], n, gen)
+                      v' = rcl size remaining !! j
+                  in (v' : sol, delete v' remaining, gen'))
+              ([], vs, gen)
               [0 .. p - 1]
     vs = [0 .. n - 1]
     totalCost i = sum $ map (G.cost g i) vs
-    candidates = sortBy (compare `on` snd) $ map (\v -> (v, totalCost v)) vs
+    candidates vs = sortBy (compare `on` snd) $ map (\v -> (v, totalCost v)) vs
     alphaSize n' = round (alpha * fromIntegral n') :: Int
-    rcl size = map fst . take size $ candidates
+    rcl size remaining = map fst . take size $ candidates remaining
     randomIx gen n' = randomR (0, n' - 1) gen
 
 
@@ -137,6 +141,7 @@ grasp :: StdGen
       -> IO (Int, Solution)
 grasp gen g n p alpha counter0 startTime = go gen' counter0 val0 s0
   where
+--    s0 = randomSolution gen n p 
     (s0, gen') = randomizedGreedy gen g n p alpha
     val0 = solutionValue g n s0
     go gen counter val s
@@ -151,5 +156,7 @@ grasp gen g n p alpha counter0 startTime = go gen' counter0 val0 s0
         (s', gen') = randomizedGreedy gen g n p alpha
         val' = solutionValue g n s'
         (val'', s'') = localSearch g (val', s')
+--        s'' = optLocalSearch g n p s'
+--        val'' = solutionValue g n s''
 --                         randomizedGreedy gen g n p alpha
     
