@@ -5,13 +5,13 @@ module Grasp (
 import Data.Function (on)
 import Data.Foldable (toList)
 import Data.List
-import qualified Data.Sequence as S
+import qualified Data.Vector as V
 import Debug.Trace
 import qualified Graph as G
 import System.Random
 import Data.Time
 
-type Solution = S.Seq Int
+type Solution = V.Vector Int
 type Cost = Int
 inf = (maxBound :: Int)
 
@@ -19,13 +19,13 @@ inf = (maxBound :: Int)
 -- The solution is already sorted for efficiency reasons.
 randomSolution :: StdGen -> Int -> Int -> Solution
 randomSolution gen n p =
-    S.fromList . sort . take p . nub . randomRs (0, n - 1) $ gen
+    V.fromList . sort . take p . nub . randomRs (0, n - 1) $ gen
 
 -- | Return all 1-change neighbours from @sol@.
 neighbours :: Int -> Solution -> [Solution]
 neighbours n sol = do
     pos <- allVertices
-    nbs <- map (\v -> S.update pos v sol) emptyVertices
+    nbs <- map (\v -> sol V.// [(pos, v)]) emptyVertices
     return nbs
   where
     emptyVertices = allVertices \\ toList sol
@@ -37,11 +37,11 @@ twoChangeNeighbours :: Int -> Solution -> [Solution]
 twoChangeNeighbours n sol = do
     pos <- vs
     pos' <- delete pos vs
-    nbs <- map (\v -> sol S.// [(pos, v)]) emptyVertices
-    nbs' <- map (\v -> nbs S.// [(pos', v)]) $ emptyVertices \\ toList nbs
+    nbs <- map (\v -> sol V.// [(pos, v)]) emptyVertices
+    nbs' <- map (\v -> nbs V.// [(pos', v)]) $ emptyVertices \\ toList nbs
     return nbs'
   where
-    vs = [0 .. S.length sol]
+    vs = [0 .. V.length sol]
     emptyVertices = [0 .. n - 1] \\ toList sol
 -}
 
@@ -64,19 +64,18 @@ nearestFacility g sol i =
         c = G.cost g i j
 -}
     
-nearestFacilities :: G.Graph -> Int -> Solution -> S.Seq Int
+nearestFacilities :: G.Graph -> Int -> Solution -> V.Vector Int
 nearestFacilities g n sol =
-    S.fromList $ map nearestFacility [0 .. n - 1]
+    V.fromList $ map nearestFacility [0 .. n - 1]
   where    
     nearestFacility i =
-        foldr findMin inf (toList sol)
-    findMin j curMin
+        foldr (findMin i) inf (toList sol)
+    findMin i j curMin
         | c < curMin = c
         | otherwise = curMin
       where
         c = G.cost g i j
 
-optLocalSea
 
 {-
 optLocalSearch :: G.Graph -> Int -> Int -> Solution -> Solution
@@ -90,7 +89,7 @@ optLocalSearch g n p sol =
         diff = foldr ((G.cost j k - G.cost i k) +) 0 relevant
         nearest' = map (\k -> if j == k then j else k) nearest 
     indices = [0 .. n - 1]
-    incoming = S.fromList $ toList sol \\ indices
+    incoming = V.fromList $ toList sol \\ indices
     nearest = nearestFacilities g n sol
     next cur@(i, j, k) | k < n - 1     = (i, j, k + 1)
                        | j < n - p - 1 = (i, j + 1, k)
@@ -110,7 +109,7 @@ localSearch g (v0, s0) = case betters of
 
 randomizedGreedy :: StdGen -> G.Graph -> Int -> Int -> Float -> (Solution, StdGen)
 randomizedGreedy gen g n p alpha =
-    (S.fromList s, gen')
+    (V.fromList s, gen')
   where
     (s, _, gen') =
         foldr (\_ (sol, remaining, gen) ->
