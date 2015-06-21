@@ -72,7 +72,14 @@ nearestFacility g sol i =
 -- | Return a tuple containing the nearest and the second nearest facilities
 -- to node @i@.
 nearestFacilities :: G.Graph -> Solution -> Int -> (Int, Int)
-nearestFacilities g sol i =
+nearestFacilities g sol i = case vs of
+    [] -> error "empty nearest facilities"
+    (a:b:_) -> (a, b)
+  where
+    vs = map fst . sortBy (compare `on` snd) . map (\j -> (j, G.cost g i j)) $
+         toList sol
+
+{-
     (nearest, sndNearest)
   where
     ((_, nearest), (_, sndNearest)) = 
@@ -82,6 +89,7 @@ nearestFacilities g sol i =
         | otherwise = cur
       where
         c = G.cost g i j
+-}
 
 -- | Return a tuple containing the nearest and the second nearest facilities
 -- to every node in the graph.
@@ -89,9 +97,13 @@ allNearestFacilities :: G.Graph -> Int -> Solution -> V.Vector (Int, Int)
 allNearestFacilities g n sol =
     V.fromList $ map (nearestFacilities g sol) [0 .. n - 1]
 
+pick :: StdGen -> [a] -> (a, StdGen)
+pick gen ls = (ls !! ix, gen')
+  where
+    (ix, gen') = randomR (0, length ls - 1) gen
 
-findOut :: G.Graph -> Solution -> Int -> (Cost, Int)
-findOut g sol i = (profit, leaving)
+findOut :: StdGen -> G.Graph -> Solution -> Int -> V.Vector (Int, Int) -> (Cost, Int, StdGen)
+findOut gen g sol i nearestVec = (profit, leaving, gen')
   where
     n = G.numNodes g
     remaining = V.fromList $ [0 .. n - 1] \\ toList sol
@@ -99,36 +111,34 @@ findOut g sol i = (profit, leaving)
         V.partition
             (\u -> G.cost g u i <= G.cost g u (fst $ nearestVec V.! u))
             remaining
-    nearestVec = allNearestFacilities g n sol -- is a vector of pairs
     gain = V.sum $
             V.map (\u -> G.cost g u (fst $ nearestVec V.! u) - G.cost g u i)
                   gaining
-    netloss u = let nearest = nearestVec V.! u in
-                min (G.cost g u i) (G.cost g u (snd $ nearest))
-                - G.cost g u (fst $ nearest)
+    netloss u = (min (G.cost g u i) (G.cost g u (snd $ nearestVec V.! u)))
+                - G.cost g u (fst $ nearestVec V.! u)
     netlossMap =
-        foldr (\u acc -> M.adjust (netloss u +) (fst $ nearestVec V.! u) acc)
+        foldr (\u acc -> M.adjust ((netloss u) +) (fst $ nearestVec V.! u) acc)
               (M.fromList . map (\v -> (v, 0)) $ toList sol)
               (toList losing)
-    (leaving, loss) = head . sortBy (compare `on` snd) . M.toAscList $ netlossMap
+    ((leaving, loss), gen') = -- random select among members with same gain
+        pick gen . head . groupBy ((==) `on` snd)
+                 . sortBy (compare `on` snd) . M.toAscList $ netlossMap
     profit = gain - loss
 
-optLocalSearch :: G.Graph -> Solution -> Solution
-optLocalSearch g s
-    | profit best >= 0 = trace (show index) $ optLocalSearch g (s V.// [(index, incoming best)])
+optLocalSearch :: StdGen -> G.Graph -> Solution -> Solution
+optLocalSearch gen g s
+    | profit best >= 0 = optLocalSearch gen' g (s V.// [(index, incoming)])
     | otherwise = s
   where
-    Just index = V.findIndex (leaving best ==) s
+    Just index = V.findIndex (leaving ==) s
     n = G.numNodes g
-    candidates :: [(Int, (Cost, Int))]
-    candidates = sortBy (compare `on` profit)
-                 . map (\i -> (i, findOut g s i)) $ [0 .. n - 1] \\ toList s
-    best = head candidates
-    incoming = fst
-    profit = fst . snd
-    leaving = snd . snd
+    nearestVec = allNearestFacilities g n s -- is a vector of pairs
+    best@(incoming, (bestProfit, leaving, gen')) =
+        maximumBy (compare `on` profit)
+                 . map (\i -> (i, findOut gen g s i nearestVec)) $
+                       [0 .. n - 1] \\ toList s
+    profit (_, (p, _, _)) = p
     
-
 {-
 optLocalSearch :: G.Graph -> Int -> Int -> Solution -> Solution
 optLocalSearch g n p sol = go (0, 0) sol nearest
@@ -162,6 +172,20 @@ localSearch g (v0, s0) = case betters of
     betters = filter (\(v', _) -> v' < v0) $ map compute $ neighbours n s0
     n = G.numNodes g
     compute s = (solutionValue g n s, s)
+
+{-
+localSearch2 :: G.Graph -> (Cost, Solution) -> (Cost, Solution)
+localSearch2 g (v, s) = case betters of
+    [] -> (v, s)
+    _  -> localSearch2 g (head betters)
+  where
+    nearestVec = allNearestFacilities g n s -- is a vector of pairs
+    remaining = V.fromList $ [0 .. n - 1] \\ toList sol
+    profit incoming leaving
+      where
+        (fstGroup, sndGroup) = V.partition (\u -> nearestVec V.! u == leaving) 
+-}
+
 
 randomizedGreedy :: StdGen -> G.Graph -> Int -> Int -> Float -> (Solution, StdGen)
 randomizedGreedy gen g n p alpha =
@@ -208,6 +232,6 @@ grasp gen g n p alpha counter0 startTime = go gen' counter0 val0 s0
         (s', gen') = randomizedGreedy gen g n p alpha
         val' = solutionValue g n s'
 --        (val'', s'') = localSearch g (val', s')
-        s'' = optLocalSearch g s'
+        s'' = optLocalSearch gen' g s'
         val'' = solutionValue g n s''
     
