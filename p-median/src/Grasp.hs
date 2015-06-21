@@ -6,6 +6,7 @@ import Control.Monad.ST
 import Data.Function (on)
 import Data.Foldable (toList)
 import Data.List
+import qualified Data.IntMap as M
 import qualified Data.Vector as V
 import qualified Data.Vector.Mutable as VM
 import Debug.Trace
@@ -28,10 +29,10 @@ randomSolution gen n p =
 neighbours :: Int -> Solution -> [Solution]
 neighbours n sol = do
     pos <- solIndices
-    nbs <- map (\v -> sol V.// [(pos, v)]) newNodes
+    nbs <- map (\v -> sol V.// [(pos, v)]) candidates
     return nbs
   where
-    newNodes = [0 .. n - 1] \\ toList sol
+    candidates = [0 .. n - 1] \\ toList sol
     solIndices = [0 .. (V.length sol - 1)]
 
 -- | Return all 2-change neighbours from @sol@.
@@ -67,18 +68,68 @@ nearestFacility g sol i =
         c = G.cost g i j
 -}
     
-nearestFacilities :: G.Graph -> Int -> Solution -> V.Vector Int
-nearestFacilities g n sol =
-    V.fromList $ map nearestFacility [0 .. n - 1]
-  where    
-    nearestFacility i =
-        foldr (findMin i) inf (toList sol)
-    findMin i j curMin
-        | c < curMin = c
-        | otherwise = curMin
+
+-- | Return a tuple containing the nearest and the second nearest facilities
+-- to node @i@.
+nearestFacilities :: G.Graph -> Solution -> Int -> (Int, Int)
+nearestFacilities g sol i =
+    (nearest, sndNearest)
+  where
+    ((_, nearest), (_, sndNearest)) = 
+        foldr findNearest ((inf, sol V.! 0), (inf, sol V.! 0)) (toList sol)
+    findNearest j cur@((fstCost', fstNearest'), (sndCost', sndNearest'))
+        | c <= fstCost' = ((c, j), (fstCost', fstNearest'))
+        | otherwise = cur
       where
         c = G.cost g i j
 
+-- | Return a tuple containing the nearest and the second nearest facilities
+-- to every node in the graph.
+allNearestFacilities :: G.Graph -> Int -> Solution -> V.Vector (Int, Int)
+allNearestFacilities g n sol =
+    V.fromList $ map (nearestFacilities g sol) [0 .. n - 1]
+
+
+findOut :: G.Graph -> Solution -> Int -> (Cost, Int)
+findOut g sol i = (profit, leaving)
+  where
+    n = G.numNodes g
+    remaining = V.fromList $ [0 .. n - 1] \\ toList sol
+    (gaining, losing) =
+        V.partition
+            (\u -> G.cost g u i <= G.cost g u (fst $ nearestVec V.! u))
+            remaining
+    nearestVec = allNearestFacilities g n sol -- is a vector of pairs
+    gain = V.sum $
+            V.map (\u -> G.cost g u (fst $ nearestVec V.! u) - G.cost g u i)
+                  gaining
+    netloss u = let nearest = nearestVec V.! u in
+                min (G.cost g u i) (G.cost g u (snd $ nearest))
+                - G.cost g u (fst $ nearest)
+    netlossMap =
+        foldr (\u acc -> M.adjust (netloss u +) (fst $ nearestVec V.! u) acc)
+              (M.fromList . map (\v -> (v, 0)) $ toList sol)
+              (toList losing)
+    (leaving, loss) = head . sortBy (compare `on` snd) . M.toAscList $ netlossMap
+    profit = gain - loss
+
+optLocalSearch :: G.Graph -> Solution -> Solution
+optLocalSearch g s
+    | profit best >= 0 = trace (show index) $ optLocalSearch g (s V.// [(index, incoming best)])
+    | otherwise = s
+  where
+    Just index = V.findIndex (leaving best ==) s
+    n = G.numNodes g
+    candidates :: [(Int, (Cost, Int))]
+    candidates = sortBy (compare `on` profit)
+                 . map (\i -> (i, findOut g s i)) $ [0 .. n - 1] \\ toList s
+    best = head candidates
+    incoming = fst
+    profit = fst . snd
+    leaving = snd . snd
+    
+
+{-
 optLocalSearch :: G.Graph -> Int -> Int -> Solution -> Solution
 optLocalSearch g n p sol = go (0, 0) sol nearest
   where
@@ -100,6 +151,7 @@ optLocalSearch g n p sol = go (0, 0) sol nearest
                     | i < p - 1 && j == n - p - 1 = (i + 1, 0)
                     | j < n - p - 1 = (i, j + 1)
                     | otherwise = cur
+-}
 
 -- | First improvement local search.
 localSearch :: G.Graph -> (Cost, Solution) -> (Cost, Solution)
@@ -156,6 +208,6 @@ grasp gen g n p alpha counter0 startTime = go gen' counter0 val0 s0
         (s', gen') = randomizedGreedy gen g n p alpha
         val' = solutionValue g n s'
 --        (val'', s'') = localSearch g (val', s')
-        s'' = optLocalSearch g n p s'
+        s'' = optLocalSearch g s'
         val'' = solutionValue g n s''
     
