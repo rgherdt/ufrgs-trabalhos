@@ -12,8 +12,9 @@ import qualified Graph as G
 import System.Random
 import Data.Time
 import Data.Maybe
+import Data.UArray
 
-type Solution = S.Seq Int
+type Solution = UArray Int Int
 type Cost = Int
 
 
@@ -67,6 +68,31 @@ tst g n p = do
     let diffTime = diffUTCTime curTime endTime
     putStrLn $ "(" ++ show diffTime ++ ") " ++ show val
     --t0 = trace(show fn ++ "\n") $ nextNeighbor n sol1 fn
+
+nearestFacility :: Int -> Int
+nearestFacility i = foldr findMin inf (elems sol)
+  where
+    findMin j curMin
+        | c < curMin = c
+        | otherwise = curMin
+      where
+        c = G.cost g i j
+
+localSearch3 :: G.Graph -> (Cost, Solution) -> ST (Cost, Solution)
+localSearch3 g (v0, s0) = do
+    let nodes = [0 .. n - 1]
+    forM_ nodes $ \i -> do
+        
+    j <- [0 .. n-p-1]
+    let diff = 0
+    let d' = d
+  where
+    n = G.numNodes g
+    (_, p) = bounds s0
+    emptyNodes = [0 .. n - 1] \\ elems s0
+    out = array (0, p) zipWith (\a -> \b -> (a, b)) [0 .. n-p-1] emptyNodes
+    d = array (0, n-1) (map (\i -> (i, nearestFacility i)) [0 .. n-1])
+    
     
 
 localSearch2 :: G.Graph -> (Cost, Solution) -> (Cost, Solution)
