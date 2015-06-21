@@ -1,0 +1,2 @@
+solution	running time
+4445		(0.237775 s)
