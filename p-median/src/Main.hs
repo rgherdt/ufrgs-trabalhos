@@ -4,25 +4,31 @@ module Main where
 import Options.Applicative
 import Control.Monad (liftM)
 import qualified Graph as G
-import Grasp (grasp)
+import Grasp (grasp, StopCriterium (..))
 import System.IO
 import System.Random
-import Data.Time
+import System.CPUTime
 import qualified Data.ByteString.Lazy as B
 import qualified Data.ByteString.Lazy.Char8 as B8
 
 data Options = Options
     { optNum :: Int
+    , optTime :: Bool
     , optAlpha :: Float
     }
+
 
 parseOptions :: Parser Options
 parseOptions = Options
     <$> option auto ( short 'n'
-                   <> value 100
+                   <> value 1000
                    <> metavar "NUM"
                    <> help "Number of iterations to stop (default: 100)."
                     )
+    <*> switch ( short 't'
+              <> long "time"
+              <> help "If true, uses time (set by -n) as stop criterium"
+               )
     <*> option auto ( long "alpha"
                    <> short 'a'
                    <> value 0.2
@@ -39,6 +45,8 @@ main = do
     op <- execParser opts
     let iterNum = optNum op
         alpha = optAlpha op
+        stop | optTime op = TimeStop
+             | otherwise = IterStop
     params <- liftM (map read . words) getLine :: IO [Int]
     matrix <- case params of
         [n, numEdges, p] -> do
@@ -48,9 +56,9 @@ main = do
                      map (map read . map B8.unpack . B8.words) contents
             case g of
                 Just g -> do
-                    startTime <- getCurrentTime
+                    startTime <- getCPUTime
                     putStrLn $ "solution\trunning time"
-                    (val, s) <- grasp gen g n p alpha iterNum startTime
+                    (val, s) <- grasp gen g n p alpha iterNum stop startTime
                     return ()
                 _ -> B8.putStrLn "p-median: Inconsistent input graph"
             return ()

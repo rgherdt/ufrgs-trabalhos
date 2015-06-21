@@ -1,12 +1,13 @@
 module Grasp (
       grasp
+    , StopCriterium (..)
     ) where
 
 import Data.Function (on)
 import Data.Foldable (toList)
 import Data.List
 import qualified Data.IntMap as M
-import Data.Time
+import System.CPUTime
 import qualified Data.Vector as V
 import qualified Graph as G
 import System.Random
@@ -14,6 +15,7 @@ import System.Random
 type Solution = V.Vector Int
 type Cost = Int
 inf = (maxBound :: Int)
+data StopCriterium = TimeStop | IterStop
 
 -- | Return a random solution to the problem: a p-size list of locations.
 -- The solution is already sorted for efficiency reasons.
@@ -136,19 +138,24 @@ grasp :: StdGen
       -> Int
       -> Float
       -> Int
-      -> UTCTime
+      -> StopCriterium
+      -> Integer
       -> IO (Cost, Solution)
-grasp gen g n p alpha counter0 startTime = go gen' counter0 val0 s0
+grasp gen g n p alpha counter0 stop startTime = go gen' counter0 val0 s0
   where
     (s0, gen') = randomizedGreedy gen g n p alpha
     val0 = solutionValue g n s0
+    maxTime = fromIntegral counter0
     go gen counter val s
         | counter <= 0 = return (val, s)
         | val'' < val = do
-            curTime <- getCurrentTime
-            let diffTime = diffUTCTime curTime startTime
-            putStrLn $ show val'' ++ "\t\t(" ++ show diffTime ++ ")"
-            go gen' (counter - 1) val'' s''
+            curTime <- getCPUTime
+            let diffTime = fromIntegral (curTime - startTime) / 1000000000000
+            putStrLn $ show val'' ++ "\t\t(" ++ show diffTime ++ " s)"
+            case stop of
+                IterStop -> go gen' (counter - 1) val'' s''
+                TimeStop | diffTime >= maxTime -> return (val, s)
+                         | otherwise -> go gen' counter val'' s'' -- doesn't decrement
         | otherwise  = go gen' (counter - 1) val s
       where
         (s', gen') = randomizedGreedy gen g n p alpha
