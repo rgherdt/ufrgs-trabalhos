@@ -46,29 +46,6 @@ edgeFromList :: [Int] -> Maybe Edge
 edgeFromList [src, tgt, cost] = Just ((src, tgt), cost)
 edgeFromList _ = Nothing
 
-showInput :: Int -> Int -> Graph -> B.ByteString
-showInput n p gr@(Graph g) =
-    "data;\n"
-    <> "param p := " <> B8.pack (show p) <> ";\n"
-    <> "param n := " <> B8.pack (show n) <> ";\n"
-    <> "param d : \t"
-    <> B.concat (map (("\t" <>) . B8.pack . show) nodes) <> " :=\n"
-    <> B.concat (map (\i -> ("\t\t\t" <> B8.pack (show i)
-                       <> B.concat (map (\j -> "\t"
-                            <> B8.pack (show (g ! (i, j)))) nodes)
-                       <> "\n"))
-               nodes)
-    <> "\t;\nend;"
-  where
-    nodes = [0 .. n - 1]
-
--- | Return an immutable graph from a mutable one.
-{-
-freezeGraph :: MGraph -> ST Graph
-freezeGraph (MGraph m) =
-    return . Graph =<< (MArray.freeze m :: IO (Array (Int, Int) Cost))
--}
-
 
 ----------- Mutable functions --------------
 
@@ -124,3 +101,20 @@ generateGraph n input = case runST m of
                    arr <- unsafeFreeze mg'
                    return . Just $ arr
     
+showInput :: Int -> Int -> Graph -> B.ByteString
+showInput n p gr@(Graph g) =
+    "data;\n"
+    <> "param p := " <> B8.pack (show p) <> ";\n"
+    <> "param n := " <> B8.pack (show n) <> ";\n"
+    <> "param d : \t"
+    <> B.concat (map (("\t" <>) . B8.pack . show) nodes) <> " :=\n"
+    <> B.concat (map (\i -> ("\t\t\t" <> B8.pack (show i)
+                       <> B.concat (map (\j -> "\t"
+                            <> B8.pack (show (g ! (i, j)))) nodes)
+                       <> "\n"))
+               nodes)
+    <> "\t;\nend;"
+  where
+    nodes = [0 .. n - 1]
+
+
