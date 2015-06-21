@@ -1,0 +1,2 @@
+solution	running time
+6634		(0.282957 s)
