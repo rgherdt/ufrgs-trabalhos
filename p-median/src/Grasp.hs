@@ -106,11 +106,11 @@ findOut :: StdGen -> G.Graph -> Solution -> Int -> V.Vector (Int, Int) -> (Cost,
 findOut gen g sol i nearestVec = (profit, leaving, gen')
   where
     n = G.numNodes g
-    remaining = V.fromList $ [0 .. n - 1] \\ toList sol
+    nodes = V.fromList $ [0 .. n - 1] 
     (gaining, losing) =
         V.partition
             (\u -> G.cost g u i <= G.cost g u (fst $ nearestVec V.! u))
-            remaining
+            nodes
     gain = V.sum $
             V.map (\u -> G.cost g u (fst $ nearestVec V.! u) - G.cost g u i)
                   gaining
@@ -127,7 +127,7 @@ findOut gen g sol i nearestVec = (profit, leaving, gen')
 
 optLocalSearch :: StdGen -> G.Graph -> Solution -> Solution
 optLocalSearch gen g s
-    | profit best >= 0 = optLocalSearch gen' g (s V.// [(index, incoming)])
+    | profit best > 0 = optLocalSearch gen' g (s V.// [(index, incoming)])
     | otherwise = s
   where
     Just index = V.findIndex (leaving ==) s
