@@ -117,4 +117,3 @@ showInput n p gr@(Graph g) =
   where
     nodes = [0 .. n - 1]
 
-
