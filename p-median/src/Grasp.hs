@@ -67,7 +67,7 @@ nearestFacility g sol i =
         c = G.cost g i j
 -}
     
-nearestFacilities :: G.Graph -> Int -> Solution -> V.Vector Int -- ST s (VM.MVector s Int)
+nearestFacilities :: G.Graph -> Int -> Solution -> V.Vector Int
 nearestFacilities g n sol =
     V.fromList $ map nearestFacility [0 .. n - 1]
   where    
@@ -92,7 +92,7 @@ optLocalSearch g n p sol = go (0, 0) sol nearest
         newNode = incoming V.! j
         relevant = filter (\k -> oldNode == (nearest V.! k)) indices
         diff = foldr (\k acc -> (G.cost g newNode k - G.cost g oldNode k) + acc) 0 relevant
-        nearest' = fmap (\k -> if j == k then j else k) nearest 
+        nearest' = fmap (\k -> if k == oldNode then newNode else k) nearest 
         incoming = V.fromList $ indices \\ toList sol
     indices = [0 .. n - 1]
     nearest = nearestFacilities g n sol
@@ -155,8 +155,7 @@ grasp gen g n p alpha counter0 startTime = go gen' counter0 val0 s0
       where
         (s', gen') = randomizedGreedy gen g n p alpha
         val' = solutionValue g n s'
-        (val'', s'') = localSearch g (val', s')
---        s'' = optLocalSearch g n p s'
---        val'' = solutionValue g n s''
---                         randomizedGreedy gen g n p alpha
+--        (val'', s'') = localSearch g (val', s')
+        s'' = optLocalSearch g n p s'
+        val'' = solutionValue g n s''
     
