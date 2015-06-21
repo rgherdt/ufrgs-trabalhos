@@ -3,6 +3,7 @@ module Grasp (
     , StopCriterium (..)
     ) where
 
+import Debug.Trace
 import Data.Function (on)
 import Data.Foldable (toList)
 import Data.List

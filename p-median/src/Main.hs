@@ -13,7 +13,7 @@ import qualified Data.ByteString.Lazy.Char8 as B8
 
 data Options = Options
     { optNum :: Int
-    , optTime :: Bool
+    , optIter :: Bool
     , optAlpha :: Float
     }
 
@@ -21,13 +21,13 @@ data Options = Options
 parseOptions :: Parser Options
 parseOptions = Options
     <$> option auto ( short 'n'
-                   <> value 1000
+                   <> value 500
                    <> metavar "NUM"
-                   <> help "Number of iterations to stop (default: 100)."
+                   <> help "Limit for chosen stop criterium (default: 500)."
                     )
-    <*> switch ( short 't'
-              <> long "time"
-              <> help "If true, uses time (set by -n) as stop criterium"
+    <*> switch ( short 'i'
+              <> long "iter"
+              <> help "If true, uses number of iterations (set by -n) as stop criterium"
                )
     <*> option auto ( long "alpha"
                    <> short 'a'
@@ -45,8 +45,8 @@ main = do
     op <- execParser opts
     let iterNum = optNum op
         alpha = optAlpha op
-        stop | optTime op = TimeStop
-             | otherwise = IterStop
+        stop | optIter op = IterStop
+             | otherwise = TimeStop
     params <- liftM (map read . words) getLine :: IO [Int]
     matrix <- case params of
         [n, numEdges, p] -> do
