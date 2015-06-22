@@ -4,7 +4,7 @@ module Main where
 import Options.Applicative
 import Control.Monad (liftM)
 import qualified Graph as G
-import Grasp (grasp, StopCriterium (..))
+import Grasp (grasp, showSolution, StopCriterium (..))
 import System.IO
 import System.Random
 import System.CPUTime
@@ -12,7 +12,8 @@ import qualified Data.ByteString.Lazy as B
 import qualified Data.ByteString.Lazy.Char8 as B8
 
 data Options = Options
-    { optNum :: Int
+    { optOutfile :: String
+    , optNum :: Int
     , optIter :: Bool
     , optAlpha :: Float
     }
@@ -20,7 +21,8 @@ data Options = Options
 
 parseOptions :: Parser Options
 parseOptions = Options
-    <$> option auto ( short 'n'
+    <$> argument str ( metavar "OUTFILE" )
+    <*> option auto ( short 'n'
                    <> value 500
                    <> metavar "NUM"
                    <> help "Limit for chosen stop criterium (default: 500)."
@@ -47,6 +49,7 @@ main = do
         alpha = optAlpha op
         stop | optIter op = IterStop
              | otherwise = TimeStop
+        outFile = optOutfile op
     params <- liftM (map read . words) getLine :: IO [Int]
     matrix <- case params of
         [n, numEdges, p] -> do
@@ -59,7 +62,9 @@ main = do
                     startTime <- getCPUTime
                     putStrLn $ "solution\trunning time"
                     (val, s) <- grasp gen g n p alpha iterNum stop startTime
-                    return ()
+                    let resultStr = showSolution s val
+                    putStrLn resultStr
+                    writeFile outFile $ resultStr ++ "\n"
                 _ -> B8.putStrLn "p-median: Inconsistent input graph"
             return ()
         _ -> fail "p-median: First input line wrong formatted."

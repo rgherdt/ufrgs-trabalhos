@@ -1,6 +1,7 @@
 module Grasp (
       grasp
     , StopCriterium (..)
+    , showSolution
     ) where
 
 import Debug.Trace
@@ -175,3 +176,6 @@ grasp gen g n p alpha counter0 stop startTime = go gen' counter0 val0 s0
         s'' = optLocalSearch g s'
         val'' = solutionValue g n s''
     
+showSolution :: Solution -> Cost -> String
+showSolution s val =
+    "Solution: " ++ show (map (1 +) $ toList s) ++ "\nValue: " ++ show val
