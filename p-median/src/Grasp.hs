@@ -162,7 +162,14 @@ grasp gen g n p alpha counter0 stop startTime = go gen' counter0 val0 s0
                 IterStop -> go gen' (counter - 1) val'' s''
                 TimeStop | diffTime >= maxTime -> return (val, s)
                          | otherwise -> go gen' counter val'' s'' -- doesn't decrement
-        | otherwise  = go gen' (counter - 1) val s
+        | otherwise = case stop of
+                IterStop -> go gen' (counter - 1) val s
+                TimeStop -> do
+                    curTime <- getCPUTime
+                    let diffTime = fromIntegral (curTime - startTime) / 1000000000000
+                    if diffTime >= maxTime 
+                        then return (val, s)
+                        else go gen' counter val s -- doesn't decrement
       where
         (s', gen') = randomizedGreedy gen g n p alpha
         s'' = optLocalSearch g s'
