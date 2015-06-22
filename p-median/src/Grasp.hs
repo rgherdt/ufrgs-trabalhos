@@ -128,7 +128,6 @@ randomizedGreedy gen g n p alpha =
     candidates vs = sortBy (compare `on` snd) $ map (\v -> (v, totalCost v)) vs
     alphaSize n' = round (alpha * fromIntegral n') :: Int
     rcl size remaining = map fst . take size $ candidates remaining
-    randomIx gen n' = randomR (0, n' - 1) gen
     pick :: StdGen -> [a] -> (a, StdGen)
     pick gen ls = (ls !! ix, gen')
       where
