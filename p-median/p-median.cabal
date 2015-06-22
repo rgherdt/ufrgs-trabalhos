@@ -27,6 +27,7 @@ executable p-median
                        random>=1.0.1.1,
                        optparse-applicative>=0.10.0,
                        time,
-                       vector>=0.10.0.1
+                       vector>=0.10.0.1,
+                       containers>=0.5.0.0
   hs-source-dirs:      src/
   default-language:    Haskell2010

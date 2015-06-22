@@ -117,8 +117,7 @@ randomizedGreedy gen g n p alpha =
     (s, _, gen') =
         foldr (\_ (sol, remaining, gen) ->
                   let size = alphaSize (length remaining)
-                      (j, gen') = randomIx gen size
-                      v' = rcl size remaining !! j
+                      (v', gen') = pick gen $ rcl size remaining
                   in (v' : sol, delete v' remaining, gen'))
               ([], vs, gen)
               [0 .. p - 1]
@@ -128,6 +127,11 @@ randomizedGreedy gen g n p alpha =
     alphaSize n' = round (alpha * fromIntegral n') :: Int
     rcl size remaining = map fst . take size $ candidates remaining
     randomIx gen n' = randomR (0, n' - 1) gen
+    pick :: StdGen -> [a] -> (a, StdGen)
+    pick gen ls = (ls !! ix, gen')
+      where
+        (ix, gen') = randomR (0, length ls - 1) gen
+
 
 -- | The grasp algorithm, applying the randomizedGreedy and local search 
 -- algorithms until the given stop criterium is reached. Return a solution
