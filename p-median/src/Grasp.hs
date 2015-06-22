@@ -63,7 +63,7 @@ findOut :: G.Graph -> Solution -> V.Vector (Int, Int) -> Int -> (Cost, Int)
 findOut g sol nearestVec i = (profit, leaving)
   where
     n = G.numNodes g
-    remaining = V.fromList $ [0 .. n - 1] \\ toList sol
+    nodes = V.fromList $ [0 .. n - 1] 
     (gaining, losing) =
         V.partition
             (\u -> G.cost g u i <= G.cost g u (fst $ nearestVec V.! u))
@@ -80,6 +80,7 @@ findOut g sol nearestVec i = (profit, leaving)
     (leaving, loss) =
         head . sortBy (compare `on` snd) . M.toAscList $ netlossMap
     profit = gain - loss
+
 
 -- | Optimized local search algorithm using findOut (Whitaker's fast interchange).
 -- Return the local minimum, considering a 1-change neighbourhood from @sol@.
