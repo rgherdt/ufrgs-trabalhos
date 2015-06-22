@@ -16,6 +16,7 @@ data Options = Options
     , optNum :: Int
     , optIter :: Bool
     , optAlpha :: Float
+    , optSeed :: Int
     }
 
 
@@ -37,6 +38,12 @@ parseOptions = Options
                    <> metavar "ALPHA"
                    <> help "Alpha parameter in (0.0, 1.0] (default: 0.2)"
                     )
+    <*> option auto ( long "seed"
+                   <> short 's'
+                   <> value (- 1) 
+                   <> metavar "SEED"
+                   <> help "Semente para o gerador de números aleatórios"
+                   )
 
 opts = info (helper <*> parseOptions)
             ( fullDesc
@@ -50,17 +57,17 @@ main = do
         stop | optIter op = IterStop
              | otherwise = TimeStop
         outFile = optOutfile op
+        seed = optSeed op 
     params <- liftM (map read . words) getLine :: IO [Int]
     matrix <- case params of
         [n, numEdges, p] -> do
             contents <- return . B8.lines =<< B8.getContents
-            gen <- getStdGen
+            gen <- if seed == -1 then getStdGen else return $ mkStdGen seed
             let g = G.generateGraph n $
                      map (map read . map B8.unpack . B8.words) contents
             case g of
                 Just g -> do
                     startTime <- getCPUTime
-                    putStrLn $ "solution\trunning time"
                     (val, s) <- grasp gen g n p alpha iterNum stop startTime
                     let resultStr = showSolution s val
                     putStrLn resultStr

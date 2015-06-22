@@ -148,7 +148,10 @@ grasp :: StdGen
       -> StopCriterium
       -> Integer
       -> IO (Cost, Solution)
-grasp gen g n p alpha counter0 stop startTime = go gen' counter0 val0 s0
+grasp gen g n p alpha counter0 stop startTime = do
+    putStrLn $ "First solution value: " ++ show val0
+    putStrLn $ "\nsolution\trunning time"
+    go gen' counter0 val0 s0
   where
     (s0, gen') = randomizedGreedy gen g n p alpha
     val0 = solutionValue g n s0
